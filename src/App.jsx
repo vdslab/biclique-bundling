@@ -4,8 +4,20 @@ import * as d3 from "d3";
 
 import { isEqual, isSuperset } from "./utils/set_calc";
 
+const sumCordinates = (nodes, i) => {
+  let sum = 0;
+  console.log(nodes, i);
+  for (const mx of i) {
+    sum += nodes[mx].y;
+  }
+
+  return sum;
+}
+
 function App() {
   const [paths, setPaths] = useState([]);
+  const [leftNodes, setLeftNodes] = useState([]);
+  const [rightNodes, setRightNodes] = useState([]);
 
   const data = [
     {
@@ -42,31 +54,41 @@ function App() {
 
   useEffect(() => {
     const linkGenerator = d3.linkHorizontal();
-    const lineGenerator = d3.line()
-    .x(d => d.x)
-    .y(d => d.y);
-
-    console.log(lineGenerator(lineData));
+    const lineGenerator = d3
+      .line()
+      .x((d) => d.x)
+      .y((d) => d.y);
 
     const leftX = 100;
-    const rightX = 500;
-
     const leftY = 100;
+
+    const rightX = 500;
     const rigthY = 100;
 
-    const e = 10;
+    const rights = [
+      { x: 600, y: 100 },
+      { x: 600, y: 130 },
+      { x: 600, y: 160 },
+      { x: 600, y: 190 },
+      { x: 600, y: 220 },
+    ];
 
+    const lefts = [
+      { x: 400, y: 100 },
+      { x: 400, y: 130 },
+      { x: 400, y: 160 },
+    ];
 
+    const outputPaths = new Array();
 
-
+    setLeftNodes(lefts);
+    setRightNodes(rights);
 
     const bipartiteMatrix = [
       [1, 1, 1, 0, 0],
       [1, 0, 0, 1, 1],
       [1, 1, 1, 0, 1],
     ];
-
-
 
     console.log(bipartiteMatrix);
 
@@ -121,7 +143,7 @@ function App() {
           }
         }
 
-        if (edgeNumber >= 0.8 * leftNodeSetNumber * rightNodeSetNumber) {
+        if (edgeNumber >= 1.0 * leftNodeSetNumber * rightNodeSetNumber) {
           leftMaximalCandNodes.push(leftNodeSet);
           rightMaxmalCandNodes.push(rightNodeSet);
         }
@@ -137,38 +159,63 @@ function App() {
       const leftMaximalCandNodeSet = new Set(leftMaximalCandNodes[i]);
       const rightMaximalCandNodeSet = new Set(rightMaxmalCandNodes[i]);
 
-
-
       let isMaximal = true;
 
-      for(let k = 0; k < 15; k ++) {
+      for (let k = 0; k < 15; k++) {
         const lleftMaximalCandNodeSet = new Set(leftMaximalCandNodes[k]);
         const rrightMaximalCandNodeSet = new Set(rightMaxmalCandNodes[k]);
 
-        if(isEqual(leftMaximalCandNodeSet, lleftMaximalCandNodeSet) &&
-        isEqual(rightMaximalCandNodeSet, rrightMaximalCandNodeSet) ) {
+        if (
+          isEqual(leftMaximalCandNodeSet, lleftMaximalCandNodeSet) &&
+          isEqual(rightMaximalCandNodeSet, rrightMaximalCandNodeSet)
+        ) {
           continue;
         }
 
-        if(isSuperset(lleftMaximalCandNodeSet, leftMaximalCandNodeSet) &&
-        isSuperset(rrightMaximalCandNodeSet, rightMaximalCandNodeSet) ) {
+        if (
+          isSuperset(lleftMaximalCandNodeSet, leftMaximalCandNodeSet) &&
+          isSuperset(rrightMaximalCandNodeSet, rightMaximalCandNodeSet)
+        ) {
           isMaximal = false;
           break;
         }
-
       }
 
-      if(isMaximal) {
-        console.log("Maximal******************")
+      if (isMaximal) {
+        console.log("Maximal******************");
         console.log(leftMaximalCandNodeSet);
         console.log(rightMaximalCandNodeSet);
+
+        const pathData = new Array();
+        const midX = 500;
+        const midY = ( sumCordinates(lefts, [...leftMaximalCandNodeSet]) +
+         sumCordinates( rights ,[...rightMaximalCandNodeSet]) ) /
+         (leftMaximalCandNodeSet.size + rightMaximalCandNodeSet.size);
+
+         console.log(midX, midY);
+
+         for(const l of [...leftMaximalCandNodeSet]) {
+          //source:
+          //[lefts[l].x,lefts[l].y]
+
+          //target:
+          //[midX, midY]
+          outputPaths.push({source:[lefts[l].x,lefts[l].y], target:[midX, midY]});
+         }
+
+         for(const r of [...rightMaximalCandNodeSet]) {
+          //source:
+          //[lefts[l].x,lefts[l].y]
+
+          //target:
+          //[midX, midY]
+          outputPaths.push({source:[midX, midY], target:[rights[r].x,rights[r].y]});
+         }
       }
-
-
     }
 
     setPaths(
-      data.map((d) => {
+      outputPaths.map((d) => {
         return linkGenerator(d);
       })
     );
@@ -177,20 +224,24 @@ function App() {
   return (
     <>
       <svg width="1000" height="1000" xmlns="http://www.w3.org/2000/svg">
-        {paths?.map((path, key) => {
+        {paths.map((path, key) => {
           return (
             <path
               d={path}
               stroke="silver"
-              stroke-width="2"
+              stroke-width="1"
               fill="transparent"
             />
           );
         })}
 
-        <path d = "M10,20L100,200L200,100"  stroke="silver"
-              stroke-width="2"
-              fill="transparent"/>
+        {leftNodes?.map((node, key) => {
+          return <circle cx={node.x} cy={node.y} r="3" fill="blue" />;
+        })}
+
+        {rightNodes?.map((node, key) => {
+          return <circle cx={node.x} cy={node.y} r="3" fill="blue" />;
+        })}
 
         {data?.map((datum, key) => {
           return (
