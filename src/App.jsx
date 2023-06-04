@@ -10,7 +10,7 @@ function App() {
   const [leftNodes, setLeftNodes] = useState([]);
   const [rightNodes, setRightNodes] = useState([]);
   const [midNodes, setMidNodes] = useState([]);
-  const gamma = 0.8;
+  const gamma = 1.0;
   const nodeRadius = 4;
 
   useEffect(() => {
@@ -48,9 +48,9 @@ function App() {
     setRightNodes(rights);
 
     const bipartiteMatrix = [
-      [1, 1, 1, 0, 0],
-      [1, 0, 0, 1, 1],
-      [1, 1, 1, 0, 1],
+      [1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1],
     ];
 
     console.log(bipartiteMatrix);
@@ -118,13 +118,13 @@ function App() {
     console.log([leftMaximalCandNodes, rightMaxmalCandNodes])
     console.log(isEqual(new Set([1, 4, 7]) ,  new Set([4, 3, 7])));*/
     let cc = 0;
-    for (let i = 0; i < leftNodeNumber * rightNodeNumber; i++) {
+    for (let i = 0; i < leftMaximalCandNodes.length; i++) {
       const leftMaximalCandNodeSet = new Set(leftMaximalCandNodes[i]);
       const rightMaximalCandNodeSet = new Set(rightMaxmalCandNodes[i]);
 
       let isMaximal = true;
 
-      for (let k = 0; k < leftNodeNumber * rightNodeNumber; k++) {
+      for (let k = 0; k < leftMaximalCandNodes.length; k++) {
         const lleftMaximalCandNodeSet = new Set(leftMaximalCandNodes[k]);
         const rrightMaximalCandNodeSet = new Set(rightMaxmalCandNodes[k]);
 
