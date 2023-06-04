@@ -19,6 +19,8 @@ function App() {
   const [leftNodes, setLeftNodes] = useState([]);
   const [rightNodes, setRightNodes] = useState([]);
   const [midNodes, setMidNodes] = useState([]);
+  const gamma = 0.8;
+  const nodeRadius = 4;
 
   useEffect(() => {
     const linkGenerator = d3.linkHorizontal();
@@ -27,24 +29,24 @@ function App() {
       .x((d) => d.x)
       .y((d) => d.y);
 
-    const leftX = 100;
+    const leftX = 300;
     const leftY = 100;
 
-    const rightX = 500;
+    const rightX = 700;
     const rigthY = 100;
 
     const rights = [
-      { x: 600, y: 100 },
-      { x: 600, y: 130 },
-      { x: 600, y: 160 },
-      { x: 600, y: 190 },
-      { x: 600, y: 220 },
+      { x: rightX, y: 100 },
+      { x: rightX, y: 180 },
+      { x: rightX, y: 260 },
+      { x: rightX, y: 340 },
+      { x: rightX, y: 420 },
     ];
 
     const lefts = [
-      { x: 400, y: 100 },
-      { x: 400, y: 130 },
-      { x: 400, y: 160 },
+      { x: leftX, y: 100 },
+      { x: leftX, y: 180 },
+      { x: leftX, y: 260 },
     ];
 
     const outputPaths = new Array();
@@ -111,7 +113,7 @@ function App() {
           }
         }
 
-        if (edgeNumber >= 1.0 * leftNodeSetNumber * rightNodeSetNumber) {
+        if (edgeNumber >= gamma * leftNodeSetNumber * rightNodeSetNumber) {
           leftMaximalCandNodes.push(leftNodeSet);
           rightMaxmalCandNodes.push(rightNodeSet);
         }
@@ -155,7 +157,7 @@ function App() {
         console.log(rightMaximalCandNodeSet);
 
         const pathData = new Array();
-        const midX = 500;
+        const midX = (rightX + leftX) / 2;
         const midY =
           (sumCordinates(lefts, [...leftMaximalCandNodeSet]) +
             sumCordinates(rights, [...rightMaximalCandNodeSet])) /
@@ -165,7 +167,6 @@ function App() {
         setMidNodes((prev) => {
           return [...prev, { x: midX, y: midY }];
         });
-
 
         for (const l of [...leftMaximalCandNodeSet]) {
           //source:
@@ -202,29 +203,37 @@ function App() {
 
   return (
     <>
-      <svg width="1000" height="1000" xmlns="http://www.w3.org/2000/svg">
-        {paths.map((path, key) => {
-          return (
-            <path
-              d={path}
-              stroke="silver"
-              stroke-width="1"
-              fill="transparent"
-            />
-          );
-        })}
+      <p>γ:{gamma}</p>
 
-        {leftNodes?.map((node, key) => {
-          return <circle cx={node.x} cy={node.y} r="3" fill="blue" />;
-        })}
+      <svg width="1000" height="500" style={{ border: "solid 1px" }}>
+        <g>
+          {paths.map((path, key) => {
+            return (
+              <path
+                d={path}
+                stroke="silver"
+                stroke-width="1.5"
+                fill="transparent"
+              />
+            );
+          })}
 
-        {rightNodes?.map((node, key) => {
-          return <circle cx={node.x} cy={node.y} r="3" fill="blue" />;
-        })}
+          {leftNodes?.map((node, key) => {
+            return (
+              <circle cx={node.x} cy={node.y} r={nodeRadius} fill="blue" />
+            );
+          })}
 
-        {midNodes?.map((node, key) => {
-          return <circle cx={node.x} cy={node.y} r="3" fill="red" />;
-        })}
+          {rightNodes?.map((node, key) => {
+            return (
+              <circle cx={node.x} cy={node.y} r={nodeRadius} fill="blue" />
+            );
+          })}
+
+          {midNodes?.map((node, key) => {
+            return <circle cx={node.x} cy={node.y} r={nodeRadius} fill="red" />;
+          })}
+        </g>
       </svg>
     </>
   );
