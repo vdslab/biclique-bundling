@@ -3,16 +3,7 @@ import "./App.css";
 import * as d3 from "d3";
 
 import { isEqual, isSuperset } from "./utils/set_calc";
-
-const sumCordinates = (nodes, i) => {
-  let sum = 0;
-  console.log(nodes, i);
-  for (const mx of i) {
-    sum += nodes[mx].y;
-  }
-
-  return sum;
-};
+import { sumCordinates } from "./utils/calc";
 
 function App() {
   const [paths, setPaths] = useState([]);
@@ -48,6 +39,8 @@ function App() {
       { x: leftX, y: 180 },
       { x: leftX, y: 260 },
     ];
+
+    const midNodesCopy = new Array();
 
     const outputPaths = new Array();
 
@@ -124,14 +117,14 @@ function App() {
     console.log(rightMaxmalCandNodes);
     console.log([leftMaximalCandNodes, rightMaxmalCandNodes])
     console.log(isEqual(new Set([1, 4, 7]) ,  new Set([4, 3, 7])));*/
-
-    for (let i = 0; i < 15; i++) {
+    let cc = 0;
+    for (let i = 0; i < leftNodeNumber * rightNodeNumber; i++) {
       const leftMaximalCandNodeSet = new Set(leftMaximalCandNodes[i]);
       const rightMaximalCandNodeSet = new Set(rightMaxmalCandNodes[i]);
 
       let isMaximal = true;
 
-      for (let k = 0; k < 15; k++) {
+      for (let k = 0; k < leftNodeNumber * rightNodeNumber; k++) {
         const lleftMaximalCandNodeSet = new Set(leftMaximalCandNodes[k]);
         const rrightMaximalCandNodeSet = new Set(rightMaxmalCandNodes[k]);
 
@@ -164,9 +157,7 @@ function App() {
           (leftMaximalCandNodeSet.size + rightMaximalCandNodeSet.size);
 
         console.log(midX, midY);
-        setMidNodes((prev) => {
-          return [...prev, { x: midX, y: midY }];
-        });
+        midNodesCopy.push({ x: midX, y: midY });
 
         for (const l of [...leftMaximalCandNodeSet]) {
           //source:
@@ -181,11 +172,6 @@ function App() {
         }
 
         for (const r of [...rightMaximalCandNodeSet]) {
-          //source:
-          //[lefts[l].x,lefts[l].y]
-
-          //target:
-          //[midX, midY]
           outputPaths.push({
             source: [midX, midY],
             target: [rights[r].x, rights[r].y],
@@ -194,6 +180,10 @@ function App() {
       }
     }
 
+    console.log("missing", cc);
+
+    console.log(midNodesCopy);
+    setMidNodes(midNodesCopy);
     setPaths(
       outputPaths.map((d) => {
         return linkGenerator(d);
@@ -212,7 +202,7 @@ function App() {
               <path
                 d={path}
                 stroke="silver"
-                stroke-width="1.5"
+                stroke-width="1"
                 fill="transparent"
               />
             );
@@ -231,7 +221,9 @@ function App() {
           })}
 
           {midNodes?.map((node, key) => {
-            return <circle cx={node.x} cy={node.y} r={nodeRadius} fill="red" />;
+            return (
+              <circle cx={node.x} cy={node.y} r={nodeRadius - 1.5} fill="red" />
+            );
           })}
         </g>
       </svg>
