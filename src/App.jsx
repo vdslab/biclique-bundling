@@ -12,45 +12,13 @@ const sumCordinates = (nodes, i) => {
   }
 
   return sum;
-}
+};
 
 function App() {
   const [paths, setPaths] = useState([]);
   const [leftNodes, setLeftNodes] = useState([]);
   const [rightNodes, setRightNodes] = useState([]);
-
-  const data = [
-    {
-      source: [100, 120],
-      target: [200, 200],
-    },
-    {
-      source: [100, 140],
-      target: [200, 200],
-    },
-    {
-      source: [100, 150],
-      target: [200, 200],
-    },
-    {
-      source: [300, 120],
-      target: [200, 200],
-    },
-    {
-      source: [300, 140],
-      target: [200, 200],
-    },
-    {
-      source: [300, 150],
-      target: [200, 200],
-    },
-  ];
-
-  const lineData = [
-    { x: 10, y: 20 },
-    { x: 100, y: 200 },
-    { x: 200, y: 100 },
-  ];
+  const [midNodes, setMidNodes] = useState([]);
 
   useEffect(() => {
     const linkGenerator = d3.linkHorizontal();
@@ -188,29 +156,40 @@ function App() {
 
         const pathData = new Array();
         const midX = 500;
-        const midY = ( sumCordinates(lefts, [...leftMaximalCandNodeSet]) +
-         sumCordinates( rights ,[...rightMaximalCandNodeSet]) ) /
-         (leftMaximalCandNodeSet.size + rightMaximalCandNodeSet.size);
+        const midY =
+          (sumCordinates(lefts, [...leftMaximalCandNodeSet]) +
+            sumCordinates(rights, [...rightMaximalCandNodeSet])) /
+          (leftMaximalCandNodeSet.size + rightMaximalCandNodeSet.size);
 
-         console.log(midX, midY);
+        console.log(midX, midY);
+        setMidNodes((prev) => {
+          return [...prev, { x: midX, y: midY }];
+        });
 
-         for(const l of [...leftMaximalCandNodeSet]) {
+
+        for (const l of [...leftMaximalCandNodeSet]) {
           //source:
           //[lefts[l].x,lefts[l].y]
 
           //target:
           //[midX, midY]
-          outputPaths.push({source:[lefts[l].x,lefts[l].y], target:[midX, midY]});
-         }
+          outputPaths.push({
+            source: [lefts[l].x, lefts[l].y],
+            target: [midX, midY],
+          });
+        }
 
-         for(const r of [...rightMaximalCandNodeSet]) {
+        for (const r of [...rightMaximalCandNodeSet]) {
           //source:
           //[lefts[l].x,lefts[l].y]
 
           //target:
           //[midX, midY]
-          outputPaths.push({source:[midX, midY], target:[rights[r].x,rights[r].y]});
-         }
+          outputPaths.push({
+            source: [midX, midY],
+            target: [rights[r].x, rights[r].y],
+          });
+        }
       }
     }
 
@@ -243,24 +222,8 @@ function App() {
           return <circle cx={node.x} cy={node.y} r="3" fill="blue" />;
         })}
 
-        {data?.map((datum, key) => {
-          return (
-            <>
-              <circle
-                cx={datum.source[0]}
-                cy={datum.source[1]}
-                r="3"
-                fill="blue"
-              />
-
-              <circle
-                cx={datum.target[0]}
-                cy={datum.target[1]}
-                r="3"
-                fill="blue"
-              />
-            </>
-          );
+        {midNodes?.map((node, key) => {
+          return <circle cx={node.x} cy={node.y} r="3" fill="red" />;
         })}
       </svg>
     </>
