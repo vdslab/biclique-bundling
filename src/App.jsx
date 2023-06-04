@@ -3,7 +3,7 @@ import "./App.css";
 import * as d3 from "d3";
 
 import { isEqual, isSuperset } from "./utils/set_calc";
-import { sumCordinates } from "./utils/calc";
+import { sumCordinates, objectOnePropertytoProgression } from "./utils/calc";
 
 function App() {
   const [paths, setPaths] = useState([]);
@@ -20,25 +20,39 @@ function App() {
       .x((d) => d.x)
       .y((d) => d.y);
 
+    const bipartiteMatrix = [
+      [1, 1, 1, 1, 0],
+      [1, 1, 1, 1, 0],
+      [1, 1, 1, 1, 0],
+    ];
+
     const leftX = 300;
     const leftY = 100;
 
     const rightX = 700;
-    const rigthY = 100;
+    const rightY = 100;
 
-    const rights = [
-      { x: rightX, y: 100 },
-      { x: rightX, y: 180 },
-      { x: rightX, y: 260 },
-      { x: rightX, y: 340 },
-      { x: rightX, y: 420 },
-    ];
+    const stepY = 80;
 
-    const lefts = [
-      { x: leftX, y: 100 },
-      { x: leftX, y: 180 },
-      { x: leftX, y: 260 },
-    ];
+    const leftNodeNumber = bipartiteMatrix.length;
+    const rightNodeNumber = bipartiteMatrix[0].length;
+
+    const lefts = objectOnePropertytoProgression(
+      leftNodeNumber,
+      stepY,
+      leftX,
+      leftY
+    );
+
+    const rights = objectOnePropertytoProgression(
+      rightNodeNumber,
+      stepY,
+      rightX,
+      rightY
+    );
+
+    console.log(lefts, rights);
+    console.log(Array(leftNodeNumber));
 
     const midNodesCopy = new Array();
 
@@ -47,16 +61,7 @@ function App() {
     setLeftNodes(lefts);
     setRightNodes(rights);
 
-    const bipartiteMatrix = [
-      [1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1],
-    ];
-
     console.log(bipartiteMatrix);
-
-    const leftNodeNumber = bipartiteMatrix.length;
-    const rightNodeNumber = bipartiteMatrix[0].length;
 
     const leftAllEmumNodes = new Array();
     const rightAllEnumNodes = new Array();
@@ -202,7 +207,7 @@ function App() {
               <path
                 d={path}
                 stroke="silver"
-                stroke-width="1"
+                strokeWidth="1"
                 fill="transparent"
               />
             );
@@ -222,7 +227,7 @@ function App() {
 
           {midNodes?.map((node, key) => {
             return (
-              <circle cx={node.x} cy={node.y} r={nodeRadius - 1.5} fill="red" />
+              <circle cx={node.x} cy={node.y} r={0.7 * nodeRadius} fill="red" />
             );
           })}
         </g>
