@@ -5,37 +5,45 @@ import {
   getMaximalNodes,
 } from "../utils/getNodes";
 
-const useMaximalGammaQuasiBicliqueByBruteForce = (bipartiteMatrix, gamma) => {
+const useMaximalGammaQuasiBicliqueByBruteForce = (gamma) => {
   const [l, setL] = useState([]);
   const [r, setR] = useState([]);
   useEffect(() => {
-    const leftNodeNumber = bipartiteMatrix.length;
-    const rightNodeNumber = bipartiteMatrix[0].length;
+    (async () => {
+      console.log("MOOOOOOOoooo")
+      const res = await fetch('./../../matrix_5_5_70.json');
+      const matrixJson = await res.json();
+      console.log("json", matrixJson);
+      const bipartiteMatrix = matrixJson['4'];
 
-    const leftAllEnumNodes = getAllEnumNodes(leftNodeNumber);
-    const rightAllEnumNodes = getAllEnumNodes(rightNodeNumber);
+      const leftNodeNumber = bipartiteMatrix.length;
+      const rightNodeNumber = bipartiteMatrix[0].length;
 
-    const [leftMaximalCandNodes, rightMaxmalCandNodes] = getMaximalCandNodes(
-      bipartiteMatrix,
-      leftAllEnumNodes,
-      rightAllEnumNodes,
-      gamma
-    );
+      const leftAllEnumNodes = getAllEnumNodes(leftNodeNumber);
+      const rightAllEnumNodes = getAllEnumNodes(rightNodeNumber);
 
-    const [leftMaximalNodes, rightMaximalNodes] = getMaximalNodes(
-      leftMaximalCandNodes,
-      rightMaxmalCandNodes
-    );
+      const [leftMaximalCandNodes, rightMaxmalCandNodes] = getMaximalCandNodes(
+        bipartiteMatrix,
+        leftAllEnumNodes,
+        rightAllEnumNodes,
+        gamma
+      );
 
-    setL(leftMaximalNodes);
-    setR(rightMaximalNodes);
+      const [leftMaximalNodes, rightMaximalNodes] = getMaximalNodes(
+        leftMaximalCandNodes,
+        rightMaxmalCandNodes
+      );
 
-    console.log(leftMaximalNodes);
-    console.log(rightMaximalNodes);
-    console.log("buru fini");
+      setL(leftMaximalNodes);
+      setR(rightMaximalNodes);
+
+      console.log(leftMaximalNodes);
+      console.log(rightMaximalNodes);
+      console.log("buru fini");
+    })();
   }, []);
 
-  return [l,r];
+  return [l, r];
 };
 
 export default useMaximalGammaQuasiBicliqueByBruteForce;

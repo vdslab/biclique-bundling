@@ -6,12 +6,6 @@ function App() {
   const gamma = 0.8;
   const nodeRadius = 4;
 
-  const bipartiteMatrix = [
-    [1, 1, 1, 0, 0],
-    [1, 0, 0, 1, 1],
-    [1, 1, 1, 0, 1],
-  ];
-
   const leftX = 300;
   const leftY = 100;
 
@@ -21,19 +15,19 @@ function App() {
   const step = 80;
 
   const { paths, leftNodes, rightNodes, midNodes } = usePaths(
-    ...useMaximalGammaQuasiBicliqueByBruteForce(bipartiteMatrix, gamma),
+    ...useMaximalGammaQuasiBicliqueByBruteForce(gamma),
     leftX,
     leftY,
     rightX,
     rightY,
     step,
-    bipartiteMatrix.length,
-    bipartiteMatrix[0].length,
+    5,
+    5
   );
 
   return (
     <>
-    {console.log("Render")}
+      {console.log("Render")}
       <p>γ:{gamma}</p>
 
       <svg width="1000" height="500" style={{ border: "solid 1px" }}>
@@ -50,7 +44,7 @@ function App() {
           })}
 
           {leftNodes?.map((node, key) => {
-            console.log(leftNodes)
+            console.log(leftNodes);
             return (
               <circle cx={node.x} cy={node.y} r={nodeRadius} fill="blue" />
             );

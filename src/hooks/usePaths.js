@@ -19,8 +19,7 @@ const usePaths = (
   const linkGenerator = d3.linkHorizontal();
 
   useEffect(() => {
-    console.log(leftMaximalNodes,
-        rightMaximalNodes);
+    console.log(leftMaximalNodes, rightMaximalNodes);
     const lefts = objectOnePropertytoProgression(
       leftNodeNumber,
       step,
@@ -41,7 +40,7 @@ const usePaths = (
 
     const midNodesCopy = new Array();
     const outputPaths = new Array();
-    console.log(leftMaximalNodes.length)
+    console.log(leftMaximalNodes.length);
 
     for (let i = 0; i < leftMaximalNodes.length; i++) {
       const midX = (rightX + leftX) / 2;
@@ -54,7 +53,7 @@ const usePaths = (
       midNodesCopy.push({ x: midX, y: midY });
 
       for (const l of leftMaximalNodes[i]) {
-        console.log("xxxxxxxx")
+        console.log("xxxxxxxx");
         outputPaths.push({
           source: [lefts[l].x, lefts[l].y],
           target: [midX, midY],
@@ -62,7 +61,7 @@ const usePaths = (
       }
 
       for (const r of rightMaximalNodes[i]) {
-        console.log("yyyyyyyy")
+        console.log("yyyyyyyy");
         outputPaths.push({
           source: [midX, midY],
           target: [rights[r].x, rights[r].y],
@@ -77,8 +76,7 @@ const usePaths = (
         return linkGenerator(d);
       })
     );
-  }, [leftMaximalNodes,
-    rightMaximalNodes]);
+  }, [leftMaximalNodes, rightMaximalNodes]);
 
   return { paths, leftNodes, rightNodes, midNodes };
 };
