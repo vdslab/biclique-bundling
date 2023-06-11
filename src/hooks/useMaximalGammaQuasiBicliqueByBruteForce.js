@@ -6,8 +6,8 @@ import {
 } from "../utils/getNodes";
 
 const useMaximalGammaQuasiBicliqueByBruteForce = (gamma) => {
-  const [l, setL] = useState([]);
-  const [r, setR] = useState([]);
+  const [maximalNodes, setMaximalNodes] = useState({});
+
   useEffect(() => {
     (async () => {
       console.log("MOOOOOOOoooo")
@@ -34,16 +34,30 @@ const useMaximalGammaQuasiBicliqueByBruteForce = (gamma) => {
         rightMaxmalCandNodes
       );
 
-      setL(leftMaximalNodes);
-      setR(rightMaximalNodes);
 
-      console.log(leftMaximalNodes);
-      console.log(rightMaximalNodes);
+
+      const maximalObjs = new Array();
+      for(let i = 0; i < leftMaximalNodes.length; i++) {
+        maximalObjs.push({left:leftMaximalNodes[i], right:rightMaximalNodes[i]});
+      }
+
+      console.log("UOOOOOO", maximalObjs);
+
+      setMaximalNodes(maximalObjs);
+
       console.log("buru fini");
+
     })();
   }, []);
 
-  return [l, r];
+  return maximalNodes;
+  /*return のスキーム
+    [
+      {left:[0, 1, 2], right:[1, 2]},
+      {left:[0, 1, 2], right:[1, 2]},
+      {left:[0, 0, 2], right:[, 2]},
+    ]
+  */
 };
 
 export default useMaximalGammaQuasiBicliqueByBruteForce;

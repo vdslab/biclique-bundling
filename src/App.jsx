@@ -15,7 +15,7 @@ function App() {
   const step = 80;
 
   const { paths, leftNodes, rightNodes, midNodes } = usePaths(
-    ...useMaximalGammaQuasiBicliqueByBruteForce(gamma),
+    useMaximalGammaQuasiBicliqueByBruteForce(gamma),
     leftX,
     leftY,
     rightX,

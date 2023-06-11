@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { objectOnePropertytoProgression, sumCordinates } from "../utils/calc";
 import * as d3 from "d3";
 const usePaths = (
-  leftMaximalNodes,
-  rightMaximalNodes,
+  maximalNodes,
   leftX,
   leftY,
   rightX,
@@ -19,7 +18,7 @@ const usePaths = (
   const linkGenerator = d3.linkHorizontal();
 
   useEffect(() => {
-    console.log(leftMaximalNodes, rightMaximalNodes);
+
     const lefts = objectOnePropertytoProgression(
       leftNodeNumber,
       step,
@@ -40,19 +39,18 @@ const usePaths = (
 
     const midNodesCopy = new Array();
     const outputPaths = new Array();
-    console.log(leftMaximalNodes.length);
 
-    for (let i = 0; i < leftMaximalNodes.length; i++) {
+    for (let i = 0; i < maximalNodes.length; i++) {
       const midX = (rightX + leftX) / 2;
       const midY =
-        (sumCordinates(lefts, leftMaximalNodes[i]) +
-          sumCordinates(rights, rightMaximalNodes[i])) /
-        (leftMaximalNodes[i].length + rightMaximalNodes[i].length);
+        (sumCordinates(lefts, maximalNodes[i].left) +
+          sumCordinates(rights, maximalNodes[i].right)) /
+        (maximalNodes[i].left.length + maximalNodes[i].right.length);
 
       console.log(midX, midY);
       midNodesCopy.push({ x: midX, y: midY });
 
-      for (const l of leftMaximalNodes[i]) {
+      for (const l of maximalNodes[i].left) {
         console.log("xxxxxxxx");
         outputPaths.push({
           source: [lefts[l].x, lefts[l].y],
@@ -60,7 +58,7 @@ const usePaths = (
         });
       }
 
-      for (const r of rightMaximalNodes[i]) {
+      for (const r of maximalNodes[i].right) {
         console.log("yyyyyyyy");
         outputPaths.push({
           source: [midX, midY],
@@ -70,13 +68,12 @@ const usePaths = (
     }
 
     setMidNodes(midNodesCopy);
-    console.log("FF", outputPaths);
     setPaths(
       outputPaths.map((d) => {
         return linkGenerator(d);
       })
     );
-  }, [leftMaximalNodes, rightMaximalNodes]);
+  }, [maximalNodes]);
 
   return { paths, leftNodes, rightNodes, midNodes };
 };
