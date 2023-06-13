@@ -3,7 +3,7 @@ import useMaximalGammaQuasiBicliqueByBruteForce from "./hooks/useMaximalGammaQua
 import usePaths from "./hooks/usePaths";
 
 function App() {
-  const gamma = 0.8;
+  const gamma = 1;
   const nodeRadius = 4;
 
   const leftX = 300;
