@@ -12,25 +12,29 @@ import {
 [1,1,1,1,0]]
 */
 const useMaximalGammaQuasiBicliqueByBruteForce = (gamma) => {
-  const [maximalNodes, setMaximalNodes] = useState({});
+  const [maximalNodes, setMaximalNodes] = useState([]);
+  const [bipartiteMatrix, setBipartiteMatrix] = useState([]);
 
   useEffect(() => {
     (async () => {
-      const res = await fetch('/matrix_5_5_70.json');
+      const res = await fetch("/matrix_5_5_70.json");
       const matrixJson = await res.json();
-      const bipartiteMatrix = matrixJson['1'];
-      let MatrixClone = [...bipartiteMatrix];
-      console.log(MatrixClone)
-      console.log(bipartiteMatrix);
+      const bipartite = matrixJson["1"];
+      console.log("FFFFFFFFFFFF", bipartite);
 
-      const leftNodeNumber = bipartiteMatrix.length;
-      const rightNodeNumber = bipartiteMatrix[0].length;
+      let MatrixClone = [...bipartite];
+      setBipartiteMatrix(structuredClone(MatrixClone));
+      console.log(MatrixClone);
+      console.log(bipartite);
+
+      const leftNodeNumber = bipartite.length;
+      const rightNodeNumber = bipartite[0].length;
 
       const leftAllEnumNodes = getAllEnumNodes(leftNodeNumber);
       const rightAllEnumNodes = getAllEnumNodes(rightNodeNumber);
 
       const [leftMaximalCandNodes, rightMaxmalCandNodes] = getMaximalCandNodes(
-        bipartiteMatrix,
+        bipartite,
         leftAllEnumNodes,
         rightAllEnumNodes,
         gamma
@@ -41,30 +45,29 @@ const useMaximalGammaQuasiBicliqueByBruteForce = (gamma) => {
         rightMaxmalCandNodes
       );
 
-
-
       const maximalObjs = new Array();
-      for(let i = 0; i < leftMaximalNodes.length; i++) {
-        maximalObjs.push({left:leftMaximalNodes[i], right:rightMaximalNodes[i]});
+      for (let i = 0; i < leftMaximalNodes.length; i++) {
+        maximalObjs.push({
+          left: leftMaximalNodes[i],
+          right: rightMaximalNodes[i],
+        });
       }
 
       console.log("UOOOOOO", maximalObjs);
 
       //maxRect
       maximalObjs.sort((a, b) => {
-
         const aa = a.left.length * a.right.length;
         const bb = b.left.length * b.right.length;
         console.log(aa, bb);
         return -(bb - aa);
       });
 
-
       const subMaximalObjs = new Array();
       console.log(MatrixClone);
-      for(const obj of maximalObjs) {
+      for (const obj of maximalObjs) {
         console.log(MatrixClone);
-        if(!isIn(obj, MatrixClone)) continue;
+        if (!isIn(obj, MatrixClone)) continue;
         subMaximalObjs.push(obj);
       }
 
@@ -72,11 +75,10 @@ const useMaximalGammaQuasiBicliqueByBruteForce = (gamma) => {
       setMaximalNodes(subMaximalObjs);
 
       console.log("buru fini");
-
     })();
   }, []);
 
-  return maximalNodes;
+  return { bipartiteMatrix, maximalNodes };
   /*return のスキーム
     [
       {left:[0, 1, 2], right:[1, 2]},
@@ -86,30 +88,30 @@ const useMaximalGammaQuasiBicliqueByBruteForce = (gamma) => {
   */
 };
 
-const isIn = (obj, bipartiteMatrix) => {
-  let d = obj.left.length * obj.right.length - obj.left.length - obj.right.length;
-  const mtc = [...bipartiteMatrix];
+const isIn = (obj, bipartite) => {
+  let d =
+    obj.left.length * obj.right.length - obj.left.length - obj.right.length;
+  const mtc = [...bipartite];
   console.log("moto", d);
   console.log("str", obj);
-  for(const left of obj.left) {
-    for(const right of obj.right) {
-      if(!mtc[left][right]) {
-        d --;
+  for (const left of obj.left) {
+    for (const right of obj.right) {
+      if (!mtc[left][right]) {
+        d--;
       } else {
-        console.log("pov",left, right);
+        console.log("pov", left, right);
         mtc[left][right] = 0;
       }
     }
   }
 
-  console.log("dddd", d);
-  if(d > 0) {
-    bipartiteMatrix = [...mtc];
+  if (d > 0) {
+    bipartite = [...mtc];
     console.error("hoihoi");
     return true;
   } else {
     return false;
   }
-}
+};
 
 export default useMaximalGammaQuasiBicliqueByBruteForce;

@@ -2,22 +2,27 @@ import { useState, useEffect } from "react";
 import { objectOnePropertytoProgression, sumCordinates } from "../utils/calc";
 import * as d3 from "d3";
 const usePaths = (
+  bipartiteMatrix,
   maximalNodes,
   leftX,
   leftY,
   rightX,
   rightY,
-  step,
-  leftNodeNumber,
-  rightNodeNumber
+  step
 ) => {
   const [paths, setPaths] = useState([]);
+  const [lines, setLines] = useState([]);
+
   const [leftNodes, setLeftNodes] = useState([]);
   const [rightNodes, setRightNodes] = useState([]);
   const [midNodes, setMidNodes] = useState([]);
+
   const linkGenerator = d3.linkHorizontal();
+  //const lineGenerator = d3.line().x(d => x(d.x)).y(d => y(d.y));;
 
   useEffect(() => {
+    const leftNodeNumber = bipartiteMatrix?.length;
+    const rightNodeNumber = bipartiteMatrix[0]?.length;
 
     const lefts = objectOnePropertytoProgression(
       leftNodeNumber,
@@ -67,15 +72,36 @@ const usePaths = (
       }
     }
 
+    //左から右へ直線を通す
+    const lineData = new Array();
+
+    for (let left = 0; left < leftNodeNumber; left++) {
+      for (let right = 0; right < rightNodeNumber; right++) {
+        if (false) continue;
+        if (!bipartiteMatrix[left][right]) continue;
+
+        lineData.push({
+          x1: lefts[left].x,
+          y1: lefts[left].y,
+          x2: rights[right].x,
+          y2: rights[right].y,
+        });
+      }
+    }
+
+    console.log(bipartiteMatrix);
+    console.log("wooooooooooooooooooooooooooo", lineData);
+
     setMidNodes(midNodesCopy);
     setPaths(
       outputPaths.map((d) => {
         return linkGenerator(d);
       })
     );
+    setLines(lineData);
   }, [maximalNodes]);
 
-  return { paths, leftNodes, rightNodes, midNodes };
+  return { paths, lines, leftNodes, rightNodes, midNodes };
 };
 
 export default usePaths;
