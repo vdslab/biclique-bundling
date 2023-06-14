@@ -77,9 +77,13 @@ const usePaths = (
 
     for (let left = 0; left < leftNodeNumber; left++) {
       for (let right = 0; right < rightNodeNumber; right++) {
-        if (false) continue;
+        if (f(maximalNodes, left, right)) {
+          console.log("EEEEEEEEEEeeee")
+          continue;
+        }
         if (!bipartiteMatrix[left][right]) continue;
 
+        console.log(left, right);
         lineData.push({
           x1: lefts[left].x,
           y1: lefts[left].y,
@@ -104,4 +108,17 @@ const usePaths = (
   return { paths, lines, leftNodes, rightNodes, midNodes };
 };
 
+const f = (maximalNodes, left, right) => {
+  for(const node of maximalNodes) {
+    const leftNodeSet = new Set(node.left);
+    const rightNodeSet = new Set(node.right);
+
+    if(leftNodeSet.has(left) && rightNodeSet.has(right)) {
+      console.log("wewewewewwwwwwwwwwwwwwwwwwwwwwwwwwwww", left, right)
+      return true;
+    }
+  };
+
+  return false;
+}
 export default usePaths;
