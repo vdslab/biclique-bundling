@@ -19,7 +19,7 @@ const useMaximalGammaQuasiBicliqueByBruteForce = (gamma) => {
     (async () => {
       const res = await fetch("/matrix_5_5_70.json");
       const matrixJson = await res.json();
-      const bipartite = matrixJson["1"];
+      const bipartite = matrixJson["2"];
       console.log("FFFFFFFFFFFF", bipartite);
 
       let MatrixClone = [...bipartite];
@@ -66,7 +66,7 @@ const useMaximalGammaQuasiBicliqueByBruteForce = (gamma) => {
       const subMaximalObjs = new Array();
       console.log(MatrixClone);
       for (const obj of maximalObjs) {
-        console.log(MatrixClone);
+        console.log("FYUUUUUUUUUUUUUUU", MatrixClone);
         if (!isIn(obj, MatrixClone)) continue;
         subMaximalObjs.push(obj);
       }
@@ -91,23 +91,25 @@ const useMaximalGammaQuasiBicliqueByBruteForce = (gamma) => {
 const isIn = (obj, bipartite) => {
   let d =
     obj.left.length * obj.right.length - obj.left.length - obj.right.length;
-  const mtc = [...bipartite];
-  console.log("moto", d);
-  console.log("str", obj);
+  const edgeDeleted = new Array();
   for (const left of obj.left) {
     for (const right of obj.right) {
-      if (!mtc[left][right]) {
+      if (!bipartite[left][right]) {
         d--;
       } else {
         console.log("pov", left, right);
-        mtc[left][right] = 0;
+        //mtc[left][right] = 0;
+        edgeDeleted.push({left: left, right: right});
       }
     }
   }
 
-  if (d > 0) {
-    bipartite = [...mtc];
-    console.error("hoihoi");
+  console.error(obj, d);
+  if (d >= 0) {
+    edgeDeleted.forEach((edge) => {
+      bipartite[edge.left][edge.right] = 0;
+    });
+
     return true;
   } else {
     return false;

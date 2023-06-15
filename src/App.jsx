@@ -3,7 +3,7 @@ import useMaximalGammaQuasiBicliqueByBruteForce from "./hooks/useMaximalGammaQua
 import usePaths from "./hooks/usePaths";
 
 function App() {
-  const gamma = 1;
+  const gamma = 0.8;
   const nodeRadius = 4;
 
   const leftX = 300;
@@ -37,8 +37,9 @@ function App() {
               <path
                 d={path}
                 stroke="silver"
-                strokeWidth="1"
+                strokeWidth="1.8"
                 fill="transparent"
+                opacity={0.3}
               />
             );
           })}
@@ -51,8 +52,9 @@ function App() {
                 x2={line.x2}
                 y2={line.y2}
                 stroke="silver"
-                strokeWidth="1"
+                strokeWidth="1.3"
                 fill="transparent"
+                opacity={0.3}
               />
             );
           })}
