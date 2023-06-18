@@ -78,7 +78,7 @@ const usePaths = (
     for (let left = 0; left < leftNodeNumber; left++) {
       for (let right = 0; right < rightNodeNumber; right++) {
         if (f(maximalNodes, left, right)) {
-          console.log("EEEEEEEEEEeeee")
+          console.log("EEEEEEEEEEeeee");
           continue;
         }
         if (!bipartiteMatrix[left][right]) continue;
@@ -109,16 +109,16 @@ const usePaths = (
 };
 
 const f = (maximalNodes, left, right) => {
-  for(const node of maximalNodes) {
+  for (const node of maximalNodes) {
     const leftNodeSet = new Set(node.left);
     const rightNodeSet = new Set(node.right);
 
-    if(leftNodeSet.has(left) && rightNodeSet.has(right)) {
-      console.log("wewewewewwwwwwwwwwwwwwwwwwwwwwwwwwwww", left, right)
+    if (leftNodeSet.has(left) && rightNodeSet.has(right)) {
+      console.log("wewewewewwwwwwwwwwwwwwwwwwwwwwwwwwwww", left, right);
       return true;
     }
-  };
+  }
 
   return false;
-}
+};
 export default usePaths;

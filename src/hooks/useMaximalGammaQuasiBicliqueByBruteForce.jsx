@@ -5,6 +5,7 @@ import {
   getMaximalNodes,
 } from "../utils/getNodes";
 
+import isReduceEdgeMaximal from "../utils/isReduceEdgeMaximal";
 /* [[1,1,1,0,1]
 ,[1,1,1,0,0],
 [1,1,0,0,0],
@@ -55,6 +56,7 @@ const useMaximalGammaQuasiBicliqueByBruteForce = (gamma) => {
 
       console.log("UOOOOOO", maximalObjs);
 
+      //maximalから抽出
       //maxRect
       maximalObjs.sort((a, b) => {
         const aa = a.left.length * a.right.length;
@@ -67,7 +69,7 @@ const useMaximalGammaQuasiBicliqueByBruteForce = (gamma) => {
       console.log(MatrixClone);
       for (const obj of maximalObjs) {
         console.log("FYUUUUUUUUUUUUUUU", MatrixClone);
-        if (!isIn(obj, MatrixClone)) continue;
+        if (!isReduceEdgeMaximal(obj, MatrixClone)) continue;
         subMaximalObjs.push(obj);
       }
 
@@ -86,34 +88,6 @@ const useMaximalGammaQuasiBicliqueByBruteForce = (gamma) => {
       {left:[0, 0, 2], right:[, 2]},
     ]
   */
-};
-
-const isIn = (obj, bipartite) => {
-  let d =
-    obj.left.length * obj.right.length - obj.left.length - obj.right.length;
-  const edgeDeleted = new Array();
-  for (const left of obj.left) {
-    for (const right of obj.right) {
-      if (!bipartite[left][right]) {
-        d--;
-      } else {
-        console.log("pov", left, right);
-        //mtc[left][right] = 0;
-        edgeDeleted.push({left: left, right: right});
-      }
-    }
-  }
-
-  console.error(obj, d);
-  if (d >= 0) {
-    edgeDeleted.forEach((edge) => {
-      bipartite[edge.left][edge.right] = 0;
-    });
-
-    return true;
-  } else {
-    return false;
-  }
 };
 
 export default useMaximalGammaQuasiBicliqueByBruteForce;

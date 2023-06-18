@@ -29,7 +29,7 @@ const useMaxRect = (gamma) => {
 
             for(const u of R) {
               S.push(u);
-              const TAndTail = Array()l
+              const TAndTail = Array();
               for(const l of T) {
                 if(E[u][l]) {
 
