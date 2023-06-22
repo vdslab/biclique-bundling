@@ -85,10 +85,8 @@ const usePaths = (
 
         console.log(left, right);
         lineData.push({
-          x1: lefts[left].x,
-          y1: lefts[left].y,
-          x2: rights[right].x,
-          y2: rights[right].y,
+          source:[lefts[left].x, lefts[left].y],
+          target:[rights[right].x, rights[right].y]
         });
       }
     }
@@ -102,7 +100,11 @@ const usePaths = (
         return linkGenerator(d);
       })
     );
-    setLines(lineData);
+    setLines(
+      lineData.map((d)=> {
+        return linkGenerator(d);
+      })
+    );
   }, [maximalNodes]);
 
   return { paths, lines, leftNodes, rightNodes, midNodes };
