@@ -1,6 +1,6 @@
 import csv
 import json
-
+# https://snap.stanford.edu/data/act-mooc.html
 start = 1
 end = 10000 + 1
 
@@ -44,12 +44,12 @@ for i in matrix:
 
 print(cnt)
 print(len(userId_list))
-print(matrix)
-print(json.dumps(matrix))
+##print(matrix)
+##print(json.dumps(matrix))
 
 
-with open('public/act-mooc/json/mooc_actions_{}.json'.format(end-1), 'w') as f:
-    json.dump(matrix, f)
+##with open('public/act-mooc/json/mooc_actions_{}.json'.format(end-1), 'w') as f:
+#    json.dump(matrix, f)
 
 
 
