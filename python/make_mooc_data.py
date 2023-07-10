@@ -2,7 +2,10 @@ import csv
 import json
 # https://snap.stanford.edu/data/act-mooc.html
 start = 1
-end = 10000 + 1
+
+print("edge_num >> ")
+end = int(input())
+end += 1
 
 mooc_data = []
 with open('public/act-mooc/mooc_actions.tsv', encoding='utf-8', newline='') as f:
@@ -44,12 +47,13 @@ for i in matrix:
 
 print(cnt)
 print(len(userId_list))
-##print(matrix)
-##print(json.dumps(matrix))
+print("#####################")
+print("left:", len(matrix))
+print("right:", len(matrix[0]))
 
 
-##with open('public/act-mooc/json/mooc_actions_{}.json'.format(end-1), 'w') as f:
-#    json.dump(matrix, f)
+with open('public/act-mooc/json/mooc_actions_{}.json'.format(end-1), 'w') as f:
+    json.dump(matrix, f)
 
 
 

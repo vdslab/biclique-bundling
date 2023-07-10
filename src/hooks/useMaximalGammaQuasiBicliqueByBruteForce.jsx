@@ -18,9 +18,9 @@ const useMaximalGammaQuasiBicliqueByBruteForce = (gamma) => {
 
   useEffect(() => {
     (async () => {
-      const res = await fetch("/matrix_5_5_70.json");
-      const matrixJson = await res.json();
-      const bipartite = matrixJson["2"];
+      const res = await fetch("public/random/json/random_5_5_70_1.json");
+      //const matrixJson = await res.json();
+      const bipartite = await res.json();
       console.log("FFFFFFFFFFFF", bipartite);
 
       let MatrixClone = [...bipartite];
@@ -40,7 +40,7 @@ const useMaximalGammaQuasiBicliqueByBruteForce = (gamma) => {
         rightAllEnumNodes,
         gamma
       );
-
+      console.log("dfsdafdsfafdsdfsadfsa", leftMaximalCandNodes,rightMaxmalCandNodes)
       const [leftMaximalNodes, rightMaximalNodes] = getMaximalNodes(
         leftMaximalCandNodes,
         rightMaxmalCandNodes
@@ -73,7 +73,7 @@ const useMaximalGammaQuasiBicliqueByBruteForce = (gamma) => {
         subMaximalObjs.push(obj);
       }
 
-      console.log("FKDKFS", subMaximalObjs);
+      console.error("Fgdfghsdftyrtegrfeftdsgfedsgdfs fdgsfgdgfdKDKFS", subMaximalObjs);
       setMaximalNodes(subMaximalObjs);
 
       console.log("buru fini");

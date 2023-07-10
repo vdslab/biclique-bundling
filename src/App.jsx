@@ -1,20 +1,20 @@
 import "./App.css";
 import useMaximalGammaQuasiBicliqueByBruteForce from "./hooks/useMaximalGammaQuasiBicliqueByBruteForce";
+import useMuQuasiBiclique from "./hooks/useMuQuasiBiclique";
 import usePaths from "./hooks/usePaths";
 
 function App() {
-  const gamma = 0.9;
+  const gamma = 0.7;
   const nodeRadius = 4;
 
   const leftX = 300;
-  const leftY = 100;
+  const leftY = 10;
 
   const rightX = 700;
-  const rightY = 100;
+  const rightY = 10;
 
-  const step = 80;
-  const { bipartiteMatrix, maximalNodes } =
-    useMaximalGammaQuasiBicliqueByBruteForce(gamma);
+  const step = 60;
+  const { bipartiteMatrix, maximalNodes } = useMuQuasiBiclique(gamma);
   const { paths, lines, leftNodes, rightNodes, midNodes } = usePaths(
     bipartiteMatrix,
     maximalNodes,
@@ -39,7 +39,7 @@ function App() {
                 stroke="silver"
                 strokeWidth="1.8"
                 fill="transparent"
-                opacity={0.5}
+                opacity={0.9}
               />
             );
           })}

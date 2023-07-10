@@ -1,4 +1,4 @@
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 
 const useMaxRect = (gamma) => {
   const [maximalNodes, setMaximalNodes] = useState({});
@@ -19,8 +19,8 @@ const useMaxRect = (gamma) => {
         });
 
       let EdgeNumber = 0;
-      for(const vector of bipartiteMatrix) {
-        for(const element of vector) {
+      for (const vector of bipartiteMatrix) {
+        for (const element of vector) {
           EdgeNumber += element;
         }
       }
@@ -39,11 +39,11 @@ const useMaxRect = (gamma) => {
           let anum = 0;
           let bnum = 0;
 
-          for(const f of F) {
+          for (const f of F) {
             anum += f;
           }
 
-          for(const f of F) {
+          for (const f of F) {
             bnum += f;
           }
 
@@ -94,7 +94,7 @@ const useMaxRect = (gamma) => {
     })();
   }, []);
 
-  return {bipartiteMatrix, maximalNodes};
+  return { bipartiteMatrix, maximalNodes };
   /*return のスキーム
       [
         {left:[0, 1, 2], right:[1, 2]},
@@ -106,6 +106,6 @@ const useMaxRect = (gamma) => {
 
 const d = () => {
   return 1;
-}
+};
 
 export default useMaxRect;

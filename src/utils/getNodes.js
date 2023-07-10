@@ -29,7 +29,7 @@ export const getMaximalCandNodes = (
       const leftNodeSetNumber = leftNodeSet.length;
       const rightNodeSetNumber = rightNodeSet.length;
 
-      if (leftNodeSetNumber < 2 || rightNodeSetNumber < 2) {
+      if (leftNodeSetNumber < 2 && rightNodeSetNumber < 2) {
         continue;
       }
 

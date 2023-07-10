@@ -4,6 +4,10 @@ import json
 #transactionはエッジが疎なデータ 20000ぐらい
 #addtocartsはtransactionsより3倍ぐらい濃そう 69332
 #viewは結構エッジが濃い　2664312
+#上からn個とり出すとだけだと疎になる
+
+#あるvisitorに集中する方向
+#csvファイルをtimestampではなくvisitorでソートした方がよい
 
 def extract_translations():
     trans_cnt = 0
@@ -72,8 +76,9 @@ def make_transaction_bipartite():
 visit = []
 item = []
 cnt = 0
-edge_num = 7
-with open('public/retailrocket/transactions.csv', encoding='utf-8', newline='') as f:
+print("edge_num >> ")
+edge_num = int(input())
+with open('public/retailrocket/views.csv', encoding='utf-8', newline='') as f:
 
     cnt = 0
     for cols in csv.reader(f):
@@ -111,12 +116,12 @@ print(item_c)
 matrix = [[0] * ( max(item_c) + 1 ) for i in range(max(visit_c) + 1 )]
 print("left", len(matrix))
 print("right", len(matrix[0]))
-print(matrix)
+#print(matrix)
 
 for i, j in zip(visit_c,item_c):
     matrix[i][j] = 1
 
-print(matrix)
-print(matrix)
-with open('public/retailrocket/json/transactions_edgenum_{}.json'.format(edge_num),'w' ,encoding='utf-8') as f:
+#print(matrix)
+#print(matrix)
+with open('public/retailrocket/json/views_edgenum_{}.json'.format(edge_num),'w' ,encoding='utf-8') as f:
     json.dump(matrix, f)
