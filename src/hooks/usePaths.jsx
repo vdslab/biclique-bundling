@@ -73,20 +73,28 @@ const usePaths = (
     }
 
     //左から右へ直線を通す
+    //エッジ数1のバイクラスタとして見なす
     const lineData = new Array();
 
     for (let left = 0; left < leftNodeNumber; left++) {
       for (let right = 0; right < rightNodeNumber; right++) {
         if (f(maximalNodes, left, right)) {
-          console.log("EEEEEEEEEEeeee");
+          //console.log("EEEEEEEEEEeeee");
           continue;
         }
         if (!bipartiteMatrix[left][right]) continue;
 
         console.log(left, right);
+        const midX = (lefts[left].x + rights[right].x) / 2;
+        const midY = (lefts[left].y + rights[right].y) / 2;
+        console.log(midX, midY);
         lineData.push({
-          source:[lefts[left].x, lefts[left].y],
-          target:[rights[right].x, rights[right].y]
+          source: [lefts[left].x, lefts[left].y],
+          target: [midX, midY],
+        });
+        lineData.push({
+          source: [midX, midY],
+          target: [rights[right].x, rights[right].y],
         });
       }
     }
@@ -101,7 +109,7 @@ const usePaths = (
       })
     );
     setLines(
-      lineData.map((d)=> {
+      lineData.map((d) => {
         return linkGenerator(d);
       })
     );
