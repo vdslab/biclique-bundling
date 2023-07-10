@@ -40,7 +40,11 @@ const useMaximalGammaQuasiBicliqueByBruteForce = (gamma) => {
         rightAllEnumNodes,
         gamma
       );
-      console.log("dfsdafdsfafdsdfsadfsa", leftMaximalCandNodes,rightMaxmalCandNodes)
+      console.log(
+        "dfsdafdsfafdsdfsadfsa",
+        leftMaximalCandNodes,
+        rightMaxmalCandNodes
+      );
       const [leftMaximalNodes, rightMaximalNodes] = getMaximalNodes(
         leftMaximalCandNodes,
         rightMaxmalCandNodes
@@ -73,7 +77,10 @@ const useMaximalGammaQuasiBicliqueByBruteForce = (gamma) => {
         subMaximalObjs.push(obj);
       }
 
-      console.error("Fgdfghsdftyrtegrfeftdsgfedsgdfs fdgsfgdgfdKDKFS", subMaximalObjs);
+      console.error(
+        "Fgdfghsdftyrtegrfeftdsgfedsgdfs fdgsfgdgfdKDKFS",
+        subMaximalObjs
+      );
       setMaximalNodes(subMaximalObjs);
 
       console.log("buru fini");

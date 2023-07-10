@@ -1,44 +1,42 @@
 import { useEffect, useState } from "react";
-import { xxHash32 } from 'js-xxhash';
-import {
-  getMaximalNodes,
-} from "../utils/getNodes";
+import { xxHash32 } from "js-xxhash";
+import { getMaximalNodes } from "../utils/getNodes";
 
 const genKey = (u) => {
-  const seed = 43784
+  const seed = 43784;
 
-  let str = ""
-  for(const num of u) {
+  let str = "";
+  for (const num of u) {
     const strnum = String(num);
 
-    str += strnum.padStart(4, '0');
-    console.log(strnum.padStart(4, '0'))
+    str += strnum.padStart(4, "0");
+    console.log(strnum.padStart(4, "0"));
   }
 
   return xxHash32(str, seed);
-}
+};
 
 const outVertices = (u, bipartite) => {
   const outV = [];
-  for(let idx = 0; idx < bipartite[u].length; idx++) {
-    if(bipartite[u][idx]) {
+  for (let idx = 0; idx < bipartite[u].length; idx++) {
+    if (bipartite[u][idx]) {
       outV.push(idx);
     }
   }
   return outV;
-}
+};
 
 const inVertices = (u, bipartite) => {
   const inV = [];
-  for(let idx = 0; idx < bipartite[u].length; idx++) {
-    if(bipartite[u][idx]) {
+  for (let idx = 0; idx < bipartite[u].length; idx++) {
+    if (bipartite[u][idx]) {
       inV.push(idx);
     }
   }
 
-  console.log("UOOOO", u, inV)
+  console.log("UOOOO", u, inV);
   return inV;
-}
+};
 
 const useMuQuasiBiclique = (mu) => {
   const [maximalNodes, setMaximalNodes] = useState({});
@@ -59,26 +57,26 @@ const useMuQuasiBiclique = (mu) => {
         const T = outVertices(u, bipartite);
         const M = {};
 
-        console.log(u, T, M)
+        console.log(u, T, M);
         //Tからハッシュ値を生み出す
         const key = genKey(T);
-        console.log(key)
+        console.log(key);
         Cand[key] = { T, M };
       }
 
-      console.log(Cand)
-      console.log(Object.keys(Cand))
+      console.log(Cand);
+      console.log(Object.keys(Cand));
 
       for (const key of Object.keys(Cand)) {
         //double for
         const T = Cand[key].T;
         const M = Cand[key].M;
 
-        console.log(T, M)
+        console.log(T, M);
 
-        for(const v of T) {
-          for(const u of inVertices(v, bipartite)) {
-            if(u in M) {
+        for (const v of T) {
+          for (const u of inVertices(v, bipartite)) {
+            if (u in M) {
               M[u] += 1;
             } else {
               M[u] = 0;
@@ -87,29 +85,26 @@ const useMuQuasiBiclique = (mu) => {
         }
       }
 
-      console.log("HOOOOOOO", Cand)
-
-
-
+      console.log("HOOOOOOO", Cand);
 
       //main process
       const K = {};
       const SMaximalCandNodes = [];
       const TMaximalCandNodes = [];
-      for(const key of Object.keys(Cand)) {
+      for (const key of Object.keys(Cand)) {
         const T = Cand[key].T;
         const M = Cand[key].M;
 
         const S = [];
 
-        for(const u of Object.keys(M)) {
-          if(M[u] >= mu*T.length) {
+        for (const u of Object.keys(M)) {
+          if (M[u] >= mu * T.length) {
             S.push(Number(u));
           }
         }
 
-        console.log("wertyddgffsd", key ,S, T)
-        if(S.length > 0 && T.length > 0) {
+        console.log("wertyddgffsd", key, S, T);
+        if (S.length > 0 && T.length > 0) {
           SMaximalCandNodes.push(S);
           TMaximalCandNodes.push(T);
         }
@@ -129,7 +124,7 @@ const useMuQuasiBiclique = (mu) => {
         });
       }
 
-      console.log("ffffffffffffffffffffffffffffffffffffff",maximalObjs)
+      console.log("ffffffffffffffffffffffffffffffffffffff", maximalObjs);
       setMaximalNodes(maximalObjs);
     })();
   }, []);
