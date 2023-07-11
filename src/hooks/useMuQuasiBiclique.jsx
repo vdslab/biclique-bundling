@@ -10,7 +10,6 @@ const genKey = (u) => {
     const strnum = String(num);
 
     str += strnum.padStart(4, "0");
-    console.log(strnum.padStart(4, "0"));
   }
 
   return xxHash32(str, seed);
@@ -33,8 +32,6 @@ const inVertices = (u, bipartite) => {
       inV.push(idx);
     }
   }
-
-  console.log("UOOOO", u, inV);
   return inV;
 };
 
@@ -51,8 +48,8 @@ const useMuQuasiBiclique = (mu) => {
       //pre-preprocess
       const Cand = {};
 
-      const Upper = [0, 1, 2, 3, 4];
-
+      const Upper = Array.from({length: bipartite.length}, (_, i) => i);
+      console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFf",Upper);
       for (const u of Upper) {
         const T = outVertices(u, bipartite);
         const M = {};
@@ -111,6 +108,7 @@ const useMuQuasiBiclique = (mu) => {
       }
 
       //fillterNonMaximal*/
+      console.log("resulttttttttttttttttttttttttttttttttttttttttttttttttttttt")
       const [SMaximalNodes, TMaximalNodes] = getMaximalNodes(
         SMaximalCandNodes,
         TMaximalCandNodes

@@ -38,6 +38,8 @@ const usePaths = (
       rightY
     );
 
+    console.log("RERERERRERERERRERERERRERERERRERERER", lefts);
+
     console.log("pathss", rights, lefts);
     setLeftNodes(lefts);
     setRightNodes(rights);
