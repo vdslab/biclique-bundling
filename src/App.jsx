@@ -78,24 +78,21 @@ function App() {
             );
           })}
 
-          {
-            leftNodes?.map((node, key) => {
-              return (
-                <text x = {node.x - 20} y = {node.y + 20} font-size="25">
-                  {node.label}
-                </text>
-              );
-            })}
+          {leftNodes?.map((node, key) => {
+            return (
+              <text x={node.x - 20} y={node.y + 20} font-size="25">
+                {node.label}
+              </text>
+            );
+          })}
 
-            {
-            rightNodes?.map((node, key) => {
-              return (
-                <text x = {node.x + 10} y = {node.y + 20} font-size="25">
-                  {node.label}
-                </text>
-              );
-            })}
-
+          {rightNodes?.map((node, key) => {
+            return (
+              <text x={node.x + 10} y={node.y + 20} font-size="25">
+                {node.label}
+              </text>
+            );
+          })}
         </g>
       </svg>
     </>

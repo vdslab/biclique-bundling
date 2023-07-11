@@ -12,6 +12,7 @@ export const objectOnePropertytoProgression = (ArrayNumber, step, x, y) => {
     .fill()
     .reduce((prev) => {
       const prevItem = prev.length > 0 ? prev.at(-1).y + step : y;
-      return [...prev, { x, y: prevItem }];
+      const prevLabel = prev.length > 0 ? prev.at(-1).label + 1 : 1;
+      return [...prev, { x, y: prevItem, label: prevLabel }];
     }, []);
 };

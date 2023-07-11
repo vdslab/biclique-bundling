@@ -48,8 +48,8 @@ const useMuQuasiBiclique = (mu) => {
       //pre-preprocess
       const Cand = {};
 
-      const Upper = Array.from({length: bipartite.length}, (_, i) => i);
-      console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFf",Upper);
+      const Upper = Array.from({ length: bipartite.length }, (_, i) => i);
+      console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFf", Upper);
       for (const u of Upper) {
         const T = outVertices(u, bipartite);
         const M = {};
@@ -108,7 +108,7 @@ const useMuQuasiBiclique = (mu) => {
       }
 
       //fillterNonMaximal*/
-      console.log("resulttttttttttttttttttttttttttttttttttttttttttttttttttttt")
+      console.log("resulttttttttttttttttttttttttttttttttttttttttttttttttttttt");
       const [SMaximalNodes, TMaximalNodes] = getMaximalNodes(
         SMaximalCandNodes,
         TMaximalCandNodes
