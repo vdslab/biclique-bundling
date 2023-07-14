@@ -38,9 +38,7 @@ const usePaths = (
       rightY
     );
 
-    console.log("RERERERRERERERRERERERRERERERRERERER", lefts);
 
-    console.log("pathss", rights, lefts);
     setLeftNodes(lefts);
     setRightNodes(rights);
 
@@ -76,6 +74,7 @@ const usePaths = (
 
     //左から右へ直線を通す
     //エッジ数1のバイクラスタとして見なす
+    //中間層ノードは重ならないようにする
     const lineData = new Array();
 
     for (let left = 0; left < leftNodeNumber; left++) {
@@ -103,6 +102,11 @@ const usePaths = (
 
     console.log(bipartiteMatrix);
     console.log("wooooooooooooooooooooooooooo", lineData);
+
+    //ノードの並び替え
+    //案1、バイクリークを近くに持ってくる
+    //案2、エッジ交差数が少なくなるように力任せで
+    //案3、論文を読んで実装
 
     setMidNodes(midNodesCopy);
     setPaths(

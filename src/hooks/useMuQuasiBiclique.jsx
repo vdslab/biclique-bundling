@@ -40,7 +40,7 @@ const useMuQuasiBiclique = (mu) => {
   const [bipartiteMatrix, setBipartiteMatrix] = useState([]);
   useEffect(() => {
     (async () => {
-      const res = await fetch("public/random/json/random_5_5_70_1.json");
+      const res = await fetch("public/act-mooc/json/mooc_actions_100.json");
       //const matrixJson = await res.json();
       const bipartite = await res.json();
       setBipartiteMatrix(bipartite);
@@ -48,8 +48,8 @@ const useMuQuasiBiclique = (mu) => {
       //pre-preprocess
       const Cand = {};
 
-      const Upper = Array.from({ length: bipartite.length }, (_, i) => i);
-      console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFf", Upper);
+      const Upper = Array.from({length: bipartite.length}, (_, i) => i);
+      console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFf",Upper);
       for (const u of Upper) {
         const T = outVertices(u, bipartite);
         const M = {};
@@ -108,7 +108,6 @@ const useMuQuasiBiclique = (mu) => {
       }
 
       //fillterNonMaximal*/
-      console.log("resulttttttttttttttttttttttttttttttttttttttttttttttttttttt");
       const [SMaximalNodes, TMaximalNodes] = getMaximalNodes(
         SMaximalCandNodes,
         TMaximalCandNodes
