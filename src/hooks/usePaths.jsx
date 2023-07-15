@@ -19,6 +19,7 @@ const usePaths = (
 
   const linkGenerator = d3.linkHorizontal();
   //const lineGenerator = d3.line().x(d => x(d.x)).y(d => y(d.y));;
+  const r = 7;
 
   useEffect(() => {
     const leftNodeNumber = bipartiteMatrix?.length;
@@ -38,23 +39,27 @@ const usePaths = (
       rightY
     );
 
-
     setLeftNodes(lefts);
     setRightNodes(rights);
 
     const midNodesCopy = new Array();
     const outputPaths = new Array();
-    const midYSet  = new Set();
+    const midYSet = new Set();
     for (let i = 0; i < maximalNodes.length; i++) {
       const midX = (rightX + leftX) / 2;
 
-
-      const midYCand =
+      let midYCand =
         (sumCordinates(lefts, maximalNodes[i].left) +
           sumCordinates(rights, maximalNodes[i].right)) /
         (maximalNodes[i].left.length + maximalNodes[i].right.length);
+      let midY;
+      for(const v of midYSet) {
+        if(Math.abs(v - midYCand) < 2*r) {
+          midYCand += step;
+        }
+      }
 
-      const midY = midYSet.has(midYCand)?midYCand+10:midYCand;
+      midY = midYCand;
       midYSet.add(midY);
 
       console.log(midX, midY);
@@ -94,7 +99,7 @@ const usePaths = (
         const midX = (lefts[left].x + rights[right].x) / 2;
         const midYCand = (lefts[left].y + rights[right].y) / 2;
 
-        const midY = midYSet.has(midYCand)?midYCand + step / 2:midYCand;
+        const midY = midYSet.has(midYCand) ? midYCand + step / 2 : midYCand;
         midYSet.add(midY);
         console.log(midX, midY);
         lineData.push({
