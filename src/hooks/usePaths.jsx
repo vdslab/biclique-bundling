@@ -44,13 +44,18 @@ const usePaths = (
 
     const midNodesCopy = new Array();
     const outputPaths = new Array();
-
+    const midYSet  = new Set();
     for (let i = 0; i < maximalNodes.length; i++) {
       const midX = (rightX + leftX) / 2;
-      const midY =
+
+
+      const midYCand =
         (sumCordinates(lefts, maximalNodes[i].left) +
           sumCordinates(rights, maximalNodes[i].right)) /
         (maximalNodes[i].left.length + maximalNodes[i].right.length);
+
+      const midY = midYSet.has(midYCand)?midYCand+10:midYCand;
+      midYSet.add(midY);
 
       console.log(midX, midY);
       midNodesCopy.push({ x: midX, y: midY });
@@ -87,7 +92,10 @@ const usePaths = (
 
         console.log(left, right);
         const midX = (lefts[left].x + rights[right].x) / 2;
-        const midY = (lefts[left].y + rights[right].y) / 2;
+        const midYCand = (lefts[left].y + rights[right].y) / 2;
+
+        const midY = midYSet.has(midYCand)?midYCand + step / 2:midYCand;
+        midYSet.add(midY);
         console.log(midX, midY);
         lineData.push({
           source: [lefts[left].x, lefts[left].y],
