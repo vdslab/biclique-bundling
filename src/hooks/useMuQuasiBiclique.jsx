@@ -11,16 +11,19 @@ const outVertices = (u, bipartite) => {
       outV.push(idx);
     }
   }
+  console.error(u,outV)
   return outV;
 };
 
 const inVertices = (u, bipartite) => {
   const inV = [];
-  for (let idx = 0; idx < bipartite[u].length; idx++) {
-    if (bipartite[u][idx]) {
+  for(let idx = 0; idx < bipartite.length; idx++) {
+    if(bipartite[idx][u]) {
       inV.push(idx);
     }
   }
+
+  console.log(u ,inV);
   return inV;
 };
 
@@ -46,12 +49,12 @@ const useMuQuasiBiclique = (mu) => {
         console.log(u, T, M);
         //Tからハッシュ値を生み出す
         const key = genKey(T);
-        console.log(key);
+        //console.log(key);
         Cand[key] = { T, M };
       }
 
       console.log(Cand);
-      console.log(Object.keys(Cand));
+      console.error(Object.keys(Cand));
 
       for (const key of Object.keys(Cand)) {
         //double for
@@ -59,9 +62,11 @@ const useMuQuasiBiclique = (mu) => {
         const M = Cand[key].M;
 
         console.log(T, M);
-
+        console.log(key);
         for (const v of T) {
-          for (const u of inVertices(v, bipartite)) {
+          const inVer = inVertices(v, bipartite);
+          for (const u of inVer) {
+            console.error("VVVVVVVVVVVVV", u, inVer);
             if (u in M) {
               M[u] += 1;
             } else {
@@ -110,7 +115,7 @@ const useMuQuasiBiclique = (mu) => {
         });
       }
 
-      console.log("ffffffffffffffffffffffffffffffffffffff", maximalObjs);
+      console.log("mu-quisi output", maximalObjs);
       setMaximalNodes(maximalObjs);
     })();
   }, []);
