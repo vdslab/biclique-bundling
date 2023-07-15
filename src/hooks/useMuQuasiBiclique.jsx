@@ -11,19 +11,19 @@ const outVertices = (u, bipartite) => {
       outV.push(idx);
     }
   }
-  console.error(u,outV)
+  console.error(u, outV);
   return outV;
 };
 
 const inVertices = (u, bipartite) => {
   const inV = [];
-  for(let idx = 0; idx < bipartite.length; idx++) {
-    if(bipartite[idx][u]) {
+  for (let idx = 0; idx < bipartite.length; idx++) {
+    if (bipartite[idx][u]) {
       inV.push(idx);
     }
   }
 
-  console.log(u ,inV);
+  console.log(u, inV);
   return inV;
 };
 

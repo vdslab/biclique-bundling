@@ -53,8 +53,8 @@ const usePaths = (
           sumCordinates(rights, maximalNodes[i].right)) /
         (maximalNodes[i].left.length + maximalNodes[i].right.length);
       let midY;
-      for(const v of midYSet) {
-        if(Math.abs(v - midYCand) < 2*r) {
+      for (const v of midYSet) {
+        if (Math.abs(v - midYCand) < 2 * r) {
           midYCand += step;
         }
       }

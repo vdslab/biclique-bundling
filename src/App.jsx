@@ -5,9 +5,9 @@ import usePaths from "./hooks/usePaths";
 
 function App() {
   const width = 1300;
-  const height = 750;
+  const height = 3000;
 
-  const gamma = 0.7;
+  const gamma = 0.8;
   const nodeRadius = 4;
 
   const leftX = 450;
@@ -16,7 +16,7 @@ function App() {
   const rightX = 800;
   const rightY = 10;
 
-  const step = 50;
+  const step = 20;
   const { bipartiteMatrix, maximalNodes } = useMuQuasiBiclique(gamma);
   const { paths, lines, leftNodes, rightNodes, midNodes } = usePaths(
     bipartiteMatrix,
@@ -52,7 +52,7 @@ function App() {
               <path
                 d={line}
                 stroke="silver"
-                strokeWidth="1.3"
+                strokeWidth="0.7"
                 fill="transparent"
                 opacity={0.7}
               />
