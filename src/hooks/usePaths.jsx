@@ -24,6 +24,7 @@ const usePaths = (
   useEffect(() => {
     const leftNodeNumber = bipartiteMatrix?.length;
     const rightNodeNumber = bipartiteMatrix[0]?.length;
+    console.error(maximalNodes);
 
     const lefts = objectOnePropertytoProgression(
       leftNodeNumber,
@@ -117,9 +118,15 @@ const usePaths = (
     console.log("wooooooooooooooooooooooooooo", lineData);
 
     //ノードの並び替え
-    //案1、バイクリークを近くに持ってくる
-    //案2、エッジ交差数が少なくなるように力任せで
-    //案3、論文を読んで実装
+    //案1、バイクリークを近くに持ってくる(貪欲法)
+    //案2、エッジ交差数が少なくなるように力任せで(計算量が高くなる)
+    //案3、論文を読んで実装(DA)
+
+    //貪欲法
+    //バイクラスターが長い方でソートする(もしくは短い方)
+    //バイクラスターのを上から被りがないように配置する
+    //配置しようとしているノードが既に用いられている場合、そこにつなげる
+    //バイクラスターに被りがないとき、 バイクラスターのエッジが交差しない
 
     setMidNodes(midNodesCopy);
     setPaths(
@@ -143,7 +150,6 @@ const f = (maximalNodes, left, right) => {
     const rightNodeSet = new Set(node.right);
 
     if (leftNodeSet.has(left) && rightNodeSet.has(right)) {
-      console.log("wewewewewwwwwwwwwwwwwwwwwwwwwwwwwwwww", left, right);
       return true;
     }
   }
