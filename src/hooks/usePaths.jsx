@@ -40,20 +40,20 @@ const usePaths = (
       const leftObjs = new Array();
       for(const leftNodeNum of leftNodes) {
         if(!leftNodeMap.has(leftNodeNum)) {
-          leftObjs.push({label: leftNodeNum, position:leftIdx});
+          leftObjs.push(leftIdx);
           leftNodeMap.set(leftNodeNum, leftIdx++);
         } else {
-          leftObjs.push({label: leftNodeNum, position:leftNodeMap.get(leftNodeNum)});
+          leftObjs.push(leftNodeMap.get(leftNodeNum));
         }
       }
 
       const rightObjs = new Array();
       for(const rightNodeNum of rightNodes) {
         if(!rightNodeMap.has(rightNodeNum)) {
-          rightObjs.push({label: rightNodeNum, position:rightIdx});
+          rightObjs.push(rightIdx);
           rightNodeMap.set(rightNodeNum, rightIdx++);
         } else {
-          rightObjs.push({label: rightNodeNum, position:rightNodeMap.get(rightNodeNum)});
+          rightObjs.push(rightNodeMap.get(rightNodeNum));
         }
       }
 
@@ -61,6 +61,8 @@ const usePaths = (
     }
 
     console.error(orderedMaximalNodes);
+
+
 
     const lefts = objectOnePropertytoProgression(
       leftNodeNumber,
@@ -86,9 +88,9 @@ const usePaths = (
       const midX = (rightX + leftX) / 2;
 
       let midYCand =
-        (sumCordinates(lefts, maximalNodes[i].left) +
-          sumCordinates(rights, maximalNodes[i].right)) /
-        (maximalNodes[i].left.length + maximalNodes[i].right.length);
+        (sumCordinates(lefts, orderedMaximalNodes[i].left) +
+          sumCordinates(rights, orderedMaximalNodes[i].right)) /
+        (orderedMaximalNodes[i].left.length + orderedMaximalNodes[i].right.length);
       let midY;
       for (const v of midYSet) {
         if (Math.abs(v - midYCand) < 2 * r) {
@@ -102,7 +104,7 @@ const usePaths = (
       console.log(midX, midY);
       midNodesCopy.push({ x: midX, y: midY });
 
-      for (const l of maximalNodes[i].left) {
+      for (const l of orderedMaximalNodes[i].left) {
         console.log("xxxxxxxx");
         outputPaths.push({
           source: [lefts[l].x, lefts[l].y],
@@ -110,7 +112,7 @@ const usePaths = (
         });
       }
 
-      for (const r of maximalNodes[i].right) {
+      for (const r of orderedMaximalNodes[i].right) {
         console.log("yyyyyyyy");
         outputPaths.push({
           source: [midX, midY],
