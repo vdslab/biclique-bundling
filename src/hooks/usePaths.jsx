@@ -26,6 +26,42 @@ const usePaths = (
     const rightNodeNumber = bipartiteMatrix[0]?.length;
     console.error(maximalNodes);
 
+    //ここで並び替えの処理
+    let leftIdx = 0;
+    let rightIdx = 0;
+
+    const leftNodeMap = new Map();
+    const rightNodeMap = new Map();
+    const orderedMaximalNodes = new Array();
+    for(let i = 0; i < maximalNodes.length; i++) {
+      const leftNodes = maximalNodes[i].left;
+      const rightNodes = maximalNodes[i].right;
+
+      const leftObjs = new Array();
+      for(const leftNodeNum of leftNodes) {
+        if(!leftNodeMap.has(leftNodeNum)) {
+          leftObjs.push({label: leftNodeNum, position:leftIdx});
+          leftNodeMap.set(leftNodeNum, leftIdx++);
+        } else {
+          leftObjs.push({label: leftNodeNum, position:leftNodeMap.get(leftNodeNum)});
+        }
+      }
+
+      const rightObjs = new Array();
+      for(const rightNodeNum of rightNodes) {
+        if(!rightNodeMap.has(rightNodeNum)) {
+          rightObjs.push({label: rightNodeNum, position:rightIdx});
+          rightNodeMap.set(rightNodeNum, rightIdx++);
+        } else {
+          rightObjs.push({label: rightNodeNum, position:rightNodeMap.get(rightNodeNum)});
+        }
+      }
+
+      orderedMaximalNodes.push({left: leftObjs, right: rightObjs});
+    }
+
+    console.error(orderedMaximalNodes);
+
     const lefts = objectOnePropertytoProgression(
       leftNodeNumber,
       step,
