@@ -24,22 +24,30 @@ const usePaths = (
   useEffect(() => {
     const leftNodeNumber = bipartiteMatrix?.length;
     const rightNodeNumber = bipartiteMatrix[0]?.length;
-    console.error(maximalNodes);
+
 
     //ここで並び替えの処理
+    // if(Array.isArray(maximalNodes)) {
+    //   maximalNodes.sort((a, b) => {
+    //     return (b.left.length + b.right.length) -  (a.left.length + a.right.length) ;
+    //  })
+    //  }
+
+    //  console.error(maximalNodes);
+
     let leftIdx = 0;
     let rightIdx = 0;
 
     const leftNodeMap = new Map();
     const rightNodeMap = new Map();
-    const orderedMaximalNodes = new Array();
-    for(let i = 0; i < maximalNodes.length; i++) {
+    let orderedMaximalNodes = new Array();
+    for (let i = 0; i < maximalNodes.length; i++) {
       const leftNodes = maximalNodes[i].left;
       const rightNodes = maximalNodes[i].right;
 
       const leftObjs = new Array();
-      for(const leftNodeNum of leftNodes) {
-        if(!leftNodeMap.has(leftNodeNum)) {
+      for (const leftNodeNum of leftNodes) {
+        if (!leftNodeMap.has(leftNodeNum)) {
           leftObjs.push(leftIdx);
           leftNodeMap.set(leftNodeNum, leftIdx++);
         } else {
@@ -48,8 +56,8 @@ const usePaths = (
       }
 
       const rightObjs = new Array();
-      for(const rightNodeNum of rightNodes) {
-        if(!rightNodeMap.has(rightNodeNum)) {
+      for (const rightNodeNum of rightNodes) {
+        if (!rightNodeMap.has(rightNodeNum)) {
           rightObjs.push(rightIdx);
           rightNodeMap.set(rightNodeNum, rightIdx++);
         } else {
@@ -57,12 +65,11 @@ const usePaths = (
         }
       }
 
-      orderedMaximalNodes.push({left: leftObjs, right: rightObjs});
+      orderedMaximalNodes.push({ left: leftObjs, right: rightObjs });
     }
 
     console.error(orderedMaximalNodes);
-
-
+    //orderedMaximalNodes = maximalNodes || [...maximalNodes];
 
     const lefts = objectOnePropertytoProgression(
       leftNodeNumber,
@@ -83,77 +90,72 @@ const usePaths = (
 
     const midNodesCopy = new Array();
     const outputPaths = new Array();
-    const midYSet = new Set();
-    for (let i = 0; i < maximalNodes.length; i++) {
-      const midX = (rightX + leftX) / 2;
+    // for (let i = 0; i < maximalNodes.length; i++) {
+    //   const midX = (rightX + leftX) / 2;
 
-      let midYCand =
-        (sumCordinates(lefts, orderedMaximalNodes[i].left) +
-          sumCordinates(rights, orderedMaximalNodes[i].right)) /
-        (orderedMaximalNodes[i].left.length + orderedMaximalNodes[i].right.length);
-      let midY;
-      for (const v of midYSet) {
-        if (Math.abs(v - midYCand) < 2 * r) {
-          midYCand += step;
-        }
-      }
+    //   const midY =
+    //     (sumCordinates(lefts, orderedMaximalNodes[i].left) +
+    //       sumCordinates(rights, orderedMaximalNodes[i].right)) /
+    //     (orderedMaximalNodes[i].left.length +
+    //       orderedMaximalNodes[i].right.length);
 
-      midY = midYCand;
-      midYSet.add(midY);
+    //   console.log(midX, midY);
+    //   midNodesCopy.push({ x: midX, y: midY });
 
-      console.log(midX, midY);
-      midNodesCopy.push({ x: midX, y: midY });
+    //   for (const l of orderedMaximalNodes[i].left) {
+    //     console.log("xxxxxxxx");
+    //     outputPaths.push({
+    //       source: [lefts[l].x, lefts[l].y],
+    //       target: [midX, midY],
+    //     });
+    //   }
 
-      for (const l of orderedMaximalNodes[i].left) {
-        console.log("xxxxxxxx");
-        outputPaths.push({
-          source: [lefts[l].x, lefts[l].y],
-          target: [midX, midY],
-        });
-      }
-
-      for (const r of orderedMaximalNodes[i].right) {
-        console.log("yyyyyyyy");
-        outputPaths.push({
-          source: [midX, midY],
-          target: [rights[r].x, rights[r].y],
-        });
-      }
-    }
+    //   for (const r of orderedMaximalNodes[i].right) {
+    //     console.log("yyyyyyyy");
+    //     outputPaths.push({
+    //       source: [midX, midY],
+    //       target: [rights[r].x, rights[r].y],
+    //     });
+    //   }
+    // }
 
     //左から右へ直線を通す
     //エッジ数1のバイクラスタとして見なす
     //中間層ノードは重ならないようにする
     const lineData = new Array();
-
+    let oneBiclusterNumber = 0;
     for (let left = 0; left < leftNodeNumber; left++) {
       for (let right = 0; right < rightNodeNumber; right++) {
-        if (f(maximalNodes, left, right)) {
-          //console.log("EEEEEEEEEEeeee");
+        if (f(orderedMaximalNodes, left, right)) {
           continue;
         }
         if (!bipartiteMatrix[left][right]) continue;
 
         console.log(left, right);
-        const midX = (lefts[left].x + rights[right].x) / 2;
-        const midYCand = (lefts[left].y + rights[right].y) / 2;
+        //const midX = (lefts[left].x + rights[right].x) / 2;
+        //const midY = (lefts[left].y + rights[right].y) / 2;
+        oneBiclusterNumber ++;
 
-        const midY = midYSet.has(midYCand) ? midYCand + step / 2 : midYCand;
-        midYSet.add(midY);
-        console.log(midX, midY);
-        lineData.push({
-          source: [lefts[left].x, lefts[left].y],
-          target: [midX, midY],
-        });
-        lineData.push({
-          source: [midX, midY],
-          target: [rights[right].x, rights[right].y],
-        });
+        //console.log(midX, midY);
+        // lineData.push({
+        //   source: [lefts[left].x, lefts[left].y],
+        //   target: [midX, midY],
+        // });
+        // lineData.push({
+        //   source: [midX, midY],
+        //   target: [rights[right].x, rights[right].y],
+        // });
       }
     }
 
     console.log(bipartiteMatrix);
     console.log("wooooooooooooooooooooooooooo", lineData);
+
+    const midLayerHeight = oneBiclusterNumber + maximalNodes.length;
+    const midX = (rightX + leftX) / 2;
+
+    //sugiyama frameワークの順番割り当ては、y座標の平均値の数値順で行う
+    //その後、具体的にy座標を求める
 
     //ノードの並び替え
     //案1、バイクリークを近くに持ってくる(貪欲法)
