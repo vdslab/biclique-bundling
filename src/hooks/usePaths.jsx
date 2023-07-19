@@ -25,7 +25,6 @@ const usePaths = (
     const leftNodeNumber = bipartiteMatrix?.length;
     const rightNodeNumber = bipartiteMatrix[0]?.length;
 
-
     //ここで並び替えの処理
     // if(Array.isArray(maximalNodes)) {
     //   maximalNodes.sort((a, b) => {
@@ -134,7 +133,7 @@ const usePaths = (
         console.log(left, right);
         //const midX = (lefts[left].x + rights[right].x) / 2;
         //const midY = (lefts[left].y + rights[right].y) / 2;
-        oneBiclusterNumber ++;
+        oneBiclusterNumber++;
 
         //console.log(midX, midY);
         // lineData.push({
@@ -157,6 +156,103 @@ const usePaths = (
     //sugiyama frameワークの順番割り当ては、y座標の平均値の数値順で行う
     //その後、具体的にy座標を求める
 
+    const midOrderObjs = new Array();
+    let midIdx = 0
+    for(let i = 0; i < maximalNodes.length; i++) {
+      const midY =
+         (sumCordinates(lefts, orderedMaximalNodes[i].left) +
+           sumCordinates(rights, orderedMaximalNodes[i].right)) /
+         (orderedMaximalNodes[i].left.length +
+           orderedMaximalNodes[i].right.length);
+      midOrderObjs.push({order:midIdx++,  pos:midY});
+    }
+
+    for (let left = 0; left < leftNodeNumber; left++) {
+      for (let right = 0; right < rightNodeNumber; right++) {
+        if (f(orderedMaximalNodes, left, right)) {
+          continue;
+        }
+        if (!bipartiteMatrix[left][right]) continue;
+
+        console.log(left, right);
+
+        const midY = (lefts[left].y + rights[right].y) / 2;
+
+        midOrderObjs.push({order:midIdx++,  pos:midY});
+      }
+    }
+
+    console.error(midOrderObjs);
+    midOrderObjs.sort((a, b) => {
+      return a.pos - b.pos;
+    });
+    console.error(midOrderObjs);
+
+    const midLayerH = 400;
+    const midLayerStep = midLayerH / midLayerHeight;
+
+    midIdx = 0;
+    //todo
+    //計算量を減らす
+    for(let i = 0; i < maximalNodes.length; i++) {
+
+      //midYを探す
+      console.log("KKKKKKKKKKKKKKKKKKKKKKKKKKKK");
+      const midYOrder = midOrderObjs.find((element) => {
+        if(element.order === midIdx) return true;
+        return false;
+      }).order;
+
+      const midY = midLayerStep*(midYOrder + 1);
+      console.log("YUOOOOOOOO" , midIdx, midY);
+      midNodesCopy.push({ x: midX, y:  midY});
+
+
+      for (const l of orderedMaximalNodes[i].left) {
+        console.log("xxxxxxxx");
+        outputPaths.push({
+          source: [lefts[l].x, lefts[l].y],
+          target: [midX, midY],
+        });
+      }
+
+      for (const r of orderedMaximalNodes[i].right) {
+        console.log("yyyyyyyy");
+        outputPaths.push({
+          source: [midX, midY],
+          target: [rights[r].x, rights[r].y],
+        });
+      }
+
+      midIdx ++;
+    }
+
+    for (let left = 0; left < leftNodeNumber; left++) {
+      for (let right = 0; right < rightNodeNumber; right++) {
+        if (f(orderedMaximalNodes, left, right)) {
+          continue;
+        }
+        if (!bipartiteMatrix[left][right]) continue;
+
+        const midYOrder = midOrderObjs.find((element) => {
+          if(element.order === midIdx) return true;
+          return false;
+        }).order;
+
+        const midY = midLayerStep*(midYOrder + 1);
+
+        console.log(midX, midY);
+        lineData.push({
+          source: [lefts[left].x, lefts[left].y],
+          target: [midX, midY],
+        });
+        lineData.push({
+          source: [midX, midY],
+          target: [rights[right].x, rights[right].y],
+        });
+        midIdx ++;
+      }
+    }
     //ノードの並び替え
     //案1、バイクリークを近くに持ってくる(貪欲法)
     //案2、エッジ交差数が少なくなるように力任せで(計算量が高くなる)
