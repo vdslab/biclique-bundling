@@ -32,7 +32,7 @@ const useMuQuasiBiclique = (mu) => {
   const [bipartiteMatrix, setBipartiteMatrix] = useState([]);
   useEffect(() => {
     (async () => {
-      const res = await fetch("public/act-mooc/json/mooc_actions_100.json");
+      const res = await fetch("public/act-mooc/json/mooc_actions_200.json");
       //const matrixJson = await res.json();
       const bipartite = await res.json();
       setBipartiteMatrix(bipartite);
@@ -66,7 +66,7 @@ const useMuQuasiBiclique = (mu) => {
         for (const v of T) {
           const inVer = inVertices(v, bipartite);
           for (const u of inVer) {
-            console.error("VVVVVVVVVVVVV", u, inVer);
+
             if (u in M) {
               M[u] += 1;
             } else {
@@ -95,13 +95,15 @@ const useMuQuasiBiclique = (mu) => {
         }
 
         console.log("wertyddgffsd", key, S, T);
-        if (S.length > 0 && T.length > 0) {
+        if (S.length > 1 && T.length > 1) {
           SMaximalCandNodes.push(S);
           TMaximalCandNodes.push(T);
         }
       }
 
+
       //fillterNonMaximal*/
+      console.error(SMaximalCandNodes, TMaximalCandNodes)
       const [SMaximalNodes, TMaximalNodes] = getMaximalNodes(
         SMaximalCandNodes,
         TMaximalCandNodes
