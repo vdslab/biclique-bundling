@@ -40,6 +40,7 @@ const usePaths = (
     const leftNodeMap = new Map();
     const rightNodeMap = new Map();
     let orderedMaximalNodes = new Array();
+    // 左右ノードの順番を貪欲を並び替える
     for (let i = 0; i < maximalNodes.length; i++) {
       const leftNodes = maximalNodes[i].left;
       const rightNodes = maximalNodes[i].right;
@@ -64,12 +65,13 @@ const usePaths = (
         }
       }
 
-      orderedMaximalNodes.push({ left: leftObjs, right: rightObjs });
+      //orderedMaximalNodes.push({ left: leftObjs, right: rightObjs });
     }
 
     console.error(orderedMaximalNodes);
-    //orderedMaximalNodes = maximalNodes || [...maximalNodes];
+    orderedMaximalNodes = maximalNodes || [...maximalNodes];
 
+    //左ノードの座標を決める
     const lefts = objectOnePropertytoProgression(
       leftNodeNumber,
       step,
@@ -77,6 +79,7 @@ const usePaths = (
       leftY
     );
 
+    //右ノードを座標を決める
     const rights = objectOnePropertytoProgression(
       rightNodeNumber,
       step,
@@ -183,17 +186,22 @@ const usePaths = (
     }
 
     console.error(midOrderObjs);
-    midOrderObjs.sort((a, b) => {
-      return a.pos - b.pos;
-    });
+    //重心でソート
+    // midOrderObjs.sort((a, b) => {
+    //   return a.pos - b.pos;
+    // });
     console.error(midOrderObjs);
 
-    const midLayerH = 400;
-    const midLayerStep = midLayerH / midLayerHeight;
-
+    const midLayerH = 800;
+    const midLayerStep = midLayerH / midLayerHeight + 2;
     midIdx = 0;
-    //todo
-    //計算量を減らす
+
+    /*
+    todo
+    計算量を減らす
+
+    バイクリークのエッジやノードを描画する
+    */
     for(let i = 0; i < maximalNodes.length; i++) {
 
       //midYを探す
@@ -227,6 +235,10 @@ const usePaths = (
       midIdx ++;
     }
 
+
+    /***
+    普通のエッジや描画する
+    ***/
     for (let left = 0; left < leftNodeNumber; left++) {
       for (let right = 0; right < rightNodeNumber; right++) {
         if (f(orderedMaximalNodes, left, right)) {
@@ -280,6 +292,11 @@ const usePaths = (
   return { paths, lines, leftNodes, rightNodes, midNodes };
 };
 
+/*
+関数名を変更する
+
+左右のノードがそれぞれ、一つの非自明バイクリークに含んでいるか
+*/
 const f = (maximalNodes, left, right) => {
   for (const node of maximalNodes) {
     const leftNodeSet = new Set(node.left);
