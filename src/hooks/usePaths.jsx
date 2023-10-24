@@ -19,12 +19,64 @@ const usePaths = (
 
   const linkGenerator = d3.linkHorizontal();
   //const lineGenerator = d3.line().x(d => x(d.x)).y(d => y(d.y));;
-  const r = 7;
+  //const r = 7;
 
   useEffect(() => {
     const leftNodeNumber = bipartiteMatrix?.length;
     const rightNodeNumber = bipartiteMatrix[0]?.length;
 
+    //左右中間ノードの順序を初期化
+    const leftNodesOrder = new Array();
+    const rightNodesOrder = new Array();
+    const midNodesOrder = new Array();
+
+    for(let i = 0; i < leftNodeNumber; i++) {
+      leftNodesOrder.push(i);
+    }
+
+    for(let i = 0; i < rightNodeNumber; i++) {
+      rightNodesOrder.push(i);
+    }
+
+    let midNodesCount = 0;
+    for(let i = 0; i < maximalNodes.length; i++) {
+      midNodesCount ++;
+    }
+
+    for(let i = 0; i < leftNodeNumber; i++) {
+      for(let j = 0; j < rightNodeNumber; j++) {
+        if(!bipartiteMatrix[i][j]) continue;
+        if(f(maximalNodes, i, j)) continue;
+        midNodesCount ++;
+      }
+    }
+
+    for(let i = 0; i < midNodesCount; i++) {
+      midNodesOrder.push(i);
+    }
+
+    ///ここまで初期化
+
+    // 左右ノードを重心法でソート
+    // const fd = new Array();
+    // for(let i = 0; i < rightNodeNumber; i++) {
+    //   let degree = 0;
+    //   let ouh = 0;
+    //   for(let j = 0; j < leftNodeNumber; j++) {
+    //     if(!bipartiteMatrix[i][j]) continue;
+    //     degree ++;
+    //     ouh += leftNodesOrder[j];
+    //   }
+
+    //   console.log(degree);
+    //   console.log(ouh)
+    //   fd.push(degree / ouh);
+    // }
+
+    // console.error(fd);
+    // rightNodesOrder.sort((a, b) => {
+    //   return fd[a] - fd[b]
+    // });
     //ここで並び替えの処理
     // if(Array.isArray(maximalNodes)) {
     //   maximalNodes.sort((a, b) => {
@@ -34,42 +86,43 @@ const usePaths = (
 
     //  console.error(maximalNodes);
 
-    let leftIdx = 0;
-    let rightIdx = 0;
+    // let leftIdx = 0;
+    // let rightIdx = 0;
 
-    const leftNodeMap = new Map();
-    const rightNodeMap = new Map();
-    let orderedMaximalNodes = new Array();
+    // const leftNodeMap = new Map();
+    // const rightNodeMap = new Map();
+    const orderedMaximalNodes = maximalNodes || [...maximalNodes];
     // 左右ノードの順番を貪欲を並び替える
-    for (let i = 0; i < maximalNodes.length; i++) {
-      const leftNodes = maximalNodes[i].left;
-      const rightNodes = maximalNodes[i].right;
+    // for (let i = 0; i < maximalNodes.length; i++) {
+    //   const leftNodes = maximalNodes[i].left;
+    //   const rightNodes = maximalNodes[i].right;
 
-      const leftObjs = new Array();
-      for (const leftNodeNum of leftNodes) {
-        if (!leftNodeMap.has(leftNodeNum)) {
-          leftObjs.push(leftIdx);
-          leftNodeMap.set(leftNodeNum, leftIdx++);
-        } else {
-          leftObjs.push(leftNodeMap.get(leftNodeNum));
-        }
-      }
+    //   const leftObjs = new Array();
+    //   for (const leftNodeNum of leftNodes) {
+    //     if (!leftNodeMap.has(leftNodeNum)) {
+    //       leftObjs.push(leftIdx);
+    //       leftNodeMap.set(leftNodeNum, leftIdx++);
+    //     } else {
+    //       leftObjs.push(leftNodeMap.get(leftNodeNum));
+    //     }
+    //   }
 
-      const rightObjs = new Array();
-      for (const rightNodeNum of rightNodes) {
-        if (!rightNodeMap.has(rightNodeNum)) {
-          rightObjs.push(rightIdx);
-          rightNodeMap.set(rightNodeNum, rightIdx++);
-        } else {
-          rightObjs.push(rightNodeMap.get(rightNodeNum));
-        }
-      }
+    //   const rightObjs = new Array();
+    //   for (const rightNodeNum of rightNodes) {
+    //     if (!rightNodeMap.has(rightNodeNum)) {
+    //       rightObjs.push(rightIdx);
+    //       rightNodeMap.set(rightNodeNum, rightIdx++);
+    //     } else {
+    //       rightObjs.push(rightNodeMap.get(rightNodeNum));
+    //     }
+    //   }
 
-      //orderedMaximalNodes.push({ left: leftObjs, right: rightObjs });
-    }
+    //   orderedMaximalNodes.push({ left: leftObjs, right: rightObjs });
+    // }
 
-    console.error(orderedMaximalNodes);
-    orderedMaximalNodes = maximalNodes || [...maximalNodes];
+
+    //初期化
+
 
     //左ノードの座標を決める
     const lefts = objectOnePropertytoProgression(
@@ -90,68 +143,19 @@ const usePaths = (
     setLeftNodes(lefts);
     setRightNodes(rights);
 
+    //中間ノードとバイクリークのエッジ変数
     const midNodesCopy = new Array();
     const outputPaths = new Array();
-    // for (let i = 0; i < maximalNodes.length; i++) {
-    //   const midX = (rightX + leftX) / 2;
 
-    //   const midY =
-    //     (sumCordinates(lefts, orderedMaximalNodes[i].left) +
-    //       sumCordinates(rights, orderedMaximalNodes[i].right)) /
-    //     (orderedMaximalNodes[i].left.length +
-    //       orderedMaximalNodes[i].right.length);
 
-    //   console.log(midX, midY);
-    //   midNodesCopy.push({ x: midX, y: midY });
-
-    //   for (const l of orderedMaximalNodes[i].left) {
-    //     console.log("xxxxxxxx");
-    //     outputPaths.push({
-    //       source: [lefts[l].x, lefts[l].y],
-    //       target: [midX, midY],
-    //     });
-    //   }
-
-    //   for (const r of orderedMaximalNodes[i].right) {
-    //     console.log("yyyyyyyy");
-    //     outputPaths.push({
-    //       source: [midX, midY],
-    //       target: [rights[r].x, rights[r].y],
-    //     });
-    //   }
-    // }
+    //const {} = placeNodesToMean();
+    // ノード座標の平均値をおいている
 
     //左から右へ直線を通す
     //エッジ数1のバイクラスタとして見なす
     //中間層ノードは重ならないようにする
     const lineData = new Array();
-    let oneBiclusterNumber = 0;
-    for (let left = 0; left < leftNodeNumber; left++) {
-      for (let right = 0; right < rightNodeNumber; right++) {
-        if (f(orderedMaximalNodes, left, right)) {
-          continue;
-        }
-        if (!bipartiteMatrix[left][right]) continue;
-
-        console.log(left, right);
-        //const midX = (lefts[left].x + rights[right].x) / 2;
-        //const midY = (lefts[left].y + rights[right].y) / 2;
-        oneBiclusterNumber++;
-
-        //console.log(midX, midY);
-        // lineData.push({
-        //   source: [lefts[left].x, lefts[left].y],
-        //   target: [midX, midY],
-        // });
-        // lineData.push({
-        //   source: [midX, midY],
-        //   target: [rights[right].x, rights[right].y],
-        // });
-      }
-    }
-
-    console.log(bipartiteMatrix);
-    console.log("wooooooooooooooooooooooooooo", lineData);
+    const oneBiclusterNumber = midNodesCount - orderedMaximalNodes.length;
 
     const midLayerHeight = oneBiclusterNumber + maximalNodes.length;
     const midX = (rightX + leftX) / 2;
@@ -185,8 +189,8 @@ const usePaths = (
       }
     }
 
-    console.error(midOrderObjs);
     //重心でソート
+    console.error(midOrderObjs);
     // midOrderObjs.sort((a, b) => {
     //   return a.pos - b.pos;
     // });
@@ -207,12 +211,13 @@ const usePaths = (
       //midYを探す
       console.log("KKKKKKKKKKKKKKKKKKKKKKKKKKKK");
       const midYOrder = midOrderObjs.find((element) => {
-        if(element.order === midIdx) return true;
-        return false;
+        if(element.order === midIdx) return false;
+        return true;
       }).order;
 
+      console.error(midYOrder)
+
       const midY = midLayerStep*(midYOrder + 1);
-      console.log("YUOOOOOOOO" , midIdx, midY);
       midNodesCopy.push({ x: midX, y:  midY});
 
 
