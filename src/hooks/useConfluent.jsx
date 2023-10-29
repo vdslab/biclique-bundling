@@ -92,7 +92,7 @@ const useConfluent = (mu) => {
         for (let j = 0; j < leftNodeNumber; j++) {
           if (!leftBipartite[j][i]) continue;
           degree++;
-          ouh += leftNodesOrder[j];
+          ouh += leftNodesOrder.indexOf(j);
         }
         sumLeftMid.push(ouh / degree);
       }
@@ -110,7 +110,7 @@ const useConfluent = (mu) => {
         for (let j = 0; j < midNodeNumber; j++) {
           if (!rightBipartite[j][i]) continue;
           degree++;
-          ouh += midNodesOrder[j];
+          ouh += midNodesOrder.indexOf(j);
         }
         sumMidRight.push(ouh / degree);
       }
