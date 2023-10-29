@@ -2,36 +2,46 @@ import "./App.css";
 import useMaximalGammaQuasiBicliqueByBruteForce from "./hooks/useMaximalGammaQuasiBicliqueByBruteForce";
 import useMuQuasiBiclique from "./hooks/useMuQuasiBiclique";
 import usePaths from "./hooks/usePaths";
-
+import useConfluent from "./hooks/useConfluent";
 function App() {
   const width = 1300;
   const height = 3000;
 
-  const gamma = 0.8;
+  const param = 0.7;
   const nodeRadius = 4;
 
-  const leftX = 450;
-  const leftY = 10;
+  // const leftX = 100;
+  // const leftY = 10;
 
-  const rightX = 800;
-  const rightY = 10;
+  // const rightX = 1100;
+  // const rightY = 10;
 
-  const step = 20;
-  const { bipartiteMatrix, maximalNodes } = useMuQuasiBiclique(gamma);
-  const { paths, lines, leftNodes, rightNodes, midNodes } = usePaths(
-    bipartiteMatrix,
-    maximalNodes,
-    leftX,
-    leftY,
-    rightX,
-    rightY,
-    step
-  );
+  // const step = 40;
+  // const { bipartiteMatrix, maximalNodes } = useMuQuasiBiclique(gamma);
+  // const { paths, lines, leftNodes, rightNodes, midNodes } = usePaths(
+  //   bipartiteMatrix,
+  //   maximalNodes,
+  //   leftX,
+  //   leftY,
+  //   rightX,
+  //   rightY,
+  //   step
+  // );
+
+  const {
+    paths,
+    lines,
+    leftNodes,
+    rightNodes,
+    midNodes,
+    leftNodesOrder,
+    rightNodesOrder,
+  } = useConfluent(0.7);
 
   return (
     <>
       {console.log("Render APP")}
-      <p>γ:{gamma}</p>
+      <p>γ:{param}</p>
 
       <svg width={width} height={height} style={{ border: "solid 1px" }}>
         <g>
@@ -40,7 +50,7 @@ function App() {
               <path
                 d={path}
                 stroke="silver"
-                strokeWidth="1.8"
+                strokeWidth="0.7"
                 fill="transparent"
                 opacity={0.9}
               />
@@ -81,7 +91,7 @@ function App() {
           {leftNodes?.map((node, key) => {
             return (
               <text x={node.x - 20} y={node.y + 20} font-size="25">
-                {node.label}
+                {leftNodesOrder[key]}
               </text>
             );
           })}
@@ -89,7 +99,7 @@ function App() {
           {rightNodes?.map((node, key) => {
             return (
               <text x={node.x + 10} y={node.y + 20} font-size="25">
-                {node.label}
+                {rightNodesOrder[key]}
               </text>
             );
           })}
