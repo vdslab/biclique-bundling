@@ -19,7 +19,7 @@ const useConfluent = (mu) => {
   const [leftNodes, setLeftNodes] = useState([]);
   const [rightNodes, setRightNodes] = useState([]);
   const [midNodes, setMidNodes] = useState([]);
-  const [leftNodesOrder,  setLeftNodesOrder] = useState([]);
+  const [leftNodesOrder, setLeftNodesOrder] = useState([]);
   const [rightNodesOrder, setRightNodesOrder] = useState([]);
   const linkGenerator = d3.linkHorizontal();
   useEffect(() => {
@@ -84,38 +84,44 @@ const useConfluent = (mu) => {
       );
 
       // 左中ノードを重心法でソート
-      const sum_left_mid = new Array();
-      for (let i = 0; i < leftNodeNumber; i++) {
-        let degree = 0;
-        let ouh = 0;
-        for (let j = 0; j < midNodeNumber; j++) {
-          if (!leftBipartite[i][j]) continue;
-          degree++;
-          ouh += leftNodesOrder[j];
-        }
-        sum_left_mid.push(degree / ouh);
-      }
-
-      midNodesOrder.sort((a, b) => {
-        return sum_left_mid[a] - sum_left_mid[b];
-      });
-
-      const sumMidRight = new Array();
+      const sumLeftMid = new Array();
+      console.error(leftBipartite);
       for (let i = 0; i < midNodeNumber; i++) {
         let degree = 0;
         let ouh = 0;
-        for (let j = 0; j < rightNodeNumber; j++) {
-          if (!rightBipartite[i][j]) continue;
+        for (let j = 0; j < leftNodeNumber; j++) {
+          if (!leftBipartite[j][i]) continue;
           degree++;
-          ouh += rightNodesOrder[j];
+          ouh += leftNodesOrder[j];
         }
-        sumMidRight.push(degree / ouh);
+        sumLeftMid.push(ouh / degree);
+      }
+
+      midNodesOrder.sort((a, b) => {
+        return sumLeftMid[a] - sumLeftMid[b];
+      });
+
+      console.error(midNodesOrder, sumLeftMid);
+
+      const sumMidRight = new Array();
+      for (let i = 0; i < rightNodeNumber; i++) {
+        let degree = 0;
+        let ouh = 0;
+        for (let j = 0; j < midNodeNumber; j++) {
+          if (!rightBipartite[j][i]) continue;
+          degree++;
+          ouh += midNodesOrder[j];
+        }
+        sumMidRight.push(ouh / degree);
       }
 
       rightNodesOrder.sort((a, b) => {
         return sumMidRight[a] - sumMidRight[b];
       });
 
+      console.error(leftBipartite);
+      console.error(rightBipartite);
+      console.error(rightNodesOrder, sumMidRight);
       console.error("midNodeOrder", midNodesOrder);
       console.error("rightNodeOrder", rightNodesOrder);
 
@@ -159,10 +165,12 @@ const useConfluent = (mu) => {
 
       const mids = objectOnePropertytoProgression(
         midNodeNumber,
-        step / 2,
+        step,
         midX,
-        rightY * 1.5
+        rightY * 10
       );
+
+      console.error(rights, maximalNodes);
 
       setLeftNodes(lefts);
       setRightNodes(rights);
@@ -171,27 +179,27 @@ const useConfluent = (mu) => {
       const midNodesCopy = new Array();
       const outputPaths = new Array();
       for (let i = 0; i < midNodeNumber; i++) {
+        const midIdx = midNodesOrder.indexOf(i);
+
         for (const l of maximalNodes[i].left) {
+          const leftIdx = leftNodesOrder.indexOf(l);
           outputPaths.push({
-            source: [lefts[leftNodesOrder[l]].x, lefts[leftNodesOrder[l]].y],
-            target: [mids[midNodesOrder[i]].x, mids[midNodesOrder[i]].y],
+            source: [lefts[leftIdx].x, lefts[leftIdx].y],
+            target: [mids[midIdx].x, mids[midIdx].y],
           });
         }
 
         for (const r of maximalNodes[i].right) {
-          console.log("yyyyyyyy");
+          const rightIdx = rightNodesOrder.indexOf(r);
           outputPaths.push({
-            source: [mids[midNodesOrder[i]].x, mids[midNodesOrder[i]].y],
-            target: [
-              rights[rightNodesOrder[r]].x,
-              rights[rightNodesOrder[r]].y,
-            ],
+            source: [mids[midIdx].x, mids[midIdx].y],
+            target: [rights[rightIdx].x, rights[rightIdx].y],
           });
         }
 
         midNodesCopy.push({
-          x: mids[midNodesOrder[i]].x,
-          y: mids[midNodesOrder[i]].y,
+          x: mids[midIdx].x,
+          y: mids[midIdx].y,
         });
       }
 
@@ -204,7 +212,14 @@ const useConfluent = (mu) => {
     })();
   }, []);
 
-  return { paths, leftNodes, rightNodes, midNodes, leftNodesOrder, rightNodesOrder };
+  return {
+    paths,
+    leftNodes,
+    rightNodes,
+    midNodes,
+    leftNodesOrder,
+    rightNodesOrder,
+  };
 };
 
 const getMuQuasiBiclique = (mu, bipartite) => {
@@ -257,7 +272,6 @@ const getMuQuasiBiclique = (mu, bipartite) => {
       }
     }
 
-    console.log("wertyddgffsd", key, S, T);
     if (S.length > 1 && T.length > 1) {
       SMaximalCandNodes.push(S);
       TMaximalCandNodes.push(T);
