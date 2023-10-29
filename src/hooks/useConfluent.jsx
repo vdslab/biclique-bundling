@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import genKey from "../utils/getKey";
 
 import { getMaximalNodes } from "../utils/getNodes";
+import * as d3 from "d3";
+import { objectOnePropertytoProgression, sumCordinates } from "../utils/calc";
 /*
   アルゴリズム
   1. maximal バイクリークを行う
@@ -12,6 +14,14 @@ import { getMaximalNodes } from "../utils/getNodes";
   */
 
 const useConfluent = (mu) => {
+  const [paths, setPaths] = useState([]);
+
+  const [leftNodes, setLeftNodes] = useState([]);
+  const [rightNodes, setRightNodes] = useState([]);
+  const [midNodes, setMidNodes] = useState([]);
+  const [leftNodesOrder,  setLeftNodesOrder] = useState([]);
+  const [rightNodesOrder, setRightNodesOrder] = useState([]);
+  const linkGenerator = d3.linkHorizontal();
   useEffect(() => {
     (async () => {
       const res = await fetch("public/act-mooc/json/mooc_actions_200.json");
@@ -62,8 +72,16 @@ const useConfluent = (mu) => {
         rightBipartite[i] = rightBipartiteElement;
       }
 
-      console.error("leftBipartite", leftBipartite);
-      console.error("rightBipartite", rightBipartite);
+      console.error(
+        "leftBipartite",
+        leftBipartite,
+        getMuQuasiBiclique(mu, leftBipartite)
+      );
+      console.error(
+        "rightBipartite",
+        rightBipartite,
+        getMuQuasiBiclique(mu, rightBipartite)
+      );
 
       // 左中ノードを重心法でソート
       const sum_left_mid = new Array();
@@ -82,6 +100,28 @@ const useConfluent = (mu) => {
         return sum_left_mid[a] - sum_left_mid[b];
       });
 
+      const sumMidRight = new Array();
+      for (let i = 0; i < midNodeNumber; i++) {
+        let degree = 0;
+        let ouh = 0;
+        for (let j = 0; j < rightNodeNumber; j++) {
+          if (!rightBipartite[i][j]) continue;
+          degree++;
+          ouh += rightNodesOrder[j];
+        }
+        sumMidRight.push(degree / ouh);
+      }
+
+      rightNodesOrder.sort((a, b) => {
+        return sumMidRight[a] - sumMidRight[b];
+      });
+
+      console.error("midNodeOrder", midNodesOrder);
+      console.error("rightNodeOrder", rightNodesOrder);
+
+      setLeftNodesOrder(leftNodesOrder);
+      setRightNodesOrder(rightNodesOrder);
+
       /*
       成果物
       leftNodesOrder
@@ -91,8 +131,80 @@ const useConfluent = (mu) => {
       leftBipartite
       rightBipartite
       */
+
+      // 座標決定process
+      const leftX = 100;
+      const leftY = 10;
+
+      const rightX = 1100;
+      const rightY = 10;
+
+      const midX = (leftX + rightX) / 2;
+
+      const step = 40;
+      const lefts = objectOnePropertytoProgression(
+        leftNodeNumber,
+        step,
+        leftX,
+        leftY
+      );
+
+      //右ノードを座標を決める
+      const rights = objectOnePropertytoProgression(
+        rightNodeNumber,
+        step,
+        rightX,
+        rightY
+      );
+
+      const mids = objectOnePropertytoProgression(
+        midNodeNumber,
+        step / 2,
+        midX,
+        rightY * 1.5
+      );
+
+      setLeftNodes(lefts);
+      setRightNodes(rights);
+
+      //中間ノードとバイクリークのエッジ変数
+      const midNodesCopy = new Array();
+      const outputPaths = new Array();
+      for (let i = 0; i < midNodeNumber; i++) {
+        for (const l of maximalNodes[i].left) {
+          outputPaths.push({
+            source: [lefts[leftNodesOrder[l]].x, lefts[leftNodesOrder[l]].y],
+            target: [mids[midNodesOrder[i]].x, mids[midNodesOrder[i]].y],
+          });
+        }
+
+        for (const r of maximalNodes[i].right) {
+          console.log("yyyyyyyy");
+          outputPaths.push({
+            source: [mids[midNodesOrder[i]].x, mids[midNodesOrder[i]].y],
+            target: [
+              rights[rightNodesOrder[r]].x,
+              rights[rightNodesOrder[r]].y,
+            ],
+          });
+        }
+
+        midNodesCopy.push({
+          x: mids[midNodesOrder[i]].x,
+          y: mids[midNodesOrder[i]].y,
+        });
+      }
+
+      setMidNodes(midNodesCopy);
+      setPaths(
+        outputPaths.map((d) => {
+          return linkGenerator(d);
+        })
+      );
     })();
   }, []);
+
+  return { paths, leftNodes, rightNodes, midNodes, leftNodesOrder, rightNodesOrder };
 };
 
 const getMuQuasiBiclique = (mu, bipartite) => {
