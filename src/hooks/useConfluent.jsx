@@ -119,9 +119,26 @@ const useConfluent = (mu) => {
         return sumMidRight[a] - sumMidRight[b];
       });
 
+      const sumMidLeft = new Array();
+      for(let i = 0; i < leftNodeNumber; i++) {
+        let degree = 0;
+        let ouh = 0;
+        for(let j = 0; j < midNodeNumber; j++) {
+            if(!leftBipartite[i][j]) continue;
+            degree ++;
+            ouh += midNodesOrder.indexOf(j);
+        }
+
+        sumMidLeft.push(ouh / degree);
+      }
+
+      leftNodesOrder.sort((a, b) => {
+        return sumMidLeft[a] - sumMidLeft[b];
+      });
       console.error(leftBipartite);
       console.error(rightBipartite);
       console.error(rightNodesOrder, sumMidRight);
+      console.error("leftNodesOrder", leftNodesOrder);
       console.error("midNodeOrder", midNodesOrder);
       console.error("rightNodeOrder", rightNodesOrder);
 
