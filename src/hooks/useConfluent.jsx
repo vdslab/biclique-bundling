@@ -15,12 +15,17 @@ import { objectOnePropertytoProgression, sumCordinates } from "../utils/calc";
   ## 再帰の後にノード順序の最適化を行う方法がある
   */
 
-const buildConfluent = (mu, bipartite) => {
+const layeredNodes = new Array();
+const buildConfluent = (mu, bipartite, idx, step) => {
   const maximalNodes = getMuQuasiBiclique(mu, bipartite);
 
-  if(!maximalNodes.length) {
+  if (!maximalNodes.length) {
     return;
   }
+
+
+  console.error(step, idx, maximalNodes);
+  layeredNodes.push({h: idx , maximalNodes});
 
   const leftNodeNumber = bipartite.length;
   const rightNodeNumber = bipartite[0].length;
@@ -48,8 +53,9 @@ const buildConfluent = (mu, bipartite) => {
 
   // グローバル関数に格納する
 
-  buildConfluent(mu, leftBipartite);
-  buildConfluent(mu, rightBipartite);
+  step = step / 2
+  buildConfluent(mu, leftBipartite, idx -  step, step );
+  buildConfluent(mu, rightBipartite, idx + step, step);
 };
 
 const linkGenerator = d3.linkHorizontal();
@@ -67,7 +73,11 @@ const useConfluent = (mu) => {
       const res = await fetch("public/act-mooc/json/mooc_actions_200.json");
       const bipartite = await res.json();
 
+      buildConfluent(mu, bipartite, 0, 1);
+      console.error(layeredNodes)
+      console.error(layeredNodes.length);
       const maximalNodes = getMuQuasiBiclique(mu, bipartite);
+
 
       const leftNodeNumber = bipartite.length;
       const rightNodeNumber = bipartite[0].length;
@@ -202,8 +212,16 @@ const useConfluent = (mu) => {
       const rightX = 1100;
       const rightY = 10;
 
-      const midX = (leftX + rightX) / 2;
+      layeredNodes.length = layeredNodes.length / 2;
+      const midX = (leftX + rightX)/2;
+      const midXs = new Array(layeredNodes.length);
 
+      layeredNodes.forEach((obj, index) => {
+        midXs[index] = midX +  (rightX - leftX)/ 2 *obj.h;
+      });
+
+      midXs.sort();
+      console.error(midXs, layeredNodes)
       const step = 40;
       const lefts = objectOnePropertytoProgression(
         leftNodeNumber,
