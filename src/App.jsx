@@ -7,7 +7,7 @@ function App() {
   const width = 1300;
   const height = 3000;
 
-  const param = 0.7;
+  const param = 0.75;
   const nodeRadius = 4;
 
   // const leftX = 100;
@@ -36,7 +36,7 @@ function App() {
     midNodes,
     leftNodesOrder,
     rightNodesOrder,
-  } = useConfluent(0.7);
+  } = useConfluent(param);
 
   return (
     <>
@@ -90,7 +90,7 @@ function App() {
 
           {leftNodes?.map((node, key) => {
             return (
-              <text x={node.x - 20} y={node.y + 20} font-size="25">
+              <text x={node.x - 20} y={node.y + 20} fontSize="25">
                 {leftNodesOrder[key]}
               </text>
             );
@@ -98,7 +98,7 @@ function App() {
 
           {rightNodes?.map((node, key) => {
             return (
-              <text x={node.x + 10} y={node.y + 20} font-size="25">
+              <text x={node.x + 10} y={node.y + 20} fontSize="25">
                 {rightNodesOrder[key]}
               </text>
             );
