@@ -23,9 +23,8 @@ const buildConfluent = (mu, bipartite, idx, step) => {
     return;
   }
 
-
   console.error(step, idx, maximalNodes);
-  layeredNodes.push({h: idx , maximalNodes});
+  layeredNodes.push({ h: idx, maximalNodes });
 
   const leftNodeNumber = bipartite.length;
   const rightNodeNumber = bipartite[0].length;
@@ -53,8 +52,8 @@ const buildConfluent = (mu, bipartite, idx, step) => {
 
   // グローバル関数に格納する
 
-  step = step / 2
-  buildConfluent(mu, leftBipartite, idx -  step, step );
+  step = step / 2;
+  buildConfluent(mu, leftBipartite, idx - step, step);
   buildConfluent(mu, rightBipartite, idx + step, step);
 };
 
@@ -74,10 +73,9 @@ const useConfluent = (mu) => {
       const bipartite = await res.json();
 
       buildConfluent(mu, bipartite, 0, 1);
-      console.error(layeredNodes)
+      console.error(layeredNodes);
       console.error(layeredNodes.length);
       const maximalNodes = getMuQuasiBiclique(mu, bipartite);
-
 
       const leftNodeNumber = bipartite.length;
       const rightNodeNumber = bipartite[0].length;
@@ -144,9 +142,9 @@ const useConfluent = (mu) => {
         }
         sumLeftMid.push(ouh / degree);
       }
-      midNodesOrder.sort((a, b) => {
-        return sumLeftMid[a] - sumLeftMid[b];
-      });
+      //   midNodesOrder.sort((a, b) => {
+      //     return sumLeftMid[a] - sumLeftMid[b];
+      //   });
 
       console.error(midNodesOrder, sumLeftMid);
 
@@ -162,9 +160,9 @@ const useConfluent = (mu) => {
         }
         sumMidRight.push(ouh / degree);
       }
-      rightNodesOrder.sort((a, b) => {
-        return sumMidRight[a] - sumMidRight[b];
-      });
+      //   rightNodesOrder.sort((a, b) => {
+      //     return sumMidRight[a] - sumMidRight[b];
+      //   });
 
       //中左ノードを重心法でソート
       const sumMidLeft = new Array();
@@ -178,9 +176,9 @@ const useConfluent = (mu) => {
         }
         sumMidLeft.push(ouh / degree);
       }
-      leftNodesOrder.sort((a, b) => {
-        return sumMidLeft[a] - sumMidLeft[b];
-      });
+      //   leftNodesOrder.sort((a, b) => {
+      //     return sumMidLeft[a] - sumMidLeft[b];
+      //   });
 
       console.error(leftBipartite);
       console.error(rightBipartite);
@@ -213,15 +211,18 @@ const useConfluent = (mu) => {
       const rightY = 10;
 
       layeredNodes.length = layeredNodes.length / 2;
-      const midX = (leftX + rightX)/2;
+      const midX = (leftX + rightX) / 2;
       const midXs = new Array(layeredNodes.length);
 
       layeredNodes.forEach((obj, index) => {
-        midXs[index] = midX +  (rightX - leftX)/ 2 *obj.h;
+        midXs[index] = midX + ((rightX - leftX) / 2) * obj.h;
       });
 
       midXs.sort();
-      console.error(midXs, layeredNodes)
+      layeredNodes.sort((a, b) => {
+        return a.h - b.h;
+      });
+      console.error(midXs, layeredNodes);
       const step = 40;
       const lefts = objectOnePropertytoProgression(
         leftNodeNumber,
@@ -245,39 +246,95 @@ const useConfluent = (mu) => {
         rightY * 10
       );
 
-      console.error(rights, maximalNodes);
+      const midsList = new Array(midXs.length);
+      for (let i = 0; i < midsList.length; i++) {
+        midsList[i] = objectOnePropertytoProgression(
+          layeredNodes[i].maximalNodes.length,
+          step,
+          midXs[i],
+          rightY * 30
+        );
+      }
+
+      console.error("midsList", midsList);
+      console.error(" layeredNodes", layeredNodes);
 
       setLeftNodes(lefts);
       setRightNodes(rights);
-
-      //中間ノードとバイクリークのエッジ変数
       const midNodesCopy = new Array();
       const outputPaths = new Array();
-      for (let i = 0; i < midNodeNumber; i++) {
-        const midIdx = midNodesOrder.indexOf(i);
-
-        for (const l of maximalNodes[i].left) {
-          const leftIdx = leftNodesOrder.indexOf(l);
-          outputPaths.push({
-            source: [lefts[leftIdx].x, lefts[leftIdx].y],
-            target: [mids[midIdx].x, mids[midIdx].y],
+      for (let k = 0; k < midsList.length; k++) {
+        for (let i = 0; i < layeredNodes[k].maximalNodes.length; i++) {
+          midNodesCopy.push({
+            x: midsList[k][i].x,
+            y: midsList[k][i].y,
           });
         }
-
-        for (const r of maximalNodes[i].right) {
-          const rightIdx = rightNodesOrder.indexOf(r);
-          outputPaths.push({
-            source: [mids[midIdx].x, mids[midIdx].y],
-            target: [rights[rightIdx].x, rights[rightIdx].y],
-          });
-        }
-
-        midNodesCopy.push({
-          x: mids[midIdx].x,
-          y: mids[midIdx].y,
-        });
       }
 
+      for (let k = 0; k < midsList.length; k += 2) {
+        for (let i = 0; i < layeredNodes[k].maximalNodes.length; i++) {
+          for (const l of layeredNodes[k].maximalNodes[i].left) {
+            if (k === 0) {
+              outputPaths.push({
+                source: [lefts[l].x, lefts[l].y],
+                target: [midsList[k][i].x, midsList[k][i].y],
+              });
+            } else {
+              outputPaths.push({
+                source: [midsList[k - 1][l].x, midsList[k - 1][l].y],
+                target: [midsList[k][i].x, midsList[k][i].y],
+              });
+            }
+          }
+
+          for (const r of layeredNodes[k].maximalNodes[i].right) {
+            if (k === midsList.length - 1) {
+              outputPaths.push({
+                source: [midsList[k][i].x, midsList[k][i].y],
+                target: [rights[r].x, rights[r].y],
+              });
+            } else {
+              outputPaths.push({
+                source: [midsList[k][i].x, midsList[k][i].y],
+                target: [midsList[k + 1][r].x, midsList[k + 1][r].y],
+              });
+            }
+          }
+        }
+      }
+
+      //console.error(midNodesCopy)
+
+      //中間ノードとバイクリークのエッジ変数
+      // const midNodesCopy = new Array();
+      //   const outputPaths = new Array();
+      //   for (let i = 0; i < midNodeNumber; i++) {
+      //     const midIdx = midNodesOrder.indexOf(i);
+
+      //     for (const l of maximalNodes[i].left) {
+      //       const leftIdx = leftNodesOrder.indexOf(l);
+      //       outputPaths.push({
+      //         source: [lefts[leftIdx].x, lefts[leftIdx].y],
+      //         target: [mids[midIdx].x, mids[midIdx].y],
+      //       });
+      //     }
+
+      //     for (const r of maximalNodes[i].right) {
+      //       const rightIdx = rightNodesOrder.indexOf(r);
+      //       outputPaths.push({
+      //         source: [mids[midIdx].x, mids[midIdx].y],
+      //         target: [rights[rightIdx].x, rights[rightIdx].y],
+      //       });
+      //     }
+
+      //     midNodesCopy.push({
+      //       x: mids[midIdx].x,
+      //       y: mids[midIdx].y,
+      //     });
+      //   }
+
+      console.error(midNodesCopy);
       setMidNodes(midNodesCopy);
       setPaths(
         outputPaths.map((d) => {
