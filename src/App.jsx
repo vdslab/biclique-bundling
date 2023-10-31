@@ -48,6 +48,7 @@ function App() {
           {paths?.map((path, key) => {
             return (
               <path
+                key = {key}
                 d={path}
                 stroke="silver"
                 strokeWidth="0.7"
@@ -60,6 +61,7 @@ function App() {
           {lines?.map((line, key) => {
             return (
               <path
+                key ={key}
                 d={line}
                 stroke="silver"
                 strokeWidth="0.7"
@@ -72,25 +74,25 @@ function App() {
         <g>
           {leftNodes?.map((node, key) => {
             return (
-              <circle cx={node.x} cy={node.y} r={nodeRadius} fill="blue" />
+              <circle key ={key} cx={node.x} cy={node.y} r={nodeRadius} fill="blue" />
             );
           })}
 
           {rightNodes?.map((node, key) => {
             return (
-              <circle cx={node.x} cy={node.y} r={nodeRadius} fill="blue" />
+              <circle key ={key} cx={node.x} cy={node.y} r={nodeRadius} fill="blue" />
             );
           })}
 
           {midNodes?.map((node, key) => {
             return (
-              <circle cx={node.x} cy={node.y} r={0.7 * nodeRadius} fill="red" />
+              <circle key ={key} cx={node.x} cy={node.y} r={0.7 * nodeRadius} fill="red" />
             );
           })}
 
           {leftNodes?.map((node, key) => {
             return (
-              <text x={node.x - 20} y={node.y + 20} fontSize="25">
+              <text key ={key} x={node.x - 20} y={node.y + 20} fontSize="25">
                 {leftNodesOrder[key]}
               </text>
             );
@@ -98,7 +100,7 @@ function App() {
 
           {rightNodes?.map((node, key) => {
             return (
-              <text x={node.x + 10} y={node.y + 20} fontSize="25">
+              <text key ={key} x={node.x + 10} y={node.y + 20} fontSize="25">
                 {rightNodesOrder[key]}
               </text>
             );
