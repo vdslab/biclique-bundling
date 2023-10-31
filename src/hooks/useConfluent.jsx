@@ -15,7 +15,7 @@ import { objectOnePropertytoProgression, sumCordinates } from "../utils/calc";
   ## 再帰の後にノード順序の最適化を行う方法がある
   */
 
-  /*
+/*
   todo:
   サイズ1のバイクリークを含める
   */
@@ -30,18 +30,19 @@ const buildConfluent = (mu, bipartite, idx, step) => {
 
   const leftNodeNumber = bipartite.length;
   const rightNodeNumber = bipartite[0].length;
-  const midNodeNumber = maximalNodes.length;
 
   const oneSizeBicluster = new Array();
-  for(let leftIdx = 0; leftIdx < leftNodeNumber; leftIdx++) {
-    for(let rightIdx = 0; rightIdx < rightNodeNumber; rightIdx++) {
-      if(!bipartite[leftIdx][rightIdx]) continue;
-      if(allIsIn(maximalNodes, leftIdx, rightIdx)) continue;
-        oneSizeBicluster.push({left : [leftIdx], right : [rightIdx]});
+  for (let leftIdx = 0; leftIdx < leftNodeNumber; leftIdx++) {
+    for (let rightIdx = 0; rightIdx < rightNodeNumber; rightIdx++) {
+      if (!bipartite[leftIdx][rightIdx]) continue;
+      if (allIsIn(maximalNodes, leftIdx, rightIdx)) continue;
+      oneSizeBicluster.push({ left: [leftIdx], right: [rightIdx] });
     }
   }
-  maximalNodes.push(...oneSizeBicluster)
+  maximalNodes.push(...oneSizeBicluster);
   layeredNodes.push({ h: idx, maximalNodes });
+
+  const midNodeNumber = maximalNodes.length;
 
   //左右の二部グラフの初期化
   const leftBipartite = new Array(leftNodeNumber);
@@ -63,11 +64,13 @@ const buildConfluent = (mu, bipartite, idx, step) => {
     rightBipartite[i] = rightBipartiteElement;
   }
 
+  console.error("leftBipartile", leftBipartite);
+  console.error("rightBipartile", rightBipartite);
   // グローバル関数に格納する
 
   step = step / 2;
-  // buildConfluent(mu, leftBipartite, idx - step, step);
-  // buildConfluent(mu, rightBipartite, idx + step, step);
+  buildConfluent(mu, leftBipartite, idx - step, step);
+  buildConfluent(mu, rightBipartite, idx + step, step);
 };
 
 const linkGenerator = d3.linkHorizontal();
@@ -132,17 +135,6 @@ const useConfluent = (mu) => {
         }
         rightBipartite[i] = rightBipartiteElement;
       }
-
-      console.error(
-        "leftBipartite",
-        leftBipartite,
-        getMuQuasiBiclique(mu, leftBipartite)
-      );
-      console.error(
-        "rightBipartite",
-        rightBipartite,
-        getMuQuasiBiclique(mu, rightBipartite)
-      );
 
       // 左中ノードを重心法でソート
       const sumLeftMid = new Array();
