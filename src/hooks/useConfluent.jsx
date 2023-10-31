@@ -15,6 +15,11 @@ import { objectOnePropertytoProgression, sumCordinates } from "../utils/calc";
   ## 再帰の後にノード順序の最適化を行う方法がある
   */
 
+  /*
+  todo:
+  サイズ1のバイクリークを含める
+  */
+
 const layeredNodes = new Array();
 const buildConfluent = (mu, bipartite, idx, step) => {
   const maximalNodes = getMuQuasiBiclique(mu, bipartite);
@@ -23,12 +28,20 @@ const buildConfluent = (mu, bipartite, idx, step) => {
     return;
   }
 
-  console.error(step, idx, maximalNodes);
-  layeredNodes.push({ h: idx, maximalNodes });
-
   const leftNodeNumber = bipartite.length;
   const rightNodeNumber = bipartite[0].length;
   const midNodeNumber = maximalNodes.length;
+
+  const oneSizeBicluster = new Array();
+  for(let leftIdx = 0; leftIdx < leftNodeNumber; leftIdx++) {
+    for(let rightIdx = 0; rightIdx < rightNodeNumber; rightIdx++) {
+      if(!bipartite[leftIdx][rightIdx]) continue;
+      if(allIsIn(maximalNodes, leftIdx, rightIdx)) continue;
+        oneSizeBicluster.push({left : [leftIdx], right : [rightIdx]});
+    }
+  }
+  maximalNodes.push(...oneSizeBicluster)
+  layeredNodes.push({ h: idx, maximalNodes });
 
   //左右の二部グラフの初期化
   const leftBipartite = new Array(leftNodeNumber);
@@ -53,8 +66,8 @@ const buildConfluent = (mu, bipartite, idx, step) => {
   // グローバル関数に格納する
 
   step = step / 2;
-  buildConfluent(mu, leftBipartite, idx - step, step);
-  buildConfluent(mu, rightBipartite, idx + step, step);
+  // buildConfluent(mu, leftBipartite, idx - step, step);
+  // buildConfluent(mu, rightBipartite, idx + step, step);
 };
 
 const linkGenerator = d3.linkHorizontal();
@@ -73,8 +86,10 @@ const useConfluent = (mu) => {
       const bipartite = await res.json();
 
       buildConfluent(mu, bipartite, 0, 1);
-      console.error(layeredNodes);
-      console.error(layeredNodes.length);
+      console.error("layeredNodes", layeredNodes);
+      console.error("layeredNodes.length", layeredNodes.length);
+
+      //後からサイズ1のバイクリークを追加する
       const maximalNodes = getMuQuasiBiclique(mu, bipartite);
 
       const leftNodeNumber = bipartite.length;
@@ -207,7 +222,7 @@ const useConfluent = (mu) => {
       const leftX = 100;
       const leftY = 10;
 
-      const rightX = 1100;
+      const rightX = 1000;
       const rightY = 10;
 
       layeredNodes.length = layeredNodes.length / 2;
@@ -243,16 +258,16 @@ const useConfluent = (mu) => {
         midNodeNumber,
         step,
         midX,
-        rightY * 10
+        rightY
       );
 
       const midsList = new Array(midXs.length);
       for (let i = 0; i < midsList.length; i++) {
         midsList[i] = objectOnePropertytoProgression(
           layeredNodes[i].maximalNodes.length,
-          step,
+          step / 2,
           midXs[i],
-          rightY * 30
+          rightY * 15
         );
       }
 
@@ -447,10 +462,10 @@ const inVertices = (u, bipartite) => {
   return inV;
 };
 
-const allIsIn = (maximalNodes, left, right) => {
-  for (const node of maximalNodes) {
-    const leftNodeSet = new Set(node.left);
-    const rightNodeSet = new Set(node.right);
+const allIsIn = (maximalBiclusterNodes, left, right) => {
+  for (const bicluster of maximalBiclusterNodes) {
+    const leftNodeSet = new Set(bicluster.left);
+    const rightNodeSet = new Set(bicluster.right);
 
     if (leftNodeSet.has(left) && rightNodeSet.has(right)) {
       return true;
