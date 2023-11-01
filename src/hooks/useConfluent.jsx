@@ -24,7 +24,11 @@ const layeredNodes = new Array();
 const buildConfluent = (mu, bipartite, idx, step) => {
   const maximalNodes = getMuQuasiBiclique(mu, bipartite);
 
-  if (!maximalNodes.length) {
+  if (maximalNodes.length === 0) {
+    return;
+  }
+
+  if (Math.abs(step) < 0.1) {
     return;
   }
 
@@ -64,13 +68,44 @@ const buildConfluent = (mu, bipartite, idx, step) => {
     rightBipartite[i] = rightBipartiteElement;
   }
 
-  console.error("leftBipartile", leftBipartite);
-  console.error("rightBipartile", rightBipartite);
+  console.error(
+    "leftBipartile",
+    step,
+    getEdgeNum(leftBipartite),
+    leftBipartite
+  );
+  console.error(
+    "rightBipartile",
+    step,
+    getEdgeNum(rightBipartite),
+    rightBipartite
+  );
   // グローバル関数に格納する
 
   step = step / 2;
   buildConfluent(mu, leftBipartite, idx - step, step);
   buildConfluent(mu, rightBipartite, idx + step, step);
+};
+
+const getEdgeNum = (bipartite) => {
+  let count = 0;
+  let non = 0;
+  for (let i = 0; i < bipartite.length; i++) {
+    for (let j = 0; j < bipartite[i].length; j++) {
+      if (bipartite[i][j]) {
+        count++;
+      } else {
+        non++;
+      }
+    }
+  }
+
+  return {
+    edge: count,
+    nonEdge: non,
+    all: count + non,
+    arr: bipartite.length * bipartite[0].length,
+  };
 };
 
 const linkGenerator = d3.linkHorizontal();
@@ -211,26 +246,30 @@ const useConfluent = (mu) => {
       */
 
       // 座標決定process
-      const leftX = 100;
+      const leftX = 50;
       const leftY = 10;
 
-      const rightX = 1000;
+      const rightX = 1250;
       const rightY = 10;
 
-      layeredNodes.length = layeredNodes.length / 2;
+      //layeredNodes.length = layeredNodes.length / 2;
       const midX = (leftX + rightX) / 2;
       const midXs = new Array(layeredNodes.length);
 
       layeredNodes.forEach((obj, index) => {
-        midXs[index] = midX + ((rightX - leftX) / 2) * obj.h;
+        midXs[index] = midX + Math.abs(rightX - leftX)  * (obj.h / 2);
       });
 
-      midXs.sort();
+
+      midXs.sort((a, b) => {
+        return a - b;
+      });
+      console.error(midXs, layeredNodes)
       layeredNodes.sort((a, b) => {
         return a.h - b.h;
       });
       console.error(midXs, layeredNodes);
-      const step = 40;
+      const step = 30;
       const lefts = objectOnePropertytoProgression(
         leftNodeNumber,
         step,
@@ -257,7 +296,7 @@ const useConfluent = (mu) => {
       for (let i = 0; i < midsList.length; i++) {
         midsList[i] = objectOnePropertytoProgression(
           layeredNodes[i].maximalNodes.length,
-          step / 2,
+          step / 4,
           midXs[i],
           rightY * 15
         );
