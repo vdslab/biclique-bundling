@@ -16,15 +16,23 @@ import { objectOnePropertytoProgression, sumCordinates } from "../utils/calc";
   */
 
 /*
+  TODO:
+   - サイズ1のバイクリークを含める o
+   - 中間ノードの位置調整
+   - エッジの並び替え(OLCM, MLCM)
+   - バイクリークを選択するアルゴリズムが正しいか検証(または変えてみる)
+   - 別のデータで試してみる
+
   todo:
-  サイズ1のバイクリークを含める
+  - layeredNodes.maximalNodesとbipartiteを中間ノード同士に対応させるようにする
   */
 
 const layeredNodes = new Array();
 const buildConfluent = (mu, bipartite, idx, step) => {
   const maximalNodes = getMuQuasiBiclique(mu, bipartite);
 
-  if (maximalNodes.length === 0) {
+  //最初のバイクリーク0は見逃す
+  if (maximalNodes.length === 0 && step < 1) {
     return;
   }
 
@@ -44,8 +52,8 @@ const buildConfluent = (mu, bipartite, idx, step) => {
     }
   }
   maximalNodes.push(...oneSizeBicluster);
+  console.error(maximalNodes);
   layeredNodes.push({ h: idx, maximalNodes });
-
   const midNodeNumber = maximalNodes.length;
 
   //左右の二部グラフの初期化
@@ -120,7 +128,7 @@ const useConfluent = (mu) => {
 
   useEffect(() => {
     (async () => {
-      const res = await fetch("public/act-mooc/json/mooc_actions_200.json");
+      const res = await fetch("/public/act-mooc/json/mooc_actions_100.json");
       const bipartite = await res.json();
 
       buildConfluent(mu, bipartite, 0, 1);
@@ -257,14 +265,13 @@ const useConfluent = (mu) => {
       const midXs = new Array(layeredNodes.length);
 
       layeredNodes.forEach((obj, index) => {
-        midXs[index] = midX + Math.abs(rightX - leftX)  * (obj.h / 2);
+        midXs[index] = midX + Math.abs(rightX - leftX) * (obj.h / 2);
       });
-
 
       midXs.sort((a, b) => {
         return a - b;
       });
-      console.error(midXs, layeredNodes)
+      console.error(midXs, layeredNodes);
       layeredNodes.sort((a, b) => {
         return a.h - b.h;
       });
