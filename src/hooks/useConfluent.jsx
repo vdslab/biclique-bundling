@@ -34,7 +34,7 @@ const buildConfluent = (mu, bipartite, idx, step, depth) => {
   const maximalNodes = getMuQuasiBiclique(mu, bipartite);
   depth = idx >= 0 ? Math.abs(depth) : -1 * Math.abs(depth);
 
-  tmpBipartites.push({ h: idx, depth, bipartite });
+  tmpBipartites.push({ h: idx, depth, bipartite, maximalNodes });
   //最初のバイクリーク0は見逃す
   if (maximalNodes.length === 0 && step < 1) {
     return;
@@ -172,6 +172,9 @@ const useConfluent = (mu, url) => {
       console.error(tmpBipartites);
 
       const bipartites = getBipartites(tmpBipartites);
+      bipartites.sort((a , b) => {
+        return a.h - b.h;
+      });
       console.error(bipartites);
 
       const leftNodeNumber = bipartite.length;
@@ -355,37 +358,65 @@ const useConfluent = (mu, url) => {
         }
       }
 
-      for (let k = 0; k < midsList.length; k += 2) {
-        for (let i = 0; i < layeredNodes[k].maximalNodes.length; i++) {
-          for (const l of layeredNodes[k].maximalNodes[i].left) {
-            if (k === 0) {
-              outputPaths.push({
-                source: [lefts[l].x, lefts[l].y],
-                target: [midsList[k][i].x, midsList[k][i].y],
-              });
-            } else {
-              outputPaths.push({
-                source: [midsList[k - 1][l].x, midsList[k - 1][l].y],
-                target: [midsList[k][i].x, midsList[k][i].y],
-              });
-            }
-          }
+      for(let k = 0; k < bipartites.length; k++) {
+        const bipartite = bipartites[k].bipartite;
 
-          for (const r of layeredNodes[k].maximalNodes[i].right) {
-            if (k === midsList.length - 1) {
-              outputPaths.push({
-                source: [midsList[k][i].x, midsList[k][i].y],
-                target: [rights[r].x, rights[r].y],
-              });
+        for(let i = 0; i < bipartite.length; i++) {
+          for(let j = 0; j < bipartite[i].length; j++) {
+            if(!bipartite[i][j]) continue;
+
+            const path = new Object();
+            if(k === 0) {
+              path["source"] = [lefts[i].x, lefts[i].y];
+              path["target"] = [midsList[k][j].x, midsList[k][j].y];
+            } else if(k === bipartites.length -1 ) {
+              path["source"] = [midsList[k-1][i].x, midsList[k-1][i].y];
+              path["target"] = [rights[j].x, rights[j].y]
             } else {
-              outputPaths.push({
-                source: [midsList[k][i].x, midsList[k][i].y],
-                target: [midsList[k + 1][r].x, midsList[k + 1][r].y],
-              });
+              path["source"] = [midsList[k-1][i].x, midsList[k-1][i].y];
+              path["target"] = [midsList[k][j].x, midsList[k][j].y]
+            }
+
+            if(Object.keys(path).length) {
+              outputPaths.push(path);
             }
           }
         }
       }
+
+      console.error(outputPaths)
+
+      // for (let k = 0; k < midsList.length; k += 2) {
+      //   for (let i = 0; i < layeredNodes[k].maximalNodes.length; i++) {
+      //     for (const l of layeredNodes[k].maximalNodes[i].left) {
+      //       if (k === 0) {
+      //         outputPaths.push({
+      //           source: [lefts[l].x, lefts[l].y],
+      //           target: [midsList[k][i].x, midsList[k][i].y],
+      //         });
+      //       } else {
+      //         outputPaths.push({
+      //           source: [midsList[k - 1][l].x, midsList[k - 1][l].y],
+      //           target: [midsList[k][i].x, midsList[k][i].y],
+      //         });
+      //       }
+      //     }
+
+      //     for (const r of layeredNodes[k].maximalNodes[i].right) {
+      //       if (k === midsList.length - 1) {
+      //         outputPaths.push({
+      //           source: [midsList[k][i].x, midsList[k][i].y],
+      //           target: [rights[r].x, rights[r].y],
+      //         });
+      //       } else {
+      //         outputPaths.push({
+      //           source: [midsList[k][i].x, midsList[k][i].y],
+      //           target: [midsList[k + 1][r].x, midsList[k + 1][r].y],
+      //         });
+      //       }
+      //     }
+      //   }
+      // }
 
       //console.error(midNodesCopy)
 
