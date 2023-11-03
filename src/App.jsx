@@ -10,6 +10,8 @@ function App() {
   const param = 0.75;
   const nodeRadius = 4;
 
+  const url = "/public/act-mooc/json/mooc_actions_200.json";
+
   // const leftX = 100;
   // const leftY = 10;
 
@@ -36,7 +38,7 @@ function App() {
     midNodes,
     leftNodesOrder,
     rightNodesOrder,
-  } = useConfluent(param);
+  } = useConfluent(param, url);
 
   return (
     <>
@@ -48,7 +50,7 @@ function App() {
           {paths?.map((path, key) => {
             return (
               <path
-                key = {key}
+                key={key}
                 d={path}
                 stroke="silver"
                 strokeWidth="0.7"
@@ -61,7 +63,7 @@ function App() {
           {lines?.map((line, key) => {
             return (
               <path
-                key ={key}
+                key={key}
                 d={line}
                 stroke="silver"
                 strokeWidth="0.7"
@@ -74,25 +76,43 @@ function App() {
         <g>
           {leftNodes?.map((node, key) => {
             return (
-              <circle key ={key} cx={node.x} cy={node.y} r={nodeRadius} fill="blue" />
+              <circle
+                key={key}
+                cx={node.x}
+                cy={node.y}
+                r={nodeRadius}
+                fill="blue"
+              />
             );
           })}
 
           {rightNodes?.map((node, key) => {
             return (
-              <circle key ={key} cx={node.x} cy={node.y} r={nodeRadius} fill="blue" />
+              <circle
+                key={key}
+                cx={node.x}
+                cy={node.y}
+                r={nodeRadius}
+                fill="blue"
+              />
             );
           })}
 
           {midNodes?.map((node, key) => {
             return (
-              <circle key ={key} cx={node.x} cy={node.y} r={0.7 * nodeRadius} fill="red" />
+              <circle
+                key={key}
+                cx={node.x}
+                cy={node.y}
+                r={0.5 * nodeRadius}
+                fill="red"
+              />
             );
           })}
 
           {leftNodes?.map((node, key) => {
             return (
-              <text key ={key} x={node.x - 20} y={node.y + 20} fontSize="25">
+              <text key={key} x={node.x - 20} y={node.y + 20} fontSize="25">
                 {leftNodesOrder[key]}
               </text>
             );
@@ -100,7 +120,7 @@ function App() {
 
           {rightNodes?.map((node, key) => {
             return (
-              <text key ={key} x={node.x + 10} y={node.y + 20} fontSize="25">
+              <text key={key} x={node.x + 10} y={node.y + 20} fontSize="25">
                 {rightNodesOrder[key]}
               </text>
             );
