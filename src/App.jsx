@@ -1,34 +1,13 @@
 import "./App.css";
-import useMaximalGammaQuasiBicliqueByBruteForce from "./hooks/useMaximalGammaQuasiBicliqueByBruteForce";
-import useMuQuasiBiclique from "./hooks/useMuQuasiBiclique";
-import usePaths from "./hooks/usePaths";
 import useConfluent from "./hooks/useConfluent";
 function App() {
   const width = 1300;
   const height = 3000;
 
-  const param = 0.8;
+  const param = 1.0;
   const nodeRadius = 4;
 
-  const url = "public/random/json/random_20_20_79_2.json";
-
-  // const leftX = 100;
-  // const leftY = 10;
-
-  // const rightX = 1100;
-  // const rightY = 10;
-
-  // const step = 40;
-  // const { bipartiteMatrix, maximalNodes } = useMuQuasiBiclique(gamma);
-  // const { paths, lines, leftNodes, rightNodes, midNodes } = usePaths(
-  //   bipartiteMatrix,
-  //   maximalNodes,
-  //   leftX,
-  //   leftY,
-  //   rightX,
-  //   rightY,
-  //   step
-  // );
+  const url = "public/random/json/random_5_5_70_1.json";
 
   const {
     paths,
@@ -38,6 +17,7 @@ function App() {
     midNodes,
     leftNodesOrder,
     rightNodesOrder,
+    midNodesOrders
   } = useConfluent(param, url);
 
   return (
@@ -112,7 +92,7 @@ function App() {
 
           {leftNodes?.map((node, key) => {
             return (
-              <text key={key} x={node.x - 20} y={node.y + 20} fontSize="25">
+              <text key={key} x={node.x - 12.5} y={node.y + 10} fontSize="25">
                 {leftNodesOrder[key]}
               </text>
             );
@@ -120,9 +100,17 @@ function App() {
 
           {rightNodes?.map((node, key) => {
             return (
-              <text key={key} x={node.x + 10} y={node.y + 20} fontSize="25">
+              <text key={key} x={node.x - 12.5} y={node.y + 10} fontSize="25">
                 {rightNodesOrder[key]}
               </text>
+            );
+          })}
+
+          {midNodes?.map((node, key) => {
+            return (
+            <text key={key} x={node.x} y={node.y + 3.5} fontSize="10">
+              {midNodesOrders[key]}
+            </text>
             );
           })}
         </g>

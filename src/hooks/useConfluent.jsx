@@ -18,9 +18,10 @@ import { objectOnePropertytoProgression } from "../utils/calc";
    - サイズ1のバイクリークを含める o
    - エッジの並び替え(OLCM, MLCM)
    - 中間ノードの位置調整
-   - バイクリークを選択するアルゴリズムが正しいか検証(または変えてみる)
+   - mu-quasi-バイクリークを選択するアルゴリズムが正しいか検証 ほぼo（後はテストのみ）
+   - バイクリークを選択するアルゴリズムを別のに試してみる
    - 別のデータで試してみる (ランダムデータの可視化) o
-
+   - サイズ2以上のバイクリークを強調表示する
   todo:
   - layeredNodes.maximalNodesとbipartiteを中間ノード同士に対応させるようにする o
   */
@@ -33,7 +34,7 @@ const buildConfluent = (mu, bipartite, idx, step, depth) => {
   depth = idx >= 0 ? Math.abs(depth) : -1 * Math.abs(depth);
 
   //最初のバイクリーク0は見逃す
-  if ((maximalNodes.length === 0 && step < 1) || Math.abs(depth) >= 4) {
+  if ((maximalNodes.length === 0 && step < 1) || Math.abs(depth) > 2) {
     console.error(idx, depth, bipartite);
     bipartites.push({ h: idx, depth, bipartite, maximalNodes, step });
     return;
@@ -92,6 +93,7 @@ const useConfluent = (mu, url) => {
   const [midNodes, setMidNodes] = useState([]);
   const [leftNodesOrder, setLeftNodesOrder] = useState([]);
   const [rightNodesOrder, setRightNodesOrder] = useState([]);
+  const [midNodesOrders, setMidNodesOrders] = useState();
 
   useEffect(() => {
     (async () => {
@@ -99,8 +101,13 @@ const useConfluent = (mu, url) => {
       const bipartite = await res.json();
 
       buildConfluent(mu, bipartite, 0, 1, 0);
+      // ここでmaximalNodesを再構築する
       bipartites.sort((a, b) => {
         return a.depth - b.depth;
+      });
+
+      layeredNodes.sort((a, b) => {
+        return a.h - b.h;
       });
 
       console.error("bipartites", bipartites);
@@ -119,44 +126,72 @@ const useConfluent = (mu, url) => {
 
       const leftNodeNumber = bipartite.length;
       const rightNodeNumber = bipartite[0].length;
-      // const midNodeNumber = maximalNodes.length;
+      const midLayerNumber = layeredNodes.length;
 
       // //左右中間ノードの順序を初期化
-      // const leftNodesOrder = new Array();
-      // const rightNodesOrder = new Array();
-      // const midNodesOrder = new Array();
+      const leftNodesOrder = new Array();
+      const rightNodesOrder = new Array();
+      const midNodesOrders = new Array(); // 中間ノードの層と同じサイズ
 
-      // for (let i = 0; i < leftNodeNumber; i++) {
-      //   leftNodesOrder.push(i);
-      // }
+      for (let i = 0; i < leftNodeNumber; i++) {
+        leftNodesOrder.push(i);
+      }
 
-      // for (let i = 0; i < rightNodeNumber; i++) {
-      //   rightNodesOrder.push(i);
-      // }
+      for (let i = 0; i < rightNodeNumber; i++) {
+        rightNodesOrder.push(i);
+      }
 
-      // for (let i = 0; i < maximalNodes.length; i++) {
-      //   midNodesOrder.push(i);
-      // }
+      for (let i = 0; i < midLayerNumber; i++) {
+        const midNodesOrder = new Array();
+        for (let j = 0; j < layeredNodes[i].maximalNodes.length; j++) {
+          midNodesOrder.push(j);
+        }
+        midNodesOrders.push(midNodesOrder);
+      }
 
-      // const leftBipartite = new Array(leftNodeNumber);
-      // const rightBipartite = new Array(midNodeNumber);
-      // console.error(midNodeNumber);
+      console.log("midNodesOrders", midNodesOrders);
 
-      // for (let i = 0; i < leftBipartite.length; i++) {
-      //   const leftBipartiteElement = new Array(midNodeNumber).fill(0);
-      //   for (let j = 0; j < midNodeNumber; j++) {
-      //     if (maximalNodes[j].left.includes(i)) leftBipartiteElement[j] = 1;
-      //   }
-      //   leftBipartite[i] = leftBipartiteElement;
-      // }
+      //左から右
+      for (let k = 0; k < bipartites.length; k++) {
+        const bipartite = bipartites[k].bipartite;
 
-      // for (let i = 0; i < rightBipartite.length; i++) {
-      //   const rightBipartiteElement = new Array(rightNodeNumber).fill(0);
-      //   for (let j = 0; j < rightNodeNumber; j++) {
-      //     if (maximalNodes[i].right.includes(j)) rightBipartiteElement[j] = 1;
-      //   }
-      //   rightBipartite[i] = rightBipartiteElement;
-      // }
+        const leftSideNodesNumber = bipartite.length;
+        const rightSideNodesNumber = bipartite[0].length;
+
+        const sum = new Array();
+        for (let i = 0; i < rightSideNodesNumber; i++) {
+          let degree = 0;
+          let ouh = 0;
+          for (let j = 0; j < leftSideNodesNumber; j++) {
+            if (!bipartite[j][i]) continue;
+            degree++;
+
+            if (k !== 0) {
+              ouh += midNodesOrders[k - 1].indexOf(j);
+            } else {
+              ouh += leftNodesOrder.indexOf(j);
+            }
+          }
+          sum.push(ouh / degree);
+        }
+
+        console.error(sum);
+
+        if (k !== bipartites.length - 1) {
+          midNodesOrders[k].sort((a, b) => {
+            return sum[a] - sum[b];
+          });
+        } else {
+          rightNodesOrder.sort((a, b) => {
+            return sum[a] - sum[b];
+          });
+        }
+      }
+
+      console.log("midNodesOrders", midNodesOrders);
+      console.log("rightNodesOrders", rightNodesOrder);
+
+      // 右から左
 
       // // 左中ノードを重心法でソート
       // const sumLeftMid = new Array();
@@ -216,8 +251,9 @@ const useConfluent = (mu, url) => {
       // console.error("midNodeOrder", midNodesOrder);
       // console.error("rightNodeOrder", rightNodesOrder);
 
-      // setLeftNodesOrder(leftNodesOrder);
-      // setRightNodesOrder(rightNodesOrder);
+      setLeftNodesOrder(leftNodesOrder);
+      setRightNodesOrder(rightNodesOrder);
+
 
       /*
       成果物
@@ -239,7 +275,6 @@ const useConfluent = (mu, url) => {
       const rightX = 850;
       const rightY = 10;
 
-      //layeredNodes.length = layeredNodes.length / 2;
       const midX = (leftX + rightX) / 2;
       const midXs = new Array(layeredNodes.length);
 
@@ -252,11 +287,9 @@ const useConfluent = (mu, url) => {
       });
 
       console.error(midXs, layeredNodes);
-      layeredNodes.sort((a, b) => {
-        return a.h - b.h;
-      });
+
       console.error(midXs, layeredNodes);
-      const step = 30;
+      const step = 60;
       const lefts = objectOnePropertytoProgression(
         leftNodeNumber,
         step,
@@ -308,14 +341,26 @@ const useConfluent = (mu, url) => {
 
             const path = new Object();
             if (k === 0) {
-              path["source"] = [lefts[i].x, lefts[i].y];
-              path["target"] = [midsList[k][j].x, midsList[k][j].y];
+              const leftIdx = rightNodesOrder.indexOf(i);
+              const midjdx = midNodesOrders[k].indexOf(j);
+              path["source"] = [lefts[leftIdx].x, lefts[leftIdx].y];
+              path["target"] = [midsList[k][midjdx].x, midsList[k][midjdx].y];
             } else if (k === bipartites.length - 1) {
-              path["source"] = [midsList[k - 1][i].x, midsList[k - 1][i].y];
-              path["target"] = [rights[j].x, rights[j].y];
+              const rightIdx = rightNodesOrder.indexOf(j);
+              const midIdx = midNodesOrders[k - 1].indexOf(i);
+              path["source"] = [
+                midsList[k - 1][midIdx].x,
+                midsList[k - 1][midIdx].y,
+              ];
+              path["target"] = [rights[rightIdx].x, rights[rightIdx].y];
             } else {
-              path["source"] = [midsList[k - 1][i].x, midsList[k - 1][i].y];
-              path["target"] = [midsList[k][j].x, midsList[k][j].y];
+              const midJdx = midNodesOrders[k].indexOf(j);
+              const midIdx = midNodesOrders[k - 1].indexOf(i);
+              path["source"] = [
+                midsList[k - 1][midIdx].x,
+                midsList[k - 1][midIdx].y,
+              ];
+              path["target"] = [midsList[k][midJdx].x, midsList[k][midJdx].y];
             }
 
             if (Object.keys(path).length) {
@@ -334,6 +379,9 @@ const useConfluent = (mu, url) => {
           return linkGenerator(d);
         })
       );
+      console.error(midNodesOrders);
+      console.error(midNodesOrders.flat());
+      setMidNodesOrders(midNodesOrders.flat());
     })();
   }, [mu, url]);
 
@@ -344,6 +392,7 @@ const useConfluent = (mu, url) => {
     midNodes,
     leftNodesOrder,
     rightNodesOrder,
+    midNodesOrders
   };
 };
 
