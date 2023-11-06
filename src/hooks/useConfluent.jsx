@@ -16,31 +16,31 @@ import { objectOnePropertytoProgression } from "../utils/calc";
 /*
   TODO:
    - サイズ1のバイクリークを含める o
-   - 中間ノードの位置調整
    - エッジの並び替え(OLCM, MLCM)
+   - 中間ノードの位置調整
    - バイクリークを選択するアルゴリズムが正しいか検証(または変えてみる)
-   - 別のデータで試してみる
+   - 別のデータで試してみる (ランダムデータの可視化)
 
   todo:
-  - layeredNodes.maximalNodesとbipartiteを中間ノード同士に対応させるようにする
+  - layeredNodes.maximalNodesとbipartiteを中間ノード同士に対応させるようにする o
   */
 
 const layeredNodes = new Array();
-const tmpBipartites = new Array();
+const bipartites = new Array();
 
 const buildConfluent = (mu, bipartite, idx, step, depth) => {
-  console.error(depth);
-
   const maximalNodes = getMuQuasiBiclique(mu, bipartite);
   depth = idx >= 0 ? Math.abs(depth) : -1 * Math.abs(depth);
 
-  tmpBipartites.push({ h: idx, depth, bipartite, maximalNodes });
   //最初のバイクリーク0は見逃す
   if (maximalNodes.length === 0 && step < 1) {
+    console.error(idx, depth, bipartite);
+    bipartites.push({ h: idx, depth, bipartite, maximalNodes, step });
     return;
   }
 
-  if (Math.abs(step) < 0.1) {
+  if (Math.abs(step) < 0.01) {
+    bipartites.push({ h: idx, depth, bipartite, maximalNodes, step });
     return;
   }
 
@@ -56,7 +56,6 @@ const buildConfluent = (mu, bipartite, idx, step, depth) => {
     }
   }
   maximalNodes.push(...oneSizeBicluster);
-  console.error(maximalNodes);
 
   // グローバル変数に格納
   layeredNodes.push({ h: idx, maximalNodes });
@@ -85,62 +84,23 @@ const buildConfluent = (mu, bipartite, idx, step, depth) => {
 
   //
 
-  console.error(
-    "leftBipartile",
-    step,
-    getEdgeNum(leftBipartite),
-    leftBipartite
-  );
-  console.error(
-    "rightBipartile",
-    step,
-    getEdgeNum(rightBipartite),
-    rightBipartite
-  );
+  // console.error(
+  //   "leftBipartile",
+  //   step,
+  //   getEdgeNum(leftBipartite),
+  //   leftBipartite
+  // );
+  // console.error(
+  //   "rightBipartile",
+  //   step,
+  //   getEdgeNum(rightBipartite),
+  //   rightBipartite
+  // );
   // グローバル関数に格納する
 
   step = step / 2;
   buildConfluent(mu, leftBipartite, idx - step, step, Math.abs(depth) + 1);
   buildConfluent(mu, rightBipartite, idx + step, step, Math.abs(depth) + 1);
-};
-
-const getEdgeNum = (bipartite) => {
-  let count = 0;
-  let non = 0;
-  for (let i = 0; i < bipartite.length; i++) {
-    for (let j = 0; j < bipartite[i].length; j++) {
-      if (bipartite[i][j]) {
-        count++;
-      } else {
-        non++;
-      }
-    }
-  }
-
-  return {
-    edge: count,
-    nonEdge: non,
-    all: count + non,
-    arr: bipartite.length * bipartite[0].length,
-  };
-};
-
-const getBipartites = (tmpBipartites) => {
-  let maxDepth = -1;
-  let minDepth = 100;
-  for (const obj of tmpBipartites) {
-    maxDepth = Math.max(maxDepth, obj.depth);
-    minDepth = Math.min(minDepth, obj.depth);
-  }
-
-  const bipartites = new Array();
-  for (const obj of tmpBipartites) {
-    if (obj.depth === maxDepth || obj.depth === minDepth) {
-      bipartites.push(obj);
-    }
-  }
-
-  return bipartites;
 };
 
 const linkGenerator = d3.linkHorizontal();
@@ -158,21 +118,20 @@ const useConfluent = (mu, url) => {
       const bipartite = await res.json();
 
       buildConfluent(mu, bipartite, 0, 1, 0);
-      tmpBipartites.sort((a, b) => {
+      bipartites.sort((a, b) => {
         return a.depth - b.depth;
       });
 
-      console.error(tmpBipartites);
+      console.error("bipartites", bipartites);
       console.error("layeredNodes", layeredNodes);
       console.error("layeredNodes.length", layeredNodes.length);
 
       //後からサイズ1のバイクリークを追加する
       //const maximalNodes = getMuQuasiBiclique(mu, bipartite);
 
-      console.error(tmpBipartites);
+      console.error(bipartites);
 
-      const bipartites = getBipartites(tmpBipartites);
-      bipartites.sort((a , b) => {
+      bipartites.sort((a, b) => {
         return a.h - b.h;
       });
       console.error(bipartites);
@@ -296,7 +255,7 @@ const useConfluent = (mu, url) => {
       const leftX = 50;
       const leftY = 10;
 
-      const rightX = 600;
+      const rightX = 850;
       const rightY = 10;
 
       //layeredNodes.length = layeredNodes.length / 2;
@@ -344,9 +303,10 @@ const useConfluent = (mu, url) => {
 
       console.error("midsList", midsList);
       console.error(" layeredNodes", layeredNodes);
-
+      console.error("bipartites", bipartites);
       setLeftNodes(lefts);
       setRightNodes(rights);
+
       const midNodesCopy = new Array();
       const outputPaths = new Array();
       for (let k = 0; k < midsList.length; k++) {
@@ -358,33 +318,33 @@ const useConfluent = (mu, url) => {
         }
       }
 
-      for(let k = 0; k < bipartites.length; k++) {
+      for (let k = 0; k < bipartites.length; k++) {
         const bipartite = bipartites[k].bipartite;
 
-        for(let i = 0; i < bipartite.length; i++) {
-          for(let j = 0; j < bipartite[i].length; j++) {
-            if(!bipartite[i][j]) continue;
+        for (let i = 0; i < bipartite.length; i++) {
+          for (let j = 0; j < bipartite[i].length; j++) {
+            if (!bipartite[i][j]) continue;
 
             const path = new Object();
-            if(k === 0) {
+            if (k === 0) {
               path["source"] = [lefts[i].x, lefts[i].y];
               path["target"] = [midsList[k][j].x, midsList[k][j].y];
-            } else if(k === bipartites.length -1 ) {
-              path["source"] = [midsList[k-1][i].x, midsList[k-1][i].y];
-              path["target"] = [rights[j].x, rights[j].y]
+            } else if (k === bipartites.length - 1) {
+              path["source"] = [midsList[k - 1][i].x, midsList[k - 1][i].y];
+              path["target"] = [rights[j].x, rights[j].y];
             } else {
-              path["source"] = [midsList[k-1][i].x, midsList[k-1][i].y];
-              path["target"] = [midsList[k][j].x, midsList[k][j].y]
+              path["source"] = [midsList[k - 1][i].x, midsList[k - 1][i].y];
+              path["target"] = [midsList[k][j].x, midsList[k][j].y];
             }
 
-            if(Object.keys(path).length) {
+            if (Object.keys(path).length) {
               outputPaths.push(path);
             }
           }
         }
       }
 
-      console.error(outputPaths)
+      console.error(outputPaths);
 
       // for (let k = 0; k < midsList.length; k += 2) {
       //   for (let i = 0; i < layeredNodes[k].maximalNodes.length; i++) {

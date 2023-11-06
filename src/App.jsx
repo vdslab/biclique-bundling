@@ -7,10 +7,10 @@ function App() {
   const width = 1300;
   const height = 3000;
 
-  const param = 0.75;
+  const param = 0.8;
   const nodeRadius = 4;
 
-  const url = "/public/act-mooc/json/mooc_actions_200.json";
+  const url = "public/random/json/random_20_20_79_2.json";
 
   // const leftX = 100;
   // const leftY = 10;
