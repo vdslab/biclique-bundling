@@ -14,7 +14,8 @@ for version in range(file_num):
     for i in range(left_num):
         vec = []
         for j in range(right_num):
-            if(100*random.random() < probability):
+            num = 10 * random.random()
+            if(100*random.random() < probability +  (-1 + num % 3 if num % 3 != 0 else 2)*(num % 3)*10):
                 vec.append(1)
             else:
                 vec.append(0)
