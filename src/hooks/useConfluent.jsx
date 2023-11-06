@@ -254,7 +254,6 @@ const useConfluent = (mu, url) => {
       setLeftNodesOrder(leftNodesOrder);
       setRightNodesOrder(rightNodesOrder);
 
-
       /*
       成果物
       (再帰用の引数)
@@ -341,7 +340,7 @@ const useConfluent = (mu, url) => {
 
             const path = new Object();
             if (k === 0) {
-              const leftIdx = rightNodesOrder.indexOf(i);
+              const leftIdx = leftNodesOrder.indexOf(i);
               const midjdx = midNodesOrders[k].indexOf(j);
               path["source"] = [lefts[leftIdx].x, lefts[leftIdx].y];
               path["target"] = [midsList[k][midjdx].x, midsList[k][midjdx].y];
@@ -392,7 +391,7 @@ const useConfluent = (mu, url) => {
     midNodes,
     leftNodesOrder,
     rightNodesOrder,
-    midNodesOrders
+    midNodesOrders,
   };
 };
 
