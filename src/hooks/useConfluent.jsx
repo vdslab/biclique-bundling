@@ -19,7 +19,7 @@ import { objectOnePropertytoProgression } from "../utils/calc";
    - エッジの並び替え(OLCM, MLCM)
    - 中間ノードの位置調整
    - バイクリークを選択するアルゴリズムが正しいか検証(または変えてみる)
-   - 別のデータで試してみる (ランダムデータの可視化)
+   - 別のデータで試してみる (ランダムデータの可視化) o
 
   todo:
   - layeredNodes.maximalNodesとbipartiteを中間ノード同士に対応させるようにする o
@@ -33,13 +33,8 @@ const buildConfluent = (mu, bipartite, idx, step, depth) => {
   depth = idx >= 0 ? Math.abs(depth) : -1 * Math.abs(depth);
 
   //最初のバイクリーク0は見逃す
-  if (maximalNodes.length === 0 && step < 1) {
+  if ((maximalNodes.length === 0 && step < 1) || Math.abs(depth) >= 4) {
     console.error(idx, depth, bipartite);
-    bipartites.push({ h: idx, depth, bipartite, maximalNodes, step });
-    return;
-  }
-
-  if (Math.abs(step) < 0.01) {
     bipartites.push({ h: idx, depth, bipartite, maximalNodes, step });
     return;
   }
@@ -82,20 +77,6 @@ const buildConfluent = (mu, bipartite, idx, step, depth) => {
     rightBipartite[i] = rightBipartiteElement;
   }
 
-  //
-
-  // console.error(
-  //   "leftBipartile",
-  //   step,
-  //   getEdgeNum(leftBipartite),
-  //   leftBipartite
-  // );
-  // console.error(
-  //   "rightBipartile",
-  //   step,
-  //   getEdgeNum(rightBipartite),
-  //   rightBipartite
-  // );
   // グローバル関数に格納する
 
   step = step / 2;
@@ -345,70 +326,8 @@ const useConfluent = (mu, url) => {
       }
 
       console.error(outputPaths);
-
-      // for (let k = 0; k < midsList.length; k += 2) {
-      //   for (let i = 0; i < layeredNodes[k].maximalNodes.length; i++) {
-      //     for (const l of layeredNodes[k].maximalNodes[i].left) {
-      //       if (k === 0) {
-      //         outputPaths.push({
-      //           source: [lefts[l].x, lefts[l].y],
-      //           target: [midsList[k][i].x, midsList[k][i].y],
-      //         });
-      //       } else {
-      //         outputPaths.push({
-      //           source: [midsList[k - 1][l].x, midsList[k - 1][l].y],
-      //           target: [midsList[k][i].x, midsList[k][i].y],
-      //         });
-      //       }
-      //     }
-
-      //     for (const r of layeredNodes[k].maximalNodes[i].right) {
-      //       if (k === midsList.length - 1) {
-      //         outputPaths.push({
-      //           source: [midsList[k][i].x, midsList[k][i].y],
-      //           target: [rights[r].x, rights[r].y],
-      //         });
-      //       } else {
-      //         outputPaths.push({
-      //           source: [midsList[k][i].x, midsList[k][i].y],
-      //           target: [midsList[k + 1][r].x, midsList[k + 1][r].y],
-      //         });
-      //       }
-      //     }
-      //   }
-      // }
-
-      //console.error(midNodesCopy)
-
-      //中間ノードとバイクリークのエッジ変数
-      // const midNodesCopy = new Array();
-      //   const outputPaths = new Array();
-      //   for (let i = 0; i < midNodeNumber; i++) {
-      //     const midIdx = midNodesOrder.indexOf(i);
-
-      //     for (const l of maximalNodes[i].left) {
-      //       const leftIdx = leftNodesOrder.indexOf(l);
-      //       outputPaths.push({
-      //         source: [lefts[leftIdx].x, lefts[leftIdx].y],
-      //         target: [mids[midIdx].x, mids[midIdx].y],
-      //       });
-      //     }
-
-      //     for (const r of maximalNodes[i].right) {
-      //       const rightIdx = rightNodesOrder.indexOf(r);
-      //       outputPaths.push({
-      //         source: [mids[midIdx].x, mids[midIdx].y],
-      //         target: [rights[rightIdx].x, rights[rightIdx].y],
-      //       });
-      //     }
-
-      //     midNodesCopy.push({
-      //       x: mids[midIdx].x,
-      //       y: mids[midIdx].y,
-      //     });
-      //   }
-
       console.error(midNodesCopy);
+
       setMidNodes(midNodesCopy);
       setPaths(
         outputPaths.map((d) => {
