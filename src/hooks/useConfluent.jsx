@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import getMuQuasiBiclique from "../utils/getMuQuasiBiclique";
 import * as d3 from "d3";
 import { objectOnePropertytoProgression } from "../utils/calc";
+import getBipartiteCross from "../utils/getBipartiteCross";
 /*
   アルゴリズム
   1. maximal バイクリークを行う
@@ -160,6 +161,34 @@ const useConfluent = (mu, url) => {
 
       console.log("midNodesOrders", midNodesOrders);
 
+      //
+      let count = 0;
+      for (let i = 0; i < bipartites.length; i++) {
+        const bipartite = bipartites[i].bipartite;
+        console.error(bipartite);
+        if (i === 0) {
+          count += getBipartiteCross(
+            bipartite,
+            leftNodesOrder,
+            midNodesOrders[i]
+          );
+        } else if (i === bipartites.length - 1) {
+          count += getBipartiteCross(
+            bipartite,
+            midNodesOrders[i - 1],
+            rightNodesOrder
+          );
+        } else {
+          count += getBipartiteCross(
+            bipartite,
+            midNodesOrders[i - 1],
+            midNodesOrders[i]
+          );
+        }
+      }
+
+      console.log("ERRRRRRRRRRRRRRRRRRRRRRRRRRRRR", count);
+
       //左から右
       for (let k = 0; k < bipartites.length; k++) {
         const bipartite = bipartites[k].bipartite;
@@ -197,6 +226,33 @@ const useConfluent = (mu, url) => {
         }
       }
 
+      count = 0;
+      for (let i = 0; i < bipartites.length; i++) {
+        const bipartite = bipartites[i].bipartite;
+        console.error(bipartite);
+        if (i === 0) {
+          count += getBipartiteCross(
+            bipartite,
+            leftNodesOrder,
+            midNodesOrders[i]
+          );
+        } else if (i === bipartites.length - 1) {
+          count += getBipartiteCross(
+            bipartite,
+            midNodesOrders[i - 1],
+            rightNodesOrder
+          );
+        } else {
+          count += getBipartiteCross(
+            bipartite,
+            midNodesOrders[i - 1],
+            midNodesOrders[i]
+          );
+        }
+      }
+
+      console.log("ERRRRRRRRRRRRRRRRRRRRRRRRRRRRR", count);
+      console.log("leftNodesOrders", leftNodesOrder);
       console.log("midNodesOrders", midNodesOrders);
       console.log("rightNodesOrders", rightNodesOrder);
 
