@@ -7,7 +7,7 @@ function App() {
   const param = 1.0;
   const nodeRadius = 4;
 
-  const url = "public/random/json/random_5_5_70_1.json";
+  const url = "public/random/json/random_7_7_75_2.json";
 
   const {
     paths,
@@ -17,7 +17,7 @@ function App() {
     midNodes,
     leftNodesOrder,
     rightNodesOrder,
-    midNodesOrders
+    midNodesOrders,
   } = useConfluent(param, url);
 
   return (
@@ -108,9 +108,9 @@ function App() {
 
           {midNodes?.map((node, key) => {
             return (
-            <text key={key} x={node.x} y={node.y + 3.5} fontSize="10">
-              {midNodesOrders[key]}
-            </text>
+              <text key={key} x={node.x} y={node.y + 3.5} fontSize="10">
+                {midNodesOrders[key]}
+              </text>
             );
           })}
         </g>
