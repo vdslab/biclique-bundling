@@ -30,8 +30,13 @@ const layeredNodes = new Array();
 const bipartites = new Array();
 
 const buildConfluent = (mu, bipartite, idx, step, depth) => {
-  const maximalNodes = getMuQuasiBiclique(mu, bipartite);
   depth = idx >= 0 ? Math.abs(depth) : -1 * Math.abs(depth);
+  let maximalNodes;
+  if (depth <= 0) {
+    maximalNodes = getMuQuasiBiclique(mu, bipartite, true);
+  } else {
+    maximalNodes = getMuQuasiBiclique(mu, bipartite, false);
+  }
 
   //最初のバイクリーク0は見逃す
   if ((maximalNodes.length === 0 && step < 1) || Math.abs(depth) > 2) {
@@ -78,11 +83,15 @@ const buildConfluent = (mu, bipartite, idx, step, depth) => {
     rightBipartite[i] = rightBipartiteElement;
   }
 
+  console.error("leftBipartite", leftBipartite);
+  console.error("rightBipartite", rightBipartite);
+  console.error("maximal node", maximalNodes);
   // グローバル関数に格納する
 
   step = step / 2;
-  buildConfluent(mu, leftBipartite, idx - step, step, Math.abs(depth) + 1);
+
   buildConfluent(mu, rightBipartite, idx + step, step, Math.abs(depth) + 1);
+  buildConfluent(mu, leftBipartite, idx - step, step, Math.abs(depth) + 1);
 };
 
 const linkGenerator = d3.linkHorizontal();
@@ -192,6 +201,41 @@ const useConfluent = (mu, url) => {
       console.log("rightNodesOrders", rightNodesOrder);
 
       // 右から左
+      // for (let k = 0; k < bipartites.length; k++) {
+      //   const bipartite = bipartites[k].bipartite;
+
+      //   const leftSideNodesNumber = bipartite.length;
+      //   const rightSideNodesNumber = bipartite[0].length;
+
+      //   const sum = new Array();
+      //   for (let i = 0; i < rightSideNodesNumber; i++) {
+      //     let degree = 0;
+      //     let ouh = 0;
+      //     for (let j = 0; j < leftSideNodesNumber; j++) {
+      //       if (!bipartite[j][i]) continue;
+      //       degree++;
+
+      //       if (k !== 0) {
+      //         ouh += midNodesOrders[k - 1].indexOf(j);
+      //       } else {
+      //         ouh += leftNodesOrder.indexOf(j);
+      //       }
+      //     }
+      //     sum.push(ouh / degree);
+      //   }
+
+      //   console.error(sum);
+
+      //   if (k !== bipartites.length - 1) {
+      //     midNodesOrders[k].sort((a, b) => {
+      //       return sum[a] - sum[b];
+      //     });
+      //   } else {
+      //     rightNodesOrder.sort((a, b) => {
+      //       return sum[a] - sum[b];
+      //     });
+      //   }
+      // }
 
       // // 左中ノードを重心法でソート
       // const sumLeftMid = new Array();
@@ -271,7 +315,7 @@ const useConfluent = (mu, url) => {
       const leftX = 50;
       const leftY = 10;
 
-      const rightX = 850;
+      const rightX = 950;
       const rightY = 10;
 
       const midX = (leftX + rightX) / 2;

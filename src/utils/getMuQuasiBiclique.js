@@ -1,16 +1,19 @@
 import genKey from "./getKey";
 import { getMaximalNodes } from "./getNodes";
 
-const getMuQuasiBiclique = (mu, bipartite) => {
+const getMuQuasiBiclique = (mu, bipartite, isLeft) => {
   //pre-preprocess
   const Cand = {};
 
-  const Upper = Array.from({ length: bipartite.length }, (_, i) => i);
+  const Upper = isLeft
+    ? Array.from({ length: bipartite.length }, (_, i) => i)
+    : Array.from({ length: bipartite[0].length }, (_, i) => i);
   for (const u of Upper) {
-    const T = outVertices(u, bipartite);
+    const T = !isLeft ? inVertices(u, bipartite) : outVertices(u, bipartite);
+    console.error(T);
     const M = {};
 
-    console.log(u, T, M);
+    //console.log(u, T, M);
     //Tからハッシュ値を生み出す
     const key = genKey(T);
     //console.log(key);
@@ -22,21 +25,25 @@ const getMuQuasiBiclique = (mu, bipartite) => {
     const T = Cand[key].T;
     const M = Cand[key].M;
 
-    console.log(T, M);
-    console.log(key);
+    console.error(T, M);
+    console.error(key);
     for (const v of T) {
-      const inVer = inVertices(v, bipartite);
+      const inVer = !isLeft
+        ? outVertices(v, bipartite)
+        : inVertices(v, bipartite);
+      console.error(v, inVer);
       for (const u of inVer) {
         if (u in M) {
           M[u] = M[u] + 1;
         } else {
           M[u] = 1;
         }
+        console.error(u, M);
       }
     }
   }
 
-  console.error(Cand)
+  console.error(Cand);
 
   //main process
   const SMaximalCandNodes = [];
@@ -45,22 +52,26 @@ const getMuQuasiBiclique = (mu, bipartite) => {
     const T = Cand[key].T;
     const M = Cand[key].M;
 
+    //console.error(key ,T, M, Cand)
+
     const S = [];
 
     for (const u of Object.keys(M)) {
+      //console.error(u)
       if (M[u] >= mu * T.length) {
         S.push(Number(u));
       }
     }
 
-    if (S.length > 1 && T.length > 1 && (S.length + T.length > 2)) {
+    console.error(S, T);
+    if (S.length > 1 && T.length > 1) {
       SMaximalCandNodes.push(S);
       TMaximalCandNodes.push(T);
     }
   }
 
   //fillterNonMaximal*/
-  console.error(SMaximalCandNodes, TMaximalCandNodes)
+  console.error(SMaximalCandNodes, TMaximalCandNodes);
   const [SMaximalNodes, TMaximalNodes] = getMaximalNodes(
     SMaximalCandNodes,
     TMaximalCandNodes
@@ -68,13 +79,20 @@ const getMuQuasiBiclique = (mu, bipartite) => {
 
   const maximalObjs = new Array();
   for (let i = 0; i < SMaximalNodes.length; i++) {
-    maximalObjs.push({
-      left: SMaximalNodes[i],
-      right: TMaximalNodes[i],
-    });
+    if (isLeft) {
+      maximalObjs.push({
+        left: SMaximalNodes[i],
+        right: TMaximalNodes[i],
+      });
+    } else {
+      maximalObjs.push({
+        right: SMaximalNodes[i],
+        left: TMaximalNodes[i],
+      });
+    }
   }
 
-  console.error(maximalObjs)
+  console.error(maximalObjs);
   return maximalObjs;
 };
 
