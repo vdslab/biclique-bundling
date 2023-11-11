@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import getMuQuasiBiclique from "../utils/getMuQuasiBiclique";
 import * as d3 from "d3";
 import { objectOnePropertytoProgression } from "../utils/calc";
-import getBipartiteCross from "../utils/getBipartiteCross";
+import { getConfluentCross } from "../utils/getBipartiteCross";
 /*
   アルゴリズム
   1. maximal バイクリークを行う
@@ -104,6 +104,7 @@ const useConfluent = (mu, url) => {
   const [leftNodesOrder, setLeftNodesOrder] = useState([]);
   const [rightNodesOrder, setRightNodesOrder] = useState([]);
   const [midNodesOrders, setMidNodesOrders] = useState();
+  const [crossCount, setCrossCount] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -160,196 +161,109 @@ const useConfluent = (mu, url) => {
       }
 
       console.log("midNodesOrders", midNodesOrders);
-
-      //
-      let count = 0;
-      for (let i = 0; i < bipartites.length; i++) {
-        const bipartite = bipartites[i].bipartite;
-        console.error(bipartite);
-        if (i === 0) {
-          count += getBipartiteCross(
-            bipartite,
-            leftNodesOrder,
-            midNodesOrders[i]
-          );
-        } else if (i === bipartites.length - 1) {
-          count += getBipartiteCross(
-            bipartite,
-            midNodesOrders[i - 1],
-            rightNodesOrder
-          );
-        } else {
-          count += getBipartiteCross(
-            bipartite,
-            midNodesOrders[i - 1],
-            midNodesOrders[i]
-          );
-        }
-      }
-
-      console.log("ERRRRRRRRRRRRRRRRRRRRRRRRRRRRR", count);
+      let count = 1e12;
 
       //左から右
-      for (let k = 0; k < bipartites.length; k++) {
-        const bipartite = bipartites[k].bipartite;
+      let fromLeft = true;
+      while (true) {
+        if (fromLeft) {
+          for (let k = 0; k < bipartites.length; k++) {
+            const bipartite = bipartites[k].bipartite;
 
-        const leftSideNodesNumber = bipartite.length;
-        const rightSideNodesNumber = bipartite[0].length;
+            const leftSideNodesNumber = bipartite.length;
+            const rightSideNodesNumber = bipartite[0].length;
 
-        const sum = new Array();
-        for (let i = 0; i < rightSideNodesNumber; i++) {
-          let degree = 0;
-          let ouh = 0;
-          for (let j = 0; j < leftSideNodesNumber; j++) {
-            if (!bipartite[j][i]) continue;
-            degree++;
+            const sum = new Array();
+            for (let i = 0; i < rightSideNodesNumber; i++) {
+              let degree = 0;
+              let ouh = 0;
+              for (let j = 0; j < leftSideNodesNumber; j++) {
+                if (!bipartite[j][i]) continue;
+                degree++;
 
-            if (k !== 0) {
-              ouh += midNodesOrders[k - 1].indexOf(j);
+                if (k !== 0) {
+                  ouh += midNodesOrders[k - 1].indexOf(j);
+                } else {
+                  ouh += leftNodesOrder.indexOf(j);
+                }
+              }
+              sum.push(ouh / degree);
+            }
+
+            if (k !== bipartites.length - 1) {
+              midNodesOrders[k].sort((a, b) => {
+                return sum[a] - sum[b];
+              });
             } else {
-              ouh += leftNodesOrder.indexOf(j);
+              rightNodesOrder.sort((a, b) => {
+                return sum[a] - sum[b];
+              });
             }
           }
-          sum.push(ouh / degree);
-        }
-
-        console.error(sum);
-
-        if (k !== bipartites.length - 1) {
-          midNodesOrders[k].sort((a, b) => {
-            return sum[a] - sum[b];
-          });
         } else {
-          rightNodesOrder.sort((a, b) => {
-            return sum[a] - sum[b];
-          });
+          for (let k = bipartites.length-1; k >= 0; k--) {
+            const bipartite = bipartites[k].bipartite;
+
+            const leftSideNodesNumber = bipartite.length;
+            const rightSideNodesNumber = bipartite[0].length;
+
+            const sum = new Array();
+            for (let i = 0; i < leftSideNodesNumber; i++) {
+              let degree = 0;
+              let ouh = 0;
+              for (let j = 0; j < rightSideNodesNumber; j++) {
+                if (!bipartite[i][j]) continue;
+                degree++;
+
+                if (k !== bipartites.length-1) {
+                  ouh += midNodesOrders[k].indexOf(j);
+                } else {
+                  ouh += rightNodesOrder.indexOf(j);
+                }
+              }
+              sum.push(ouh / degree);
+            }
+
+            console.error
+            if (k !== 0) {
+              midNodesOrders[k - 1].sort((a, b) => {
+                return sum[a] - sum[b];
+              });
+            } else {
+              leftNodesOrder.sort((a, b) => {
+                return sum[a] - sum[b];
+              });
+            }
+          }
         }
+
+        fromLeft = !fromLeft;
+        const newCount = getConfluentCross(
+          bipartites,
+          leftNodesOrder,
+          rightNodesOrder,
+          midNodesOrders
+        );
+        if (count <= newCount) {
+          setCrossCount(count);
+          break;
+        }
+
+        count = newCount;
+        console.log(count)
       }
 
-      count = 0;
-      for (let i = 0; i < bipartites.length; i++) {
-        const bipartite = bipartites[i].bipartite;
-        console.error(bipartite);
-        if (i === 0) {
-          count += getBipartiteCross(
-            bipartite,
-            leftNodesOrder,
-            midNodesOrders[i]
-          );
-        } else if (i === bipartites.length - 1) {
-          count += getBipartiteCross(
-            bipartite,
-            midNodesOrders[i - 1],
-            rightNodesOrder
-          );
-        } else {
-          count += getBipartiteCross(
-            bipartite,
-            midNodesOrders[i - 1],
-            midNodesOrders[i]
-          );
-        }
-      }
+      count = getConfluentCross(
+        bipartites,
+        leftNodesOrder,
+        rightNodesOrder,
+        midNodesOrders
+      );
 
-      console.log("ERRRRRRRRRRRRRRRRRRRRRRRRRRRRR", count);
       console.log("leftNodesOrders", leftNodesOrder);
       console.log("midNodesOrders", midNodesOrders);
       console.log("rightNodesOrders", rightNodesOrder);
 
-      // 右から左
-      // for (let k = 0; k < bipartites.length; k++) {
-      //   const bipartite = bipartites[k].bipartite;
-
-      //   const leftSideNodesNumber = bipartite.length;
-      //   const rightSideNodesNumber = bipartite[0].length;
-
-      //   const sum = new Array();
-      //   for (let i = 0; i < rightSideNodesNumber; i++) {
-      //     let degree = 0;
-      //     let ouh = 0;
-      //     for (let j = 0; j < leftSideNodesNumber; j++) {
-      //       if (!bipartite[j][i]) continue;
-      //       degree++;
-
-      //       if (k !== 0) {
-      //         ouh += midNodesOrders[k - 1].indexOf(j);
-      //       } else {
-      //         ouh += leftNodesOrder.indexOf(j);
-      //       }
-      //     }
-      //     sum.push(ouh / degree);
-      //   }
-
-      //   console.error(sum);
-
-      //   if (k !== bipartites.length - 1) {
-      //     midNodesOrders[k].sort((a, b) => {
-      //       return sum[a] - sum[b];
-      //     });
-      //   } else {
-      //     rightNodesOrder.sort((a, b) => {
-      //       return sum[a] - sum[b];
-      //     });
-      //   }
-      // }
-
-      // // 左中ノードを重心法でソート
-      // const sumLeftMid = new Array();
-      // console.error(leftBipartite);
-      // for (let i = 0; i < midNodeNumber; i++) {
-      //   let degree = 0;
-      //   let ouh = 0;
-      //   for (let j = 0; j < leftNodeNumber; j++) {
-      //     if (!leftBipartite[j][i]) continue;
-      //     degree++;
-      //     ouh += leftNodesOrder.indexOf(j);
-      //   }
-      //   sumLeftMid.push(ouh / degree);
-      // }
-      // //   midNodesOrder.sort((a, b) => {
-      // //     return sumLeftMid[a] - sumLeftMid[b];
-      // //   });
-
-      // console.error(midNodesOrder, sumLeftMid);
-
-      // //中右ノードを重心法でソート
-      // const sumMidRight = new Array();
-      // for (let i = 0; i < rightNodeNumber; i++) {
-      //   let degree = 0;
-      //   let ouh = 0;
-      //   for (let j = 0; j < midNodeNumber; j++) {
-      //     if (!rightBipartite[j][i]) continue;
-      //     degree++;
-      //     ouh += midNodesOrder.indexOf(j);
-      //   }
-      //   sumMidRight.push(ouh / degree);
-      // }
-      // //   rightNodesOrder.sort((a, b) => {
-      // //     return sumMidRight[a] - sumMidRight[b];
-      // //   });
-
-      // //中左ノードを重心法でソート
-      // const sumMidLeft = new Array();
-      // for (let i = 0; i < leftNodeNumber; i++) {
-      //   let degree = 0;
-      //   let ouh = 0;
-      //   for (let j = 0; j < midNodeNumber; j++) {
-      //     if (!leftBipartite[i][j]) continue;
-      //     degree++;
-      //     ouh += midNodesOrder.indexOf(j);
-      //   }
-      //   sumMidLeft.push(ouh / degree);
-      // }
-      // //   leftNodesOrder.sort((a, b) => {
-      // //     return sumMidLeft[a] - sumMidLeft[b];
-      // //   });
-
-      // console.error(leftBipartite);
-      // console.error(rightBipartite);
-      // console.error(rightNodesOrder, sumMidRight);
-      // console.error("leftNodesOrder", leftNodesOrder);
-      // console.error("midNodeOrder", midNodesOrder);
-      // console.error("rightNodeOrder", rightNodesOrder);
 
       setLeftNodesOrder(leftNodesOrder);
       setRightNodesOrder(rightNodesOrder);
@@ -371,7 +285,7 @@ const useConfluent = (mu, url) => {
       const leftX = 50;
       const leftY = 10;
 
-      const rightX = 950;
+      const rightX = 1250;
       const rightY = 10;
 
       const midX = (leftX + rightX) / 2;
@@ -492,6 +406,7 @@ const useConfluent = (mu, url) => {
     leftNodesOrder,
     rightNodesOrder,
     midNodesOrders,
+    crossCount,
   };
 };
 
