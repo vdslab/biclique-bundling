@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import getMuQuasiBiclique from "../utils/getMuQuasiBiclique";
 import * as d3 from "d3";
+import * as cola from "webcola";
 import { objectOnePropertytoProgression } from "../utils/calc";
 import { getConfluentCross } from "../utils/getBipartiteCross";
 /*
@@ -190,18 +191,18 @@ const useConfluent = (mu, url) => {
               sum.push(ouh / degree);
             }
 
-            if (k !== bipartites.length - 1) {
-              midNodesOrders[k].sort((a, b) => {
-                return sum[a] - sum[b];
-              });
-            } else {
-              rightNodesOrder.sort((a, b) => {
-                return sum[a] - sum[b];
-              });
-            }
+            // if (k !== bipartites.length - 1) {
+            //   midNodesOrders[k].sort((a, b) => {
+            //     return sum[a] - sum[b];
+            //   });
+            // } else {
+            //   rightNodesOrder.sort((a, b) => {
+            //     return sum[a] - sum[b];
+            //   });
+            // }
           }
         } else {
-          for (let k = bipartites.length-1; k >= 0; k--) {
+          for (let k = bipartites.length - 1; k >= 0; k--) {
             const bipartite = bipartites[k].bipartite;
 
             const leftSideNodesNumber = bipartite.length;
@@ -215,7 +216,7 @@ const useConfluent = (mu, url) => {
                 if (!bipartite[i][j]) continue;
                 degree++;
 
-                if (k !== bipartites.length-1) {
+                if (k !== bipartites.length - 1) {
                   ouh += midNodesOrders[k].indexOf(j);
                 } else {
                   ouh += rightNodesOrder.indexOf(j);
@@ -224,16 +225,15 @@ const useConfluent = (mu, url) => {
               sum.push(ouh / degree);
             }
 
-            console.error
-            if (k !== 0) {
-              midNodesOrders[k - 1].sort((a, b) => {
-                return sum[a] - sum[b];
-              });
-            } else {
-              leftNodesOrder.sort((a, b) => {
-                return sum[a] - sum[b];
-              });
-            }
+            // if (k !== 0) {
+            //   midNodesOrders[k - 1].sort((a, b) => {
+            //     return sum[a] - sum[b];
+            //   });
+            // } else {
+            //   leftNodesOrder.sort((a, b) => {
+            //     return sum[a] - sum[b];
+            //   });
+            // }
           }
         }
 
@@ -250,20 +250,12 @@ const useConfluent = (mu, url) => {
         }
 
         count = newCount;
-        console.log(count)
+        console.log(count);
       }
-
-      count = getConfluentCross(
-        bipartites,
-        leftNodesOrder,
-        rightNodesOrder,
-        midNodesOrders
-      );
 
       console.log("leftNodesOrders", leftNodesOrder);
       console.log("midNodesOrders", midNodesOrders);
       console.log("rightNodesOrders", rightNodesOrder);
-
 
       setLeftNodesOrder(leftNodesOrder);
       setRightNodesOrder(rightNodesOrder);
@@ -290,6 +282,78 @@ const useConfluent = (mu, url) => {
 
       const midX = (leftX + rightX) / 2;
       const midXs = new Array(layeredNodes.length);
+
+      const d3cola = cola.d3adaptor(d3).linkDistance(1).size([rightX, 1250]);
+
+      //グラフのデータと制約を作る
+
+      const graphEdges = new Array();
+      const graphNodesSet = new Set();
+      let pad = 0;
+      for (let k = 0; k < bipartites.length; k++) {
+        const bipartite = bipartites[k].bipartite;
+        for (let i = 0; i < bipartite.length; i++) {
+          for (let j = 0; j < bipartite[i].length; j++) {
+            if (!bipartite[i][j]) continue;
+            graphEdges.push({
+              source: i + pad,
+              target: j + pad + bipartite.length,
+            });
+            graphNodesSet.add(i + pad);
+            graphNodesSet.add(j + pad + bipartite.length);
+          }
+        }
+        pad += bipartite.length;
+      }
+      const graphNodes = Array.from(graphNodesSet)
+        .sort((a, b) => a - b)
+        .map((item) => {
+          return { name: item };
+        });
+
+      const graphConstraints = new Array();
+      let idx = 0;
+      for (let k = 0; k < bipartites.length; k++) {
+        const leftNodesNum = bipartites[k].bipartite.length;
+        const rightNodesNum = bipartites[k].bipartite[0].length;
+        const constraint = { type: "alignment", axis: "x" };
+        const offsets = new Array();
+
+        if (k === 0) {
+          const toffsets = new Array();
+          const tconstraint = { type: "alignment", axis: "x" };
+          for (let i = 0; i < leftNodesNum; i++) {
+            toffsets.push({ node: String(idx++), offset: "0" });
+          }
+
+          tconstraint.offsets = toffsets;
+          graphConstraints.push(tconstraint);
+        }
+
+        for (let i = 0; i < rightNodesNum; i++) {
+          offsets.push({ node: String(idx++), offset: String(k + 1) });
+        }
+        constraint.offsets = offsets;
+        graphConstraints.push(constraint);
+      }
+
+      // graphConstraints.push({"axis":"x", "left":0, "right":5, "gap":30, "equality":"true"})
+      // graphConstraints.push({"axis":"x", "left":0, "right":6, "gap":30, "equality":"true"})
+      console.log(graphNodes);
+      console.log(graphConstraints);
+
+      const graph = new Object();
+      graph.nodes = graphNodes;
+      graph.edges = graphEdges;
+      graph.constraints = graphConstraints;
+      console.log(graph);
+      d3cola
+        .nodes(graph.nodes)
+        .links(graph.edges)
+        .constraints(graph.constraints)
+        .symmetricDiffLinkLengths(30)
+        .avoidOverlaps(true)
+        .start(10, 15, 20);
 
       layeredNodes.forEach((obj, index) => {
         midXs[index] = midX + Math.abs(rightX - leftX) * (obj.h / 2);
@@ -386,15 +450,27 @@ const useConfluent = (mu, url) => {
       console.error(outputPaths);
       console.error(midNodesCopy);
 
-      setMidNodes(midNodesCopy);
+      // setMidNodes(midNodesCopy);
+      // setPaths(
+      //   outputPaths.map((d) => {
+      //     return linkGenerator(d);
+      //   })
+      // );
+
+      setMidNodes(graph.nodes);
       setPaths(
-        outputPaths.map((d) => {
-          return linkGenerator(d);
+        graph.edges.map((d) => {
+          console.log(d.source);
+          return linkGenerator({
+            source: [d.source.x, d.source.y],
+            target: [d.target.x, d.target.y],
+          });
         })
       );
-      console.error(midNodesOrders);
-      console.error(midNodesOrders.flat());
-      setMidNodesOrders(midNodesOrders.flat());
+      console.log([leftNodesOrder, midNodesOrders.flat(), rightNodesOrder]);
+      setMidNodesOrders(
+        [leftNodesOrder, midNodesOrders.flat(), rightNodesOrder].flat()
+      );
     })();
   }, [mu, url]);
 
