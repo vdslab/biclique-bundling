@@ -7,7 +7,7 @@ function App() {
   const param = 1.0;
   const nodeRadius = 4;
 
-  const url = "public/random/json/random_7_7_75_2.json";
+  const url = "public/random/json/random_5_5_70_1.json";
 
   const {
     paths,
@@ -18,13 +18,14 @@ function App() {
     leftNodesOrder,
     rightNodesOrder,
     midNodesOrders,
+    crossCount,
   } = useConfluent(param, url);
 
   return (
     <>
       {console.log("Render APP")}
-      <p>γ:{param}</p>
-
+      <p>param:{param}</p>
+      <p>crossCount:{crossCount}</p>
       <svg width={width} height={height} style={{ border: "solid 1px" }}>
         <g>
           {paths?.map((path, key) => {
