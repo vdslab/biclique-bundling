@@ -1,13 +1,13 @@
 import "./App.css";
-import useConfluent from "./hooks/useConfluent";
+import useSugiyamaConfluent from "./hooks/useSugiyamaConfluent";
 function App() {
-  const width = 1300;
+  const width = 2300;
   const height = 3000;
 
   const param = 1.0;
   const nodeRadius = 4;
 
-  const url = "public/random/json/random_5_5_70_1.json";
+  const url = "public/random/json/random_7_7_75_1.json";
 
   const {
     paths,
@@ -19,7 +19,7 @@ function App() {
     rightNodesOrder,
     midNodesOrders,
     crossCount,
-  } = useConfluent(param, url);
+  } = useSugiyamaConfluent(param, url);
 
   return (
     <>
@@ -55,7 +55,7 @@ function App() {
           })}
         </g>
         <g>
-          {leftNodes?.map((node, key) => {
+          {/* {leftNodes?.map((node, key) => {
             return (
               <circle
                 key={key}
@@ -77,7 +77,7 @@ function App() {
                 fill="blue"
               />
             );
-          })}
+          })} */}
 
           {midNodes?.map((node, key) => {
             return (
@@ -91,7 +91,7 @@ function App() {
             );
           })}
 
-          {leftNodes?.map((node, key) => {
+          {/* {leftNodes?.map((node, key) => {
             return (
               <text key={key} x={node.x - 12.5} y={node.y + 10} fontSize="25">
                 {leftNodesOrder[key]}
@@ -105,7 +105,7 @@ function App() {
                 {rightNodesOrder[key]}
               </text>
             );
-          })}
+          })} */}
 
           {midNodes?.map((node, key) => {
             return (

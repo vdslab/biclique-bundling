@@ -4,6 +4,11 @@ import * as d3 from "d3";
 import * as cola from "webcola";
 import { objectOnePropertytoProgression } from "../utils/calc";
 import { getConfluentCross } from "../utils/getBipartiteCross";
+
+import Confluent from "../utils/confluent";
+
+/** 並び替えや座標配置をsugiyama frameworkに準拠**/
+
 /*
   アルゴリズム
   1. maximal バイクリークを行う
@@ -41,7 +46,7 @@ const buildConfluent = (mu, bipartite, idx, step, depth) => {
   }
 
   //最初のバイクリーク0は見逃す
-  if ((maximalNodes.length === 0 && step < 1) || Math.abs(depth) > 2) {
+  if ((maximalNodes.length === 0 && step < 1) || Math.abs(depth) > 3) {
     console.error(idx, depth, bipartite);
     bipartites.push({ h: idx, depth, bipartite, maximalNodes, step });
     return;
@@ -96,8 +101,8 @@ const buildConfluent = (mu, bipartite, idx, step, depth) => {
   buildConfluent(mu, leftBipartite, idx - step, step, Math.abs(depth) + 1);
 };
 
-const linkGenerator = d3.linkHorizontal();
-const useConfluent = (mu, url) => {
+const linkGenerator = d3.linkVertical();
+const useSugiyamaConfluent = (mu, url) => {
   const [paths, setPaths] = useState([]);
   const [leftNodes, setLeftNodes] = useState([]);
   const [rightNodes, setRightNodes] = useState([]);
@@ -111,7 +116,6 @@ const useConfluent = (mu, url) => {
     (async () => {
       const res = await fetch(url);
       const bipartite = await res.json();
-
       buildConfluent(mu, bipartite, 0, 1, 0);
       // ここでmaximalNodesを再構築する
       bipartites.sort((a, b) => {
@@ -283,7 +287,10 @@ const useConfluent = (mu, url) => {
       const midX = (leftX + rightX) / 2;
       const midXs = new Array(layeredNodes.length);
 
-      const d3cola = cola.d3adaptor(d3).linkDistance(1).size([rightX, 1250]);
+      const d3cola = cola
+        .d3adaptor(d3)
+        .linkDistance(30)
+        .size([2 * rightX, 1250]);
 
       //グラフのデータと制約を作る
 
@@ -313,21 +320,33 @@ const useConfluent = (mu, url) => {
 
       const graphConstraints = new Array();
       let idx = 0;
+      let prv = 0;
+      let cur = 0;
       for (let k = 0; k < bipartites.length; k++) {
         const leftNodesNum = bipartites[k].bipartite.length;
         const rightNodesNum = bipartites[k].bipartite[0].length;
-        const constraint = { type: "alignment", axis: "x" };
+        const constraint = { type: "alignment", axis: "y" };
         const offsets = new Array();
 
         if (k === 0) {
           const toffsets = new Array();
-          const tconstraint = { type: "alignment", axis: "x" };
+          const tconstraint = { type: "alignment", axis: "y" };
           for (let i = 0; i < leftNodesNum; i++) {
             toffsets.push({ node: String(idx++), offset: "0" });
           }
 
           tconstraint.offsets = toffsets;
           graphConstraints.push(tconstraint);
+
+          cur = idx;
+          graphConstraints.push({
+            axis: "y",
+            left: prv,
+            right: cur,
+            gap: 70,
+            equality: "true",
+          });
+          prv = cur;
         }
 
         for (let i = 0; i < rightNodesNum; i++) {
@@ -335,6 +354,17 @@ const useConfluent = (mu, url) => {
         }
         constraint.offsets = offsets;
         graphConstraints.push(constraint);
+
+        if (k === bipartites.length - 1) continue;
+        cur = idx;
+        graphConstraints.push({
+          axis: "y",
+          left: prv,
+          right: cur,
+          gap: 70,
+          equality: "true",
+        });
+        prv = cur;
       }
 
       // graphConstraints.push({"axis":"x", "left":0, "right":5, "gap":30, "equality":"true"})
@@ -457,17 +487,20 @@ const useConfluent = (mu, url) => {
       //   })
       // );
 
+      // setMidNodesOrders(midNodesOrders.flat());
+
       setMidNodes(graph.nodes);
       setPaths(
         graph.edges.map((d) => {
-          console.log(d.source);
           return linkGenerator({
             source: [d.source.x, d.source.y],
             target: [d.target.x, d.target.y],
           });
         })
       );
-      console.log([leftNodesOrder, midNodesOrders.flat(), rightNodesOrder]);
+      console.log(
+        [leftNodesOrder, midNodesOrders.flat(), rightNodesOrder].flat()
+      );
       setMidNodesOrders(
         [leftNodesOrder, midNodesOrders.flat(), rightNodesOrder].flat()
       );
@@ -498,4 +531,4 @@ const allIsIn = (maximalBiclusterNodes, left, right) => {
 
   return false;
 };
-export default useConfluent;
+export default useSugiyamaConfluent;
