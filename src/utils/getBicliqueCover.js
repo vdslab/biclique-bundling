@@ -45,97 +45,128 @@ export const convertG2Ge = (G) => {
 
   console.log(Ge);
 
-  return Ge;
+  return [Ge, edge2Node];
 };
 
+export const getBicliqueCover = (g) => {
+  const [G, edge2Node] = convertG2Ge(g);
+  const SS = [];
+  const RLF = (G) => {
+    if (!Object.entries(G).length) return;
 
-export const getBicliqueCover = (G) => {
-    const SS = [];
-    const RLF = (G) => {
-        if(!Object.entries(G).length) return;
+    const S = [];
+    let maxDegNode = -1;
+    let maxNum = -1;
+    for (const [key, neighbors] of Object.entries(G)) {
+      if (neighbors.length > maxNum) {
+        maxDegNode = Number(key);
+        maxNum = neighbors.length;
+      }
+    }
 
-        const S = [];
-        let maxDegNode = -1;
-        let maxNum = -1;
-        for(const [key, neighbors] of Object.entries(G)) {
-            if(neighbors.length > maxNum) {
-                maxDegNode = Number(key);
-                maxNum = neighbors.length;
-            }
+    console.log(maxDegNode);
+    const U1 = new Set();
+    const U2 = new Set();
+    S.push(maxDegNode);
+
+    for (let i = 0; i < S.length; i++) {
+      for (const u2 of G[S[i]]) {
+        U2.add(u2);
+      }
+    }
+
+    console.log(U2);
+    for (const [key] of Object.entries(G)) {
+      if (U2.has(Number(key)) || maxDegNode === Number(key)) continue;
+      U1.add(Number(key));
+    }
+
+    console.log(U1);
+    //U1から選ぶでSに入れる；
+
+    while (U1.size) {
+      // U2にmaxの接続で選ぶ
+      let maxCount = -1;
+      const cand = [];
+      for (const u1 of U1) {
+        let count = 0;
+        for (const node of G[u1]) {
+          if (!U2.has(node)) continue;
+          count++;
         }
-
-        console.log(maxDegNode);
-        const U1 = new Set();
-        const U2 = new Set();
-        S.push(maxDegNode);
-
-        for(let i = 0; i < S.length; i++) {
-            for(const u2 of G[S[i]]) {
-                U2.add(u2);
-            }
+        if (count >= maxCount) {
+          cand.push(u1);
+          maxCount = count;
+        } else {
+          while (!cand.length) {
+            cand.pop();
+          }
         }
+      }
 
-        console.log(U2);
-        for(const [key] of Object.entries(G)) {
-            if(U2.has(Number(key)) || maxDegNode === Number(key) ) continue;
-            U1.add(Number(key))
+      console.log("cand", cand);
+      //candを並び替える
+
+      for (const c of cand) {
+        S.push(c);
+        U1.delete(c);
+
+        for (const n of G[c]) {
+          U2.add(n);
         }
+      }
 
-        console.log(U1);
-        //U1から選ぶでSに入れる；
+      console.log("S", S);
+      console.log("U1", U1);
+    }
 
-        while(U1.size) {
-            // U2にmaxの接続で選ぶ
-            let maxCount = -1;
-            const cand = []
-            for(const u1 of U1) {
-                let count = 0
-                for(const node of G[u1]) {
-                    if(!U2.has(node)) continue;
-                    count ++;
-                }
-                if(count >= maxCount) {
-                    cand.push(u1);
-                    maxCount = count;
-                } else {
-                    cand.clear();
-                }
-            }
+    console.log("S", S);
 
-            console.log("cand", cand);
+    //グラフからSを取り除く
+    for (const s of S) {
+      delete G[s];
+      for (let [key, nei] of Object.entries(G)) {
+        console.log(key, s, nei);
+        nei = nei.filter((ele) => ele !== s);
+        console.log(key, s, nei);
+        G[key] = nei;
+        console.log("##########");
+      }
+    }
 
-            for(const c of cand) {
-                S.push(c);
-                U1.delete(c);
-
-                for(const n of G[c]) {
-                    U2.add(n);
-                }
-            }
-
-            console.log("S", S)
-            console.log("U1", U1);
-        }
-
-        console.log("S", S);
-
-        //グラフからSを取り除く
-        for(const s of S) {
-            delete G[s];
-            for(let [key, nei] of Object.entries(G)) {
-                console.log(key ,s, nei)
-                nei = nei.filter(ele => ele !== s);
-                console.log(key, s, nei)
-                G[key] = nei;
-                console.log("##########")
-            }
-        }
-
-        SS.push(S);
-        console.log(G, S, SS)
-        RLF(G);
-
-    };
-
+    SS.push(S);
+    console.log(G, S, SS);
     RLF(G);
-}
+  };
+
+  RLF(G);
+
+  //SSを変換する
+  console.log("SS", SS);
+  const res = [];
+  for (let i = 0; i < SS.length; i++) {
+    console.log("FFF");
+    const fs = [];
+    const obj = { left: [], right: [] };
+    for (let j = 0; j < SS[i].length; j++) {
+      edge2Node.forEach((value, key) => {
+        if (value === SS[i][j]) {
+          fs.push(key.split(","));
+        }
+      });
+    }
+    console.log(fs);
+
+    for (const edge of fs) {
+      obj["left"].push(Number(edge[0]));
+      obj["right"].push(Number(edge[1]));
+    }
+    console.log(obj);
+    obj["left"] = Array.from(new Set(obj["left"])).sort();
+    obj["right"] = Array.from(new Set(obj["right"])).sort();
+    res.push(obj);
+  }
+
+  console.error("res", res);
+  return res;
+};
