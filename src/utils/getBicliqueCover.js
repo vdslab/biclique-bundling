@@ -46,7 +46,7 @@ export const convertG2Ge = (G) => {
   return [Ge, edge2Node];
 };
 
-export const RLF = (G) => {
+export const RLF = (G, depth) => {
   console.log("start");
   if (!Object.entries(G).length) return;
   console.log(G);
@@ -64,6 +64,9 @@ export const RLF = (G) => {
 
   //vertex-disjointを選ぶ
   console.log("max degree", maxDegNode);
+  // if(depth === 1) {
+  //   maxDegNode = 1;
+  // }
   //maxDegNode = 0;
   const U1 = new Set();
   const U2 = new Set();
@@ -114,7 +117,7 @@ export const RLF = (G) => {
     let disi;
     for (const cElement of cand) {
       let count = 0;
-      for (const n of G[cElement].length) {
+      for (const n of G[cElement]) {
         if (U1.has(n)) {
           count++;
         }
@@ -139,7 +142,7 @@ export const RLF = (G) => {
     //console.log("U1", U1);
   }
 
-  console.log("S", S);
+  console.log("S", depth, S);
 
   //グラフからSを取り除く
   for (const s of S) {
@@ -153,7 +156,8 @@ export const RLF = (G) => {
     }
   }
 
-  return S;
+  console.log(G)
+  RLF(G, depth+1);
 };
 export const getBicliqueCover = (g) => {
   const [G, edge2Node] = convertG2Ge(g);
@@ -190,6 +194,7 @@ export const getBicliqueCover = (g) => {
 
     console.log("U1", U1);
     //U1から選ぶでSに入れる；
+    //U1からdisjointになるedgesを優先的に選ぶ
 
     while (U1.size) {
       // U2にmaxの接続で選ぶ
@@ -252,11 +257,11 @@ export const getBicliqueCover = (g) => {
     for (const s of S) {
       delete G[s];
       for (let [key, nei] of Object.entries(G)) {
-        console.log(key, s, nei);
+        ///console.log(key, s, nei);
         nei = nei.filter((ele) => ele !== s);
-        console.log(key, s, nei);
+        //console.log(key, s, nei);
         G[key] = nei;
-        console.log("##########");
+        //console.log("##########");
       }
     }
 

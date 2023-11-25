@@ -1,21 +1,36 @@
 import { useEffect, useState } from "react";
 import getMuQuasiBiclique from "../utils/getMuQuasiBiclique";
+import { getBicliqueCover } from "../utils/getBicliqueCover";
 import * as d3 from "d3";
 import * as cola from "webcola";
 import Confluent from "../utils/confluent";
 
+/*
+ confluent drawingに対しての準バイクリークが妥当がどうか
+ depth = 1は普通の準バイクリークによるエッジバンドリングである。
+ depth = 1 と depth >= 2のdrawing結果で比較する→ depth > 2でdepth=1と上下ノードが同じようにリンクしているならばアルゴリズムは妥当
+
+*/
 const linkGenerator = d3.linkVertical();
-const useColaConfluent = (param, url) => {
+const useColaConfluent = (param, url, maxDepth) => {
   const [paths, setPaths] = useState([]);
   const [midNodes, setMidNodes] = useState([]);
   const [midNodesOrders, setMidNodesOrders] = useState();
 
   useEffect(() => {
     (async () => {
-      const res = await fetch(url);
-      const bipartite = await res.json();
-      const cf = new Confluent(getMuQuasiBiclique);
-      cf.build(param, bipartite, 0, 1, 0);
+      // const res = await fetch(url);
+      // const bipartite = await res.json();
+
+      const bipartite = [
+        [0, 1, 1, 1, 1],
+        [1, 0, 1, 1, 1],
+        [1, 1, 0, 1, 1],
+        [1, 1, 1, 0, 1],
+        [1, 1, 1, 1, 0]
+      ];
+      const cf = new Confluent(getBicliqueCover, param, maxDepth);
+      cf.build(bipartite, 0, 1, 0);
       cf.layeredNodes.sort((a, b) => {
         return a.h - b.h;
       });
@@ -49,12 +64,9 @@ const useColaConfluent = (param, url) => {
       }
 
       // 座標決定process
-      const rightX = 1250;
+      const rightX = 2000;
 
-      const d3cola = cola
-        .d3adaptor(d3)
-        .linkDistance(30)
-        .size([2 * rightX, 1250]);
+      const d3cola = cola.d3adaptor(d3).linkDistance(200).size([rightX, 1000]);
 
       //グラフのデータと制約を作る
 
@@ -107,7 +119,7 @@ const useColaConfluent = (param, url) => {
             axis: "y",
             left: prv,
             right: cur,
-            gap: 70,
+            gap: 100,
             equality: "true",
           });
           prv = cur;
@@ -125,7 +137,7 @@ const useColaConfluent = (param, url) => {
           axis: "y",
           left: prv,
           right: cur,
-          gap: 70,
+          gap: 100,
           equality: "true",
         });
         prv = cur;
@@ -142,7 +154,7 @@ const useColaConfluent = (param, url) => {
         .constraints(graph.constraints)
         .symmetricDiffLinkLengths(30)
         .avoidOverlaps(true)
-        .start(10, 15, 20);
+        .start(100, 100, 100);
 
       setMidNodes(graph.nodes);
       setPaths(
@@ -157,7 +169,7 @@ const useColaConfluent = (param, url) => {
         [leftNodesOrder, midNodesOrders.flat(), rightNodesOrder].flat()
       );
     })();
-  }, [param, url]);
+  }, [param, url, maxDepth]);
 
   return {
     paths,
