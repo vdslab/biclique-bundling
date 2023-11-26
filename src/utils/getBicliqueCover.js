@@ -42,7 +42,6 @@ export const convertG2Ge = (G) => {
   }
 
   console.log(Ge);
-
   return [Ge, edge2Node];
 };
 
@@ -113,6 +112,7 @@ export const RLF = (G, depth) => {
     console.log("end");
 
     //candからU1に最小に繋がっているやつを選ぶ。
+    //maxDegNodeとvertex-disjointのエッジを
     let minU1deg = 1e12;
     let disi;
     for (const cElement of cand) {
@@ -144,24 +144,23 @@ export const RLF = (G, depth) => {
 
   console.log("S", depth, S);
 
-  //グラフからSを取り除く
-  for (const s of S) {
-    delete G[s];
-    for (let [key, nei] of Object.entries(G)) {
-      //console.log(key, s, nei);
-      nei = nei.filter((ele) => ele !== s);
-      //console.log(key, s, nei);
-      G[key] = nei;
-      //console.log("##########");
+  //グラフから頂点集合Sとそのエッジを取り除く
+  for (const sElement of S) {
+    delete G[sElement];
+    for (let [key, neighbors] of Object.entries(G)) {
+      neighbors = neighbors.filter((element) => element !== sElement);
+      G[key] = neighbors;
     }
   }
 
-  console.log(G)
-  RLF(G, depth+1);
+  console.log(G);
+  RLF(G, depth + 1);
 };
+
 export const getBicliqueCover = (g) => {
   const [G, edge2Node] = convertG2Ge(g);
-  const SS = [];
+
+  const coloredEdges = [];
   const RLF = (G) => {
     if (!Object.entries(G).length) return;
 
@@ -238,6 +237,25 @@ export const getBicliqueCover = (g) => {
         }
       }
 
+      let maxEdge;
+      for (const e of edge2Node) {
+        if (maxDegNode === e[1]) {
+          maxEdge = e[0];
+        }
+      }
+
+      const mac = maxEdge.split(",");
+      for (const cElement of cand) {
+        for (const e of edge2Node) {
+          if (cElement === e[1]) {
+            const tar = e[0].split(",");
+            if (mac[0] !== tar[0] && mac[1] !== tar[1]) {
+              disi = cElement;
+            }
+          }
+        }
+      }
+
       console.log("disi", disi);
       S.push(disi);
       U1.delete(disi);
@@ -254,51 +272,53 @@ export const getBicliqueCover = (g) => {
     console.log("S", S);
 
     //グラフからSを取り除く
-    for (const s of S) {
-      delete G[s];
-      for (let [key, nei] of Object.entries(G)) {
-        ///console.log(key, s, nei);
-        nei = nei.filter((ele) => ele !== s);
-        //console.log(key, s, nei);
-        G[key] = nei;
-        //console.log("##########");
+    //グラフから頂点集合Sとそのエッジを取り除く
+    for (const sElement of S) {
+      delete G[sElement];
+      for (let [key, neighbors] of Object.entries(G)) {
+        neighbors = neighbors.filter((element) => element !== sElement);
+        G[key] = neighbors;
       }
     }
 
-    SS.push(S);
-    console.log(G, S, SS);
+    coloredEdges.push(S);
+    console.log(G, S, coloredEdges);
     RLF(G);
   };
 
+  //ここでRFLを実行する
   RLF(G);
+  //coloredEdgesをconfluent drawing用にデータを変換してreturn
+  return coloredEdges2bicliques(coloredEdges, edge2Node);
+};
 
-  //SSを変換する
-  console.log("SS", SS);
-  const res = [];
-  for (let i = 0; i < SS.length; i++) {
-    console.log("FFF");
-    const fs = [];
-    const obj = { left: [], right: [] };
-    for (let j = 0; j < SS[i].length; j++) {
-      edge2Node.forEach((value, key) => {
-        if (value === SS[i][j]) {
-          fs.push(key.split(","));
+export const coloredEdges2bicliques = (coloredEdges,  edge2Node) => {
+  const bicliques = [];
+  for (let i = 0; i < coloredEdges.length; i++) {
+    const bicliqueEdges = [];
+
+    for (let j = 0; j < coloredEdges[i].length; j++) {
+      edge2Node.forEach((GeNode, GEdge) => {
+        if (GeNode === coloredEdges[i][j]) {
+          bicliqueEdges.push(GEdge.split(","));
         }
       });
     }
-    console.log(fs);
+    console.log(" bicliqueEdges", bicliqueEdges);
 
-    for (const edge of fs) {
-      obj["left"].push(Number(edge[0]));
-      obj["right"].push(Number(edge[1]));
+    const bicliqueObj = { left: [], right: [] };
+    for (const edge of bicliqueEdges) {
+      bicliqueObj["left"].push(Number(edge[0]));
+      bicliqueObj["right"].push(Number(edge[1]));
     }
-    console.log(obj);
-    obj["left"] = Array.from(new Set(obj["left"])).sort();
-    obj["right"] = Array.from(new Set(obj["right"])).sort();
-    res.push(obj);
+    console.log(bicliqueObj);
+    //bicliqueObjの重複削除とソート
+    bicliqueObj["left"] = Array.from(new Set(bicliqueObj["left"])).sort();
+    bicliqueObj["right"] = Array.from(new Set(bicliqueObj["right"])).sort();
+    bicliques.push(bicliqueObj);
   }
 
-  console.log("SS", SS);
-  console.error("res", res);
-  return res;
-};
+  console.log("coloredEdges", coloredEdges);
+  console.error("bicliques", bicliques);
+  return bicliques;
+}
