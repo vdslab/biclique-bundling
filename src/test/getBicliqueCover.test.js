@@ -8,18 +8,15 @@ import {
 import getMuQuasiBiclique from "./../utils/getMuQuasiBiclique";
 
 describe("GからG_Eの変換テスト", () => {
-
   test("2*2の二部グラフ1の変換", () => {
     const [Ge] = convertG2Ge([
       [1, 0],
       [0, 1],
     ]);
 
-    expect(
-      Ge
-    ).toStrictEqual({
-      '0':[1],
-      '1':[0],
+    expect(Ge).toStrictEqual({
+      0: [1],
+      1: [0],
     });
   });
 
@@ -29,12 +26,10 @@ describe("GからG_Eの変換テスト", () => {
       [0, 1],
     ]);
 
-    expect(
-      Ge
-    ).toStrictEqual({
-      '0':[2],
-      '1':[],
-      '2':[0]
+    expect(Ge).toStrictEqual({
+      0: [2],
+      1: [],
+      2: [0],
     });
   });
 
@@ -44,13 +39,11 @@ describe("GからG_Eの変換テスト", () => {
       [1, 1],
     ]);
 
-    expect(
-      Ge
-    ).toStrictEqual({
-      '0':[],
-      '1':[],
-      '2':[],
-      '3':[],
+    expect(Ge).toStrictEqual({
+      0: [],
+      1: [],
+      2: [],
+      3: [],
     });
   });
 
@@ -61,18 +54,16 @@ describe("GからG_Eの変換テスト", () => {
       [1, 1, 1],
     ]);
 
-    expect(
-      Ge
-    ).toStrictEqual({
-      '0':[],
-      '1':[],
-      '2':[],
-      '3':[],
-      '4':[],
-      '5':[],
-      '6':[],
-      '7':[],
-      '8':[],
+    expect(Ge).toStrictEqual({
+      0: [],
+      1: [],
+      2: [],
+      3: [],
+      4: [],
+      5: [],
+      6: [],
+      7: [],
+      8: [],
     });
   });
 
@@ -83,19 +74,34 @@ describe("GからG_Eの変換テスト", () => {
       [1, 1, 0],
     ]);
 
-    expect(
-      Ge
-    ).toStrictEqual({
-      '0':[3, 6],
-      '1':[3, 5, 6],
-      '2':[],
-      '3':[0, 1],
-      '4':[5, 6],
-      '5':[1, 4],
-      '6':[0, 1, 4],
+    expect(Ge).toStrictEqual({
+      0: [3, 6],
+      1: [3, 5, 6],
+      2: [],
+      3: [0, 1],
+      4: [5, 6],
+      5: [1, 4],
+      6: [0, 1, 4],
     });
   });
 
+  test("3*3の二部グラフ2の変換", () => {
+    const [Ge] = convertG2Ge([
+      [0, 1, 1],
+      [1, 1, 0],
+      [1, 1, 1],
+    ]);
+
+    expect(Ge).toStrictEqual({
+      0: [2, 4],
+      1: [2, 3, 4],
+      2: [0, 1, 6],
+      3: [1, 6],
+      4: [0, 1],
+      5: [],
+      6: [2, 3],
+    });
+  });
 });
 
 describe("RLFテスト", () => {
@@ -111,38 +117,16 @@ describe("RLFテスト", () => {
       "hasimasimasimasimasfimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasime"
     );
 
-    getMuQuasiBiclique(1,
+    getMuQuasiBiclique(
+      1,
       [
-        [
-            0,
-            1,
-            1,
-            0,
-            1
-        ],
-        [
-            1,
-            0,
-            1,
-            1,
-            0
-        ],
-        [
-            0,
-            1,
-            0,
-            1,
-            0
-        ],
-        [
-            1,
-            0,
-            0,
-            0,
-            1
-        ]
-    ],true
-    )
+        [0, 1, 1, 0, 1],
+        [1, 0, 1, 1, 0],
+        [0, 1, 0, 1, 0],
+        [1, 0, 0, 0, 1],
+      ],
+      true
+    );
 
     //  const G = {
     //   '0':[1, 2, 3],
@@ -158,12 +142,11 @@ describe("RLFテスト", () => {
 
     //  console.log(G, Ge)
 
-    // getBicliqueCover([
-    //   [0, 0, 1, 0, 1],
-    //   [1, 1, 1, 1, 0],
-    //   [1, 1, 1, 0, 0],
-    //   [1, 1, 0, 0, 0],
-    // ]);
+    getBicliqueCover([
+      [1, 0, 1],
+      [1, 1, 1],
+      [1, 1, 0],
+    ]);
   });
 });
 
