@@ -1,31 +1,62 @@
 import "./App.css";
-import useSugiyamaConfluent from "./hooks/useSugiyamaConfluent";
+//import useSugiyamaConfluent from "./hooks/useSugiyamaConfluent";
+import useColaConfluent from "./hooks/useColaConfluent";
+import { useState } from "react";
+
 function App() {
   const width = 2300;
   const height = 3000;
 
-  const param = 1.0;
+  const [param, setParam] = useState(1.0);
+  const [rangeParam, setRangeParam] = useState(1.0);
+  const [maxDepth, setMaxDepth] = useState(1);
   const nodeRadius = 4;
 
-  const url = "public/random/json/random_7_7_75_1.json";
+  const [url, setUrl] = useState("public/random/json/random_15_15_73_3.json");
+  const [displayUrl, setDisplayUrl] = useState(url);
 
-  const {
-    paths,
-    lines,
-    leftNodes,
-    rightNodes,
-    midNodes,
-    leftNodesOrder,
-    rightNodesOrder,
-    midNodesOrders,
-    crossCount,
-  } = useSugiyamaConfluent(param, url);
+  const { paths, lines, midNodes, midNodesOrders, crossCount } =
+    useColaConfluent(param, url, maxDepth);
 
   return (
     <>
       {console.log("Render APP")}
       <p>param:{param}</p>
       <p>crossCount:{crossCount}</p>
+      <div>
+        <p>{url}</p>
+        <input
+          type="text"
+          style={{ width: "400px" }}
+          value={displayUrl}
+          onChange={(e) => setDisplayUrl(e.target.value)}
+        />
+        <button type="button" onClick={() => setUrl(displayUrl)}>
+          データ適用
+        </button>
+      </div>
+      <br />
+      <span>depth:</span>
+      <input
+        type="number"
+        min="0"
+        max="10"
+        value={maxDepth}
+        onChange={(e) => setMaxDepth(e.target.value)}
+      />
+      <br />
+      <input
+        id="param_input"
+        type="range"
+        min="0"
+        max="1.0"
+        step="any"
+        onChange={(e) => setRangeParam(e.target.value)}
+      />
+      <p>{rangeParam}</p>
+      <button type="button" onClick={() => setParam(rangeParam)}>
+        パラメータ適用
+      </button>
       <svg width={width} height={height} style={{ border: "solid 1px" }}>
         <g>
           {paths?.map((path, key) => {
@@ -109,7 +140,7 @@ function App() {
 
           {midNodes?.map((node, key) => {
             return (
-              <text key={key} x={node.x} y={node.y + 3.5} fontSize="10">
+              <text key={key} x={node.x} y={node.y + 4} fontSize="15">
                 {midNodesOrders[key]}
               </text>
             );
