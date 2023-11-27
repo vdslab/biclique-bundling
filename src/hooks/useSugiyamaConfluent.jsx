@@ -101,7 +101,7 @@ const buildConfluent = (mu, bipartite, idx, step, depth) => {
   buildConfluent(mu, leftBipartite, idx - step, step, Math.abs(depth) + 1);
 };
 
-const linkGenerator = d3.linkVertical();
+const linkGenerator = d3.linkHorizontal();
 const useSugiyamaConfluent = (mu, url) => {
   const [paths, setPaths] = useState([]);
   const [leftNodes, setLeftNodes] = useState([]);
@@ -195,15 +195,15 @@ const useSugiyamaConfluent = (mu, url) => {
               sum.push(ouh / degree);
             }
 
-            // if (k !== bipartites.length - 1) {
-            //   midNodesOrders[k].sort((a, b) => {
-            //     return sum[a] - sum[b];
-            //   });
-            // } else {
-            //   rightNodesOrder.sort((a, b) => {
-            //     return sum[a] - sum[b];
-            //   });
-            // }
+            if (k !== bipartites.length - 1) {
+              midNodesOrders[k].sort((a, b) => {
+                return sum[a] - sum[b];
+              });
+            } else {
+              rightNodesOrder.sort((a, b) => {
+                return sum[a] - sum[b];
+              });
+            }
           }
         } else {
           for (let k = bipartites.length - 1; k >= 0; k--) {
@@ -229,15 +229,15 @@ const useSugiyamaConfluent = (mu, url) => {
               sum.push(ouh / degree);
             }
 
-            // if (k !== 0) {
-            //   midNodesOrders[k - 1].sort((a, b) => {
-            //     return sum[a] - sum[b];
-            //   });
-            // } else {
-            //   leftNodesOrder.sort((a, b) => {
-            //     return sum[a] - sum[b];
-            //   });
-            // }
+            if (k !== 0) {
+              midNodesOrders[k - 1].sort((a, b) => {
+                return sum[a] - sum[b];
+              });
+            } else {
+              leftNodesOrder.sort((a, b) => {
+                return sum[a] - sum[b];
+              });
+            }
           }
         }
 
@@ -286,104 +286,6 @@ const useSugiyamaConfluent = (mu, url) => {
 
       const midX = (leftX + rightX) / 2;
       const midXs = new Array(layeredNodes.length);
-
-      const d3cola = cola
-        .d3adaptor(d3)
-        .linkDistance(30)
-        .size([2 * rightX, 1250]);
-
-      //グラフのデータと制約を作る
-
-      const graphEdges = new Array();
-      const graphNodesSet = new Set();
-      let pad = 0;
-      for (let k = 0; k < bipartites.length; k++) {
-        const bipartite = bipartites[k].bipartite;
-        for (let i = 0; i < bipartite.length; i++) {
-          for (let j = 0; j < bipartite[i].length; j++) {
-            if (!bipartite[i][j]) continue;
-            graphEdges.push({
-              source: i + pad,
-              target: j + pad + bipartite.length,
-            });
-            graphNodesSet.add(i + pad);
-            graphNodesSet.add(j + pad + bipartite.length);
-          }
-        }
-        pad += bipartite.length;
-      }
-      const graphNodes = Array.from(graphNodesSet)
-        .sort((a, b) => a - b)
-        .map((item) => {
-          return { name: item };
-        });
-
-      const graphConstraints = new Array();
-      let idx = 0;
-      let prv = 0;
-      let cur = 0;
-      for (let k = 0; k < bipartites.length; k++) {
-        const leftNodesNum = bipartites[k].bipartite.length;
-        const rightNodesNum = bipartites[k].bipartite[0].length;
-        const constraint = { type: "alignment", axis: "y" };
-        const offsets = new Array();
-
-        if (k === 0) {
-          const toffsets = new Array();
-          const tconstraint = { type: "alignment", axis: "y" };
-          for (let i = 0; i < leftNodesNum; i++) {
-            toffsets.push({ node: String(idx++), offset: "0" });
-          }
-
-          tconstraint.offsets = toffsets;
-          graphConstraints.push(tconstraint);
-
-          cur = idx;
-          graphConstraints.push({
-            axis: "y",
-            left: prv,
-            right: cur,
-            gap: 70,
-            equality: "true",
-          });
-          prv = cur;
-        }
-
-        for (let i = 0; i < rightNodesNum; i++) {
-          offsets.push({ node: String(idx++), offset: String(k + 1) });
-        }
-        constraint.offsets = offsets;
-        graphConstraints.push(constraint);
-
-        if (k === bipartites.length - 1) continue;
-        cur = idx;
-        graphConstraints.push({
-          axis: "y",
-          left: prv,
-          right: cur,
-          gap: 70,
-          equality: "true",
-        });
-        prv = cur;
-      }
-
-      // graphConstraints.push({"axis":"x", "left":0, "right":5, "gap":30, "equality":"true"})
-      // graphConstraints.push({"axis":"x", "left":0, "right":6, "gap":30, "equality":"true"})
-      console.log(graphNodes);
-      console.log(graphConstraints);
-
-      const graph = new Object();
-      graph.nodes = graphNodes;
-      graph.edges = graphEdges;
-      graph.constraints = graphConstraints;
-      console.log(graph);
-      d3cola
-        .nodes(graph.nodes)
-        .links(graph.edges)
-        .constraints(graph.constraints)
-        .symmetricDiffLinkLengths(30)
-        .avoidOverlaps(true)
-        .start(10, 15, 20);
 
       layeredNodes.forEach((obj, index) => {
         midXs[index] = midX + Math.abs(rightX - leftX) * (obj.h / 2);
@@ -480,30 +382,13 @@ const useSugiyamaConfluent = (mu, url) => {
       console.error(outputPaths);
       console.error(midNodesCopy);
 
-      // setMidNodes(midNodesCopy);
-      // setPaths(
-      //   outputPaths.map((d) => {
-      //     return linkGenerator(d);
-      //   })
-      // );
-
-      // setMidNodesOrders(midNodesOrders.flat());
-
-      setMidNodes(graph.nodes);
+      setMidNodes(midNodesCopy);
       setPaths(
-        graph.edges.map((d) => {
-          return linkGenerator({
-            source: [d.source.x, d.source.y],
-            target: [d.target.x, d.target.y],
-          });
+        outputPaths.map((d) => {
+          return linkGenerator(d);
         })
       );
-      console.log(
-        [leftNodesOrder, midNodesOrders.flat(), rightNodesOrder].flat()
-      );
-      setMidNodesOrders(
-        [leftNodesOrder, midNodesOrders.flat(), rightNodesOrder].flat()
-      );
+      setMidNodesOrders(midNodesOrders.flat());
     })();
   }, [mu, url]);
 
