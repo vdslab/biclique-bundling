@@ -1,23 +1,24 @@
 class Confluent {
-  constructor(getBicliqueCover) {
+  constructor(getBicliqueCover, param, maxDepth) {
     this.layeredNodes = new Array();
     this.bipartites = new Array();
     this.getBicliqueCover = getBicliqueCover;
+    this.param = param;
+    this.maxDepth = maxDepth;
   }
 
-
-  build(mu, bipartite, idx, step, depth) {
+  build(bipartite, idx, step, depth) {
+    // /console.error("next", idx, bipartite);
     depth = idx >= 0 ? Math.abs(depth) : -1 * Math.abs(depth);
     let maximalNodes;
-    if (depth <= 0) {
-      maximalNodes = this.getBicliqueCover(mu, bipartite, true);
-    } else {
-      maximalNodes = this.getBicliqueCover(mu, bipartite, false);
-    }
+    maximalNodes = this.getBicliqueCover(bipartite);
+    //console.error("mad", maximalNodes, idx);
 
     //最初のバイクリーク0は見逃す
-    if ((maximalNodes.length === 0 && step < 1) || Math.abs(depth) > 3) {
-      //console.error(idx, depth, bipartite);
+    if (
+      (maximalNodes.length === 0 && step < 1) ||
+      Math.abs(depth) >= this.maxDepth
+    ) {
       this.bipartites.push({ h: idx, depth, bipartite, maximalNodes, step });
       return;
     }
@@ -35,12 +36,10 @@ class Confluent {
     }
     maximalNodes.push(...oneSizeBicluster);
 
-    // グローバル変数に格納
     this.layeredNodes.push({ h: idx, maximalNodes });
 
     const midNodeNumber = maximalNodes.length;
 
-    //左右の二部グラフの初期化
     const leftBipartite = new Array(leftNodeNumber);
     const rightBipartite = new Array(midNodeNumber);
 
@@ -60,15 +59,10 @@ class Confluent {
       rightBipartite[i] = rightBipartiteElement;
     }
 
-    // console.error("leftBipartite", leftBipartite);
-    // console.error("rightBipartite", rightBipartite);
-    // console.error("maximal node", maximalNodes);
-    // グローバル関数に格納する
-
     step = step / 2;
 
-    this.build(mu, rightBipartite, idx + step, step, Math.abs(depth) + 1);
-    this.build(mu, leftBipartite, idx - step, step, Math.abs(depth) + 1);
+    this.build(rightBipartite, idx + step, step, Math.abs(depth) + 1);
+    this.build(leftBipartite, idx - step, step, Math.abs(depth) + 1);
   }
 
   #allIsIn(maximalBiclusterNodes, left, right) {
@@ -86,5 +80,3 @@ class Confluent {
 }
 
 export default Confluent;
-
-
