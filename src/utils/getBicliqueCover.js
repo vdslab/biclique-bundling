@@ -280,7 +280,12 @@ export const getBicliqueCover = (g) => {
 
     //グラフからSを取り除く
     //グラフから頂点集合Sとそのエッジを取り除く
-    console.log("resultfssssssssssssssssssssss", S,  coloredEdge2biclique(S, edge2Node), G);
+    console.log(
+      "resultfssssssssssssssssssssss",
+      S,
+      coloredEdge2biclique(S, edge2Node),
+      G
+    );
     for (const sElement of S) {
       delete G[sElement];
       for (let [key, neighbors] of Object.entries(G)) {
@@ -301,10 +306,23 @@ export const getBicliqueCover = (g) => {
   return coloredEdges2bicliques(coloredEdges, edge2Node);
 };
 
-export const getQuasiBicliqueCover = (g, param) => {
+export const getQuasiBicliqueCover = (g, param = 1.0) => {
   const [G, edge2Node] = convertG2Ge(g);
 
+  const bipartiteNodes = { left: [], right: [] };
+  for (let i = 0; i < g.length; i++) {
+    bipartiteNodes["left"].push(i);
+  }
+
+  for (let i = 0; i < g[0].length; i++) {
+    bipartiteNodes["right"].push(i);
+  }
+
+  const usedLeftNodes = [];
+  const usedRightNodes = [];
+
   const coloredEdges = [];
+  const quasiBicliques = [];
 
   const quasiRLF = (G, param) => {
     if (!Object.entries(G).length) return;
@@ -419,12 +437,75 @@ export const getQuasiBicliqueCover = (g, param) => {
 
     console.log("S", S);
 
+    // bipartiteNodes
+    let addedNode = -1;
+    let isLeft = true;
+    const deletedNode = structuredClone(S);
     const bicliqueNodes = coloredEdge2biclique(S, edge2Node);
+    //usedLeftNodes,usedRightNodesの配列にpushする
+    for (const leftNode of bicliqueNodes["left"]) {
+      usedLeftNodes.push(leftNode);
+    }
 
+    for (const rightNode of bicliqueNodes["right"]) {
+      usedRightNodes.push(rightNode);
+    }
 
+    for (let i = 0; i < bipartiteNodes["left"].length; i++) {
+      if (addedNode === -1) continue;
+      if (bicliqueNodes["left"].includes(i)) continue;
+      if (usedLeftNodes.includes(i)) continue;
+
+      addedNode = i;
+    }
+
+    for (let i = 0; i < bipartiteNodes["right"].length; i++) {
+      if (addedNode !== -1) continue;
+      if (bicliqueNodes["right"].includes(i)) continue;
+      if (usedRightNodes.includes(i)) continue;
+      isLeft = false;
+      addedNode = i;
+    }
+
+    console.error("SSS", S, G);
+    if (addedNode !== -1) {
+      if (isLeft) {
+        usedLeftNodes.push(addedNode);
+        bicliqueNodes["left"].push(addedNode);
+        edge2Node.forEach((GeNode, GEdge) => {
+          const edge = GEdge.split(",");
+          if (
+            Number(edge[0]) === addedNode &&
+            bicliqueNodes["right"].includes(Number(edge[1]))
+          ) {
+            deletedNode.push(GeNode);
+          }
+        });
+      } else {
+        usedRightNodes.push(addedNode);
+        bicliqueNodes["right"].push(addedNode);
+        edge2Node.forEach((GeNode, GEdge) => {
+          const edge = GEdge.split(",");
+          if (
+            Number(edge[1]) === addedNode &&
+            bicliqueNodes["left"].includes(Number(edge[0]))
+          ) {
+            deletedNode.push(GeNode);
+          }
+        });
+      }
+    }
+
+    //Sはエッジの配列
+    //S.push(addedNode);
+    quasiBicliques.push(bicliqueNodes);
+    console.log("deleted", deletedNode);
+    console.log("added", addedNode);
+    console.log("node2", edge2Node);
     //グラフからSを取り除く
     //グラフから頂点集合Sとそのエッジを取り除く
-    for (const sElement of S) {
+    //グラフからどう準バイクリークを取り除くか
+    for (const sElement of deletedNode) {
       delete G[sElement];
       for (let [key, neighbors] of Object.entries(G)) {
         neighbors = neighbors.filter((element) => element !== sElement);
@@ -442,7 +523,7 @@ export const getQuasiBicliqueCover = (g, param) => {
   //ここでRFLを実行する
   quasiRLF(G, param);
   //coloredEdgesをconfluent drawing用にデータを変換してreturn
-  return coloredEdges2bicliques(coloredEdges, edge2Node);
+  return quasiBicliques;
 };
 
 const coloredEdges2bicliques = (coloredEdges, edge2Node) => {
