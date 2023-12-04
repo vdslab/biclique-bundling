@@ -2,7 +2,7 @@ import { expect, test, describe } from "vitest";
 import {
   convertG2Ge,
   getBicliqueCover,
-  RLF,
+  calcBipartiteDensity,
 } from "./../utils/getBicliqueCover";
 
 import getMuQuasiBiclique from "./../utils/getMuQuasiBiclique";
@@ -106,27 +106,35 @@ describe("GからG_Eの変換テスト", () => {
 
 describe("RLFテスト", () => {
   test("K_2_2の変換", () => {
-    // getBicliqueCover([
-    //   [0, 1, 1, 1, 1],
-    //   [1, 0, 1, 1, 1],
-    //   [1, 1, 0, 1, 1],
-    //   [1, 1, 1, 0, 1],
-    //   [1, 1, 1, 1, 0],
-    // ]);
     console.log(
       "hasimasimasimasimasfimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasimasime"
     );
 
-    getMuQuasiBiclique(
-      1,
-      [
-        [0, 1, 1, 0, 1],
-        [1, 0, 1, 1, 0],
-        [0, 1, 0, 1, 0],
-        [1, 0, 0, 0, 1],
-      ],
-      true
-    );
+    getBicliqueCover([
+      [1, 1],
+      [1, 1],
+    ]);
+
+    // getBicliqueCover([
+    //   [1, 1, 1, 1, 1, 1, 0],
+    //   [0, 1, 1, 1, 1, 1, 1],
+    //   [1, 1, 1, 1, 0, 1, 1],
+    //   [1, 0, 1, 1, 1, 1, 1],
+    //   [1, 0, 1, 1, 1, 1, 1],
+    //   [1, 1, 1, 1, 1, 1, 1],
+    //   [1, 1, 0, 0, 1, 1, 1],
+    // ]);
+
+    // getMuQuasiBiclique(
+    //   1,
+    //   [
+    //     [0, 1, 1, 0, 1],
+    //     [1, 0, 1, 1, 0],
+    //     [0, 1, 0, 1, 0],
+    //     [1, 0, 0, 0, 1],
+    //   ],
+    //   true
+    // );
 
     //  const G = {
     //   '0':[1, 2, 3],
@@ -142,11 +150,31 @@ describe("RLFテスト", () => {
 
     //  console.log(G, Ge)
 
-    getBicliqueCover([
-      [1, 0, 1],
-      [1, 1, 1],
-      [1, 1, 0],
-    ]);
+    // getBicliqueCover([
+    //   [1, 0, 1],
+    //   [1, 1, 1],
+    //   [1, 1, 0],
+    // ]);
+  });
+});
+
+describe("ノードカラーセットからエッジカラーセットへの変換", () => {
+  test("one", () => {});
+});
+
+describe("calcDensity", () => {
+  test("calcDensity1", () => {
+    //(bicliqueNodes, addedNode, bipartite)
+    calcBipartiteDensity(
+      { left: [0, 1, 2], right: [0, 1, 2] },
+      { side: "left", node: 3 },
+      [
+        [1, 1, 1],
+        [1, 1, 1],
+        [1, 1, 1],
+        [0, 0, 1],
+      ]
+    );
   });
 });
 

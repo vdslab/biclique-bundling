@@ -10,7 +10,7 @@ const getMuQuasiBiclique = (mu, bipartite, isLeft) => {
     : Array.from({ length: bipartite[0].length }, (_, i) => i);
   for (const u of Upper) {
     const T = !isLeft ? inVertices(u, bipartite) : outVertices(u, bipartite);
-    console.error(T);
+    //console.error(T);
     const M = {};
 
     //console.log(u, T, M);
@@ -25,20 +25,20 @@ const getMuQuasiBiclique = (mu, bipartite, isLeft) => {
     const T = Cand[key].T;
     const M = Cand[key].M;
 
-    console.error(T, M);
-    console.error(key);
+    //console.error(T, M);
+    //console.error(key);
     for (const v of T) {
       const inVer = !isLeft
         ? outVertices(v, bipartite)
         : inVertices(v, bipartite);
-      console.error(v, inVer);
+      // console.error(v, inVer);
       for (const u of inVer) {
         if (u in M) {
           M[u] = M[u] + 1;
         } else {
           M[u] = 1;
         }
-        console.error(u, M);
+        //console.error(u, M);
       }
     }
   }
@@ -63,7 +63,7 @@ const getMuQuasiBiclique = (mu, bipartite, isLeft) => {
       }
     }
 
-    console.error(S, T);
+    //console.error(S, T);
     if (S.length > 1 && T.length > 1) {
       SMaximalCandNodes.push(S);
       TMaximalCandNodes.push(T);
@@ -92,7 +92,7 @@ const getMuQuasiBiclique = (mu, bipartite, isLeft) => {
     }
   }
 
-  console.error(maximalObjs);
+  console.error("ans", maximalObjs);
   return maximalObjs;
 };
 
