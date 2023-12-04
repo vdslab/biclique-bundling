@@ -438,10 +438,10 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
     console.log("S", S);
 
     // bipartiteNodes
-    let addedNode = -1;
-    let isLeft = true;
+    const addedCandNodes = []; // [{side: 'left', node:1},{side: 'right', node: 2} ]
     const deletedNode = structuredClone(S);
-    const bicliqueNodes = coloredEdge2biclique(S, edge2Node);
+    const bicliqueNodes = coloredEdge2biclique(S, edge2Node); // {left: [0, 1, 2, 3], right: [1, 4, 5]}
+
     //usedLeftNodes,usedRightNodesの配列にpushする
     for (const leftNode of bicliqueNodes["left"]) {
       usedLeftNodes.push(leftNode);
@@ -452,56 +452,101 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
     }
 
     for (let i = 0; i < bipartiteNodes["left"].length; i++) {
-      if (addedNode === -1) continue;
       if (bicliqueNodes["left"].includes(i)) continue;
       if (usedLeftNodes.includes(i)) continue;
 
-      addedNode = i;
+      addedCandNodes.push({ side: "left", node: i });
     }
 
     for (let i = 0; i < bipartiteNodes["right"].length; i++) {
-      if (addedNode !== -1) continue;
       if (bicliqueNodes["right"].includes(i)) continue;
       if (usedRightNodes.includes(i)) continue;
-      isLeft = false;
-      addedNode = i;
+      addedCandNodes.push({ side: "right", node: i });
     }
 
-    console.error("SSS", S, G);
-    if (addedNode !== -1) {
-      if (isLeft) {
-        usedLeftNodes.push(addedNode);
-        bicliqueNodes["left"].push(addedNode);
-        edge2Node.forEach((GeNode, GEdge) => {
-          const edge = GEdge.split(",");
+    //bicliqueNodesの密度が高くなるようなノードを選択する
+    console.log(bicliqueNodes, addedCandNodes);
+    const addedNodes = [];
+    const addedNodesNumber = [];
+    const f = [];
+    while (true) {
+      let maxDensityNode;
+      let maxDesity = -1.0;
+      for (const addedNode of addedCandNodes) {
+        const bipartiteDensity = calcBipartiteDensity(
+          bicliqueNodes,
+          addedNode,
+          g
+        );
+
+        const nodeNumber =
+          addedNode["side"] === "left"
+            ? "l" + addedNode["node"]
+            : "r" + addedNode["node"];
+        if (
+          bipartiteDensity > maxDesity &&
+          !addedNodesNumber.includes(nodeNumber)
+        ) {
+          maxDesity = bipartiteDensity;
+          maxDensityNode = addedNode;
+        }
+      }
+
+      console.error(maxDesity, maxDensityNode, bipartiteNodes, addedNodes);
+
+      if (maxDesity < param) {
+        console.log(maxDesity);
+        break;
+      }
+
+      if (maxDensityNode) {
+        bicliqueNodes[maxDensityNode["side"]].push(maxDensityNode["node"]);
+        addedNodes.push(maxDensityNode);
+        //addedNodesNumber.push(maxDensityNode["node"]);
+
+        if (maxDensityNode["side"] === "left") {
+          usedLeftNodes.push(maxDensityNode["node"]);
+          addedNodesNumber.push("l" + maxDensityNode["node"]);
+        } else {
+          usedRightNodes.push(maxDensityNode["node"]);
+          addedNodesNumber.push("r" + maxDensityNode["node"]);
+        }
+      }
+    }
+
+    console.error("SSS", S, G, addedNodes, edge2Node, f, f.includes("r1"));
+
+    for (const addedNode of addedNodes) {
+      edge2Node.forEach((GeNode, GEdge) => {
+        const edge = GEdge.split(",");
+
+        if (addedNode["side"] === "left") {
           if (
-            Number(edge[0]) === addedNode &&
+            Number(edge[0]) === addedNode["node"] &&
             bicliqueNodes["right"].includes(Number(edge[1]))
           ) {
             deletedNode.push(GeNode);
           }
-        });
-      } else {
-        usedRightNodes.push(addedNode);
-        bicliqueNodes["right"].push(addedNode);
-        edge2Node.forEach((GeNode, GEdge) => {
-          const edge = GEdge.split(",");
+        } else {
           if (
-            Number(edge[1]) === addedNode &&
+            Number(edge[1]) === addedNode["node"] &&
             bicliqueNodes["left"].includes(Number(edge[0]))
           ) {
             deletedNode.push(GeNode);
           }
-        });
-      }
+        }
+      });
     }
+
+    console.error(deletedNode);
 
     //Sはエッジの配列
     //S.push(addedNode);
     quasiBicliques.push(bicliqueNodes);
     console.log("deleted", deletedNode);
-    console.log("added", addedNode);
+    console.error("added", addedNodes, param);
     console.log("node2", edge2Node);
+    console.log(bicliqueNodes);
     //グラフからSを取り除く
     //グラフから頂点集合Sとそのエッジを取り除く
     //グラフからどう準バイクリークを取り除くか
@@ -577,4 +622,32 @@ const coloredEdge2biclique = (coloredEdge, edge2Node) => {
   bicliqueObj["left"] = Array.from(new Set(bicliqueObj["left"])).sort();
   bicliqueObj["right"] = Array.from(new Set(bicliqueObj["right"])).sort();
   return bicliqueObj;
+};
+
+export const calcBipartiteDensity = (bicliqueNodes, addedNode, bipartite) => {
+  let bipartiteEdgesCount = 0;
+
+  const addedBicliqueNodes = structuredClone(bicliqueNodes);
+
+  if (addedNode !== undefined)
+    addedBicliqueNodes[addedNode["side"]].push(addedNode["node"]);
+  //console.log(addedBicliqueNodes);
+
+  for (const leftNode of addedBicliqueNodes["left"]) {
+    for (const rightNode of addedBicliqueNodes["right"]) {
+      if (!bipartite[leftNode][rightNode]) continue;
+      bipartiteEdgesCount++;
+    }
+  }
+
+  const bipartiteDensity =
+    bipartiteEdgesCount /
+    (addedBicliqueNodes["left"].length * addedBicliqueNodes["right"].length);
+  // console.log(
+  //   bipartiteEdgesCount,
+  //   addedBicliqueNodes["left"],
+  //   addedBicliqueNodes["right"],
+  //   bipartiteDensity
+  // );
+  return bipartiteDensity;
 };
