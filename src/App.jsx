@@ -7,12 +7,12 @@ function App() {
   const width = 2300;
   const height = 3000;
 
-  const [param, setParam] = useState(1.0);
-  const [rangeParam, setRangeParam] = useState(1.0);
+  const [param, setParam] = useState(0.1);
+  const [rangeParam, setRangeParam] = useState(param);
   const [maxDepth, setMaxDepth] = useState(1);
   const nodeRadius = 4;
 
-  const [url, setUrl] = useState("public/random/json/random_15_15_73_3.json");
+  const [url, setUrl] = useState("public/random/json/random_7_7_75_2.json");
   const [displayUrl, setDisplayUrl] = useState(url);
 
   const { paths, lines, midNodes, midNodesOrders, crossCount } =
@@ -50,7 +50,8 @@ function App() {
         type="range"
         min="0"
         max="1.0"
-        step="any"
+        step="0.01"
+        value={rangeParam}
         onChange={(e) => setRangeParam(e.target.value)}
       />
       <p>{rangeParam}</p>
