@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import getMuQuasiBiclique from "../utils/getMuQuasiBiclique";
-import { getBicliqueCover } from "../utils/getBicliqueCover";
+// import getMuQuasiBiclique from "../utils/getMuQuasiBiclique";
+import {
+  getQuasiBicliqueCover,
+} from "../utils/getBicliqueCover";
 import * as d3 from "d3";
 import * as cola from "webcola";
 import Confluent from "../utils/confluent";
+import {getColaBipartiteCross } from '../utils/getBipartiteCross';
 
 /*
  confluent drawingに対しての準バイクリークが妥当がどうか
@@ -19,17 +22,23 @@ const useColaConfluent = (param, url, maxDepth) => {
 
   useEffect(() => {
     (async () => {
-      // const res = await fetch(url);
-      // const bipartite = await res.json();
+      const res = await fetch(url);
+      const bipartite = await res.json();
 
-      const bipartite = [
-        [0, 1, 1, 1, 1],
-        [1, 0, 1, 1, 1],
-        [1, 1, 0, 1, 1],
-        [1, 1, 1, 0, 1],
-        [1, 1, 1, 1, 0]
-      ];
-      const cf = new Confluent(getBicliqueCover, param, maxDepth);
+      // const bipartite = [
+      //   [0, 1, 1, 1, 1],
+      //   [1, 0, 1, 1, 1],
+      //   [1, 1, 0, 1, 1],
+      //   [1, 1, 1, 0, 1],
+      //   [1, 1, 1, 1, 0],
+      // ];
+
+      // const bipartite = [
+      //   [1, 0, 1],
+      //   [1, 1, 1],
+      //   [1, 1, 0],
+      // ];
+      const cf = new Confluent(getQuasiBicliqueCover, param, maxDepth);
       cf.build(bipartite, 0, 1, 0);
       cf.layeredNodes.sort((a, b) => {
         return a.h - b.h;
@@ -82,18 +91,15 @@ const useColaConfluent = (param, url, maxDepth) => {
               source: i + pad,
               target: j + pad + bipartite.length,
             });
-            graphNodesSet.add(i + pad);
-            graphNodesSet.add(j + pad + bipartite.length);
+            graphNodesSet.add({id: i + pad, label: i, layer: k});
+            graphNodesSet.add({id: j + pad + bipartite.length, label: j, layer: k+1});
           }
         }
         pad += bipartite.length;
       }
-      const graphNodes = Array.from(graphNodesSet)
-        .sort((a, b) => a - b)
-        .map((item) => {
-          return { name: item };
-        });
 
+      const graphNodes = filterSameNodes(Array.from(graphNodesSet))
+      console.error(graphNodes)
       const graphConstraints = new Array();
       let idx = 0;
       let prv = 0;
@@ -154,8 +160,12 @@ const useColaConfluent = (param, url, maxDepth) => {
         .constraints(graph.constraints)
         .symmetricDiffLinkLengths(30)
         .avoidOverlaps(true)
-        .start(100, 100, 100);
+        .start(200, 200, 200);
 
+      // graph.nodesを用いてedge-crossingをする
+      getColaBipartiteCross(cf.bipartites, graph.nodes)
+      console.error("pos", graph.nodes);
+      console.error(cf.bipartites)
       setMidNodes(graph.nodes);
       setPaths(
         graph.edges.map((d) => {
@@ -177,5 +187,19 @@ const useColaConfluent = (param, url, maxDepth) => {
     midNodesOrders,
   };
 };
+
+const filterSameNodes = (nodes) => {
+  const res = new Array();
+
+  for(let i = 0; i < nodes.length; i++) {
+    let isSame = true;
+    for(let j = i + 1; j < nodes.length; j++) {
+      if(nodes[i].id === nodes[j].id && nodes[i].label === nodes[j].label) isSame = false;
+    }
+    if(isSame) res.push(nodes[i]);
+  }
+
+  return res.sort((a, b) => a.id - b.id);
+}
 
 export default useColaConfluent;
