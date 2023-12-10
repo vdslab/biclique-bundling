@@ -15,8 +15,11 @@ function App() {
   const [url, setUrl] = useState("public/random/json/random_7_7_75_2.json");
   const [displayUrl, setDisplayUrl] = useState(url);
 
-  const { paths, midNodes, midNodesOrders, crossCount } =
-    useColaConfluent(param, url, maxDepth);
+  const { paths, midNodes, midNodesOrders, crossCount } = useColaConfluent(
+    param,
+    url,
+    maxDepth
+  );
 
   return (
     <>
@@ -64,8 +67,8 @@ function App() {
             return (
               <path
                 key={key}
-                d={path}
-                stroke="silver"
+                d={path.path}
+                stroke={path.color}
                 strokeWidth="0.7"
                 fill="transparent"
                 opacity={0.9}
