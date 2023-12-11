@@ -4,7 +4,7 @@ import * as cola from "webcola";
 import Confluent from "./../utils/confluent.js";
 import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
 
-const colaConfluent = async (bipartite, param, maxDepth) => {
+const colaConfluent = (bipartite, param, maxDepth) => {
   const linkGenerator = d3.linkVertical();
   console.log(bipartite);
 

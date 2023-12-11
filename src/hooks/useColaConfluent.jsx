@@ -15,7 +15,6 @@ const useColaConfluent = (param, url, maxDepth) => {
 
   useEffect(() => {
     (async () => {
-
       const res = await fetch(url);
       const bipartite = await res.json();
 
@@ -26,7 +25,7 @@ const useColaConfluent = (param, url, maxDepth) => {
         rightNodesOrder,
         edgePaths,
         graph,
-      } = await colaConfluent(bipartite, param, maxDepth);
+      } = colaConfluent(bipartite, param, maxDepth);
 
       setCrossCount(cross);
       setMidNodes(graph.nodes);
