@@ -1,15 +1,12 @@
-import { getQuasiBicliqueCover } from "../utils/getBicliqueCover";
+import { getQuasiBicliqueCover } from "./../utils/getBicliqueCover.js";
 import * as d3 from "d3";
 import * as cola from "webcola";
-import Confluent from "../utils/confluent";
-import { getColaBipartiteCross } from "../utils/getBipartiteCross";
+import Confluent from "./../utils/confluent.js";
+import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
 
-const colaConfluent = async (url, param, maxDepth) => {
-  console.log("fd")
+const colaConfluent = async (bipartite, param, maxDepth) => {
   const linkGenerator = d3.linkVertical();
-  const res = await fetch(url);
-  const bipartite = await res.json();
-  console.log(bipartite)
+  console.log(bipartite);
 
   const cf = new Confluent(getQuasiBicliqueCover, param, maxDepth);
   cf.build(bipartite, 0, 1, 0);
@@ -160,7 +157,7 @@ const colaConfluent = async (url, param, maxDepth) => {
     midNodesOrders,
     rightNodesOrder,
     edgePaths,
-    graph
+    graph,
   };
 };
 
