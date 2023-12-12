@@ -69,9 +69,9 @@ function App() {
                 key={key}
                 d={path.path}
                 stroke={path.color}
-                strokeWidth="0.7"
+                strokeWidth="2.0"
                 fill="transparent"
-                opacity={0.9}
+                opacity={0.5}
               />
             );
           })}

@@ -4,7 +4,7 @@ import * as cola from "webcola";
 import Confluent from "./../utils/confluent.js";
 import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
 
-const colaConfluent = (bipartite, param, maxDepth) => {
+const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor) => {
   const linkGenerator = d3.linkVertical();
   console.log(bipartite);
 
@@ -136,6 +136,52 @@ const colaConfluent = (bipartite, param, maxDepth) => {
     .avoidOverlaps(true)
     .start(200, 200, 200);
 
+  console.log(cf.bicliqueCover);
+  const edgeColorInterpolation = d3.interpolateRgbBasis(["red", "green"]);
+  const edgeColors = [];
+  if (hasEdgeColor) {
+    for (const edge of graph.edges) {
+      const srcEdge = edge["source"];
+      const tarEdge = edge["target"];
+
+      if (srcEdge["layer"] === 0) {
+        let outVerticesCount = 0;
+        const biclique = cf.bicliqueCover[0]["maximalNodes"][tarEdge["label"]];
+
+        for (const rightNode of biclique["right"]) {
+          if (bipartite[srcEdge["label"]][rightNode]) {
+            outVerticesCount++;
+          }
+        }
+
+        console.log(
+          outVerticesCount / biclique["right"].length,
+          edgeColorInterpolation(outVerticesCount / biclique["right"].length)
+        );
+        edgeColors.push(
+          edgeColorInterpolation(outVerticesCount / biclique["right"].length)
+        );
+      } else if (srcEdge["layer"] === 1) {
+        let outVerticesCount = 0;
+        const biclique = cf.bicliqueCover[0]["maximalNodes"][srcEdge["label"]];
+
+        for (const leftNode of biclique["left"]) {
+          if (bipartite[leftNode][tarEdge["label"]]) {
+            outVerticesCount++;
+          }
+        }
+
+        console.log(
+          outVerticesCount / biclique["right"].length,
+          edgeColorInterpolation(outVerticesCount / biclique["left"].length)
+        );
+        edgeColors.push(
+          edgeColorInterpolation(outVerticesCount / biclique["left"].length)
+        );
+      }
+    }
+  }
+
   // graph.nodesを用いてedge-crossingをする
   //setCrossCount(getColaBipartiteCross(cf.bipartites, graph.nodes));
   const cross = getColaBipartiteCross(cf.bipartites, graph.nodes);
@@ -158,6 +204,7 @@ const colaConfluent = (bipartite, param, maxDepth) => {
     rightNodesOrder,
     edgePaths,
     graph,
+    edgeColors,
   };
 };
 

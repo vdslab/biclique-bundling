@@ -25,13 +25,18 @@ const useColaConfluent = (param, url, maxDepth) => {
         rightNodesOrder,
         edgePaths,
         graph,
-      } = colaConfluent(bipartite, param, maxDepth);
+        edgeColors,
+      } = colaConfluent(bipartite, param, maxDepth, true);
 
       setCrossCount(cross);
       setMidNodes(graph.nodes);
       setPaths(
-        edgePaths.map((path) => {
-          return { path, color: "rgb(100, 100, 100)" };
+        edgePaths.map((path, key) => {
+          if (key < edgeColors.length) {
+            return { path, color: edgeColors[key] };
+          } else {
+            return { path, color: "silver" };
+          }
         })
       );
       setMidNodesOrders(
