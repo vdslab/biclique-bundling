@@ -12,7 +12,11 @@ class Confluent {
     // /console.error("next", idx, bipartite);
     depth = idx >= 0 ? Math.abs(depth) : -1 * Math.abs(depth);
     let maximalNodes;
-    maximalNodes = this.getBicliqueCover(bipartite, this.param);
+    if(depth === 0) {
+      maximalNodes = this.getBicliqueCover(bipartite, this.param);
+    } else {
+      maximalNodes = this.getBicliqueCover(bipartite, this.param);
+    }
     console.error("mad", maximalNodes, idx);
 
     //最初のバイクリーク0は見逃す

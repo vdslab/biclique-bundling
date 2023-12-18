@@ -4,8 +4,7 @@ import * as cola from "webcola";
 import Confluent from "./../utils/confluent.js";
 import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
 
-const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor) => {
-  const linkGenerator = d3.linkVertical();
+const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
   console.log(bipartite);
 
   const cf = new Confluent(getQuasiBicliqueCover, param, maxDepth);
@@ -74,6 +73,7 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor) => {
 
   const graphNodes = filterSameNodes(Array.from(graphNodesSet));
   console.error(graphNodes);
+  // x軸上の分離制約も入れる
   const graphConstraints = new Array();
   let idx = 0;
   let prv = 0;
@@ -123,6 +123,14 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor) => {
     prv = cur;
   }
 
+  // ノードの分離制約(O(V^2))
+  for(let i = 0; i < graphNodes.length; i++) {
+    for(let j = i + 1; j < graphNodes.length; j++) {
+      if(graphNodes[i].layer !== graphNodes[j].layer) continue;
+      graphConstraints.push({ axis: 'x', type: 'separation', left: String(i), right: String(j), gap: 100 })
+    }
+  }
+
   const graph = new Object();
   graph.nodes = graphNodes;
   graph.edges = graphEdges;
@@ -137,9 +145,10 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor) => {
     .start(200, 200, 200);
 
   console.log(cf.bicliqueCover);
+  // 欠けているエッジに色を付ける
   const edgeColorInterpolation = d3.interpolateRgbBasis(["red", "green"]);
   const edgeColors = [];
-  if (hasEdgeColor) {
+  if (hasEdgeColor && maxDepth > 0) {
     for (const edge of graph.edges) {
       const srcEdge = edge["source"];
       const tarEdge = edge["target"];
@@ -172,7 +181,7 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor) => {
         }
 
         console.log(
-          outVerticesCount / biclique["right"].length,
+          outVerticesCount / biclique["left"].length,
           edgeColorInterpolation(outVerticesCount / biclique["left"].length)
         );
         edgeColors.push(
@@ -190,6 +199,7 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor) => {
   console.error(cf.bicliqueCover);
   //setMidNodes(graph.nodes);
 
+  const linkGenerator = d3.linkVertical();
   const edgePaths = graph.edges.map((d) => {
     return linkGenerator({
       source: [d.source.x, d.source.y],
