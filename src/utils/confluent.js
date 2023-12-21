@@ -2,6 +2,7 @@ class Confluent {
   constructor(getBicliqueCover, param, maxDepth) {
     this.layeredNodes = new Array();
     this.bipartites = new Array();
+    this.bipartitesForColor = new Array();
     this.getBicliqueCover = getBicliqueCover;
     this.param = param;
     this.maxDepth = maxDepth;
@@ -11,13 +12,15 @@ class Confluent {
   build(bipartite, idx, step, depth) {
     // /console.error("next", idx, bipartite);
     depth = idx >= 0 ? Math.abs(depth) : -1 * Math.abs(depth);
-    let maximalNodes;
-    if(depth === 0) {
-      maximalNodes = this.getBicliqueCover(bipartite, this.param);
-    } else {
-      maximalNodes = this.getBicliqueCover(bipartite, this.param);
-    }
+    const maximalNodes = this.getBicliqueCover(bipartite, this.param);
     console.error("mad", maximalNodes, idx);
+    this.bipartitesForColor.push({
+      h: idx,
+      depth,
+      bipartite,
+      maximalNodes,
+      step,
+    });
 
     //最初のバイクリーク0は見逃す
     if (
