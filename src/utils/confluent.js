@@ -9,7 +9,7 @@ class Confluent {
     this.bicliqueCover = new Array();
   }
 
-  build(bipartite, idx, step, depth) {
+  build(bipartite, idx = 0, step = 1, depth = 0) {
     // /console.error("next", idx, bipartite);
     depth = idx >= 0 ? Math.abs(depth) : -1 * Math.abs(depth);
     const maximalNodes = this.getBicliqueCover(bipartite, this.param);
