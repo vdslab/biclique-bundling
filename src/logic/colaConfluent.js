@@ -137,7 +137,7 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
   graph.nodes = graphNodes;
   graph.edges = graphEdges;
   graph.constraints = graphConstraints;
-  console.log(graph);
+  // console.log(graph);
 
   // stress最小化
   d3cola
@@ -154,73 +154,59 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
     - 色付けが正しいか
     - エッジ損失率を調べる
   */
-  console.error("cover", cf.bicliqueCover);
-  console.error(cf.bipartites);
-  console.error(cf.bipartitesForColor);
+  // console.error("cover", cf.bicliqueCover);
+  // console.error(cf.bipartites);
+  // console.error(cf.bipartitesForColor);
   const cbipartites = cf.bipartitesForColor
     .filter((item) => {
       return Math.abs(item.depth) === maxDepth - 1;
     })
     .sort((a, b) => a.h - b.h);
 
-  console.error(
-    "kkkkkkkkkkkkkk ",
-    cbipartites,
-    cf.bicliqueCover,
-    cf.bipartitesForColor
-  );
+  console.error("color", cbipartites, cf.bicliqueCover, cf.bipartitesForColor);
 
+  console.error(graph.edges);
   const edgeColorInterpolation = d3.interpolateRgbBasis(["red", "green"]);
   const edgeColors = [];
   if (hasEdgeColor && maxDepth > 0) {
     for (let i = 0; i < cbipartites.length; i++) {
-      console.error("HHHHHHHHHHHHHHHHHHHHHHHHHH");
       for (const edge of graph.edges) {
-        const srcEdge = edge["source"];
-        const tarEdge = edge["target"];
+        const srcNode = edge["source"];
+        const tarNode = edge["target"];
 
-        if (srcEdge["layer"] === 2 * i) {
+        console.error(
+          "yayay",
+          srcNode["layer"] / 2,
+          Math.floor(srcNode["layer"] / 2),
+          i
+        );
+        if (Math.floor(srcNode["layer"] / 2) !== i) continue;
+
+        if (srcNode["layer"] % 2 === 0) {
           let outVerticesCount = 0;
-          const biclique = cbipartites[i]["maximalNodes"][tarEdge["label"]];
-
+          const biclique = cbipartites[i]["maximalNodes"][tarNode["label"]];
+          //console.error("up", srcNode);
+          //console.error(cbipartites[i]["bipartite"][srcNode["label"]]);
           for (const rightNode of biclique["right"]) {
-            // console.error(cbipartites[i], i);
-            // console.error(
-            //   cbipartites[i]["bipartite"],
-            //   srcEdge["label"],
-            //   rightNode,
-            //   graph.edges
-            // );
-            if (cbipartites[i]["bipartite"][srcEdge["label"]][rightNode]) {
+            if (cbipartites[i]["bipartite"][srcNode["label"]][rightNode]) {
               outVerticesCount++;
             }
           }
-
-          console.error(
-            outVerticesCount,
-            biclique["left"].length,
-            outVerticesCount / biclique["right"].length,
-            edgeColorInterpolation(outVerticesCount / biclique["right"].length)
-          );
+          //console.error(outVerticesCount, biclique["right"].length, outVerticesCount / biclique["right"].length)
           edgeColors.push(
             edgeColorInterpolation(outVerticesCount / biclique["right"].length)
           );
-        } else if (srcEdge["layer"] === 2 * i + 1) {
+        } else {
+          //console.error("down", srcNode);
           let outVerticesCount = 0;
-          const biclique = cbipartites[i]["maximalNodes"][srcEdge["label"]];
+          const biclique = cbipartites[i]["maximalNodes"][srcNode["label"]];
 
           for (const leftNode of biclique["left"]) {
-            if (cbipartites[i]["bipartite"][leftNode][tarEdge["label"]]) {
+            if (cbipartites[i]["bipartite"][leftNode][tarNode["label"]]) {
               outVerticesCount++;
             }
           }
-
-          // console.error(
-          //   outVerticesCount,
-          //   biclique["left"].length,
-          //   outVerticesCount / biclique["left"].length,
-          //   edgeColorInterpolation(outVerticesCount / biclique["left"].length)
-          // );
+          //console.error(outVerticesCount,  biclique["left"].length,outVerticesCount / biclique["left"].length)
           edgeColors.push(
             edgeColorInterpolation(outVerticesCount / biclique["left"].length)
           );
@@ -240,20 +226,21 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
   const cross = getColaBipartiteCross(cf.bipartites, graph.nodes);
 
   // 中間ノード数
-  // cf.midNodesCount
+  const midNodesCount = cf.midNodesCount;
 
   // エッジ数
   const totalEdgeCount = getConfluentEdgeCount(cbipartites);
 
   // 損失数
+  // const loss
 
   //const midNodes =  getColaMidNodesNumber();
-  console.error("pos", graph);
-  console.error(cf.bipartites);
-  console.error(cf.bicliqueCover);
-  console.error(cf.midNodesCount);
-  console.error(totalEdgeCount);
-  //setMidNodes(graph.nodes);
+  // console.error("pos", graph);
+  // console.error(cf.bipartites);
+  // console.error(cf.bicliqueCover);
+  // console.error(cf.midNodesCount);
+  // console.error(totalEdgeCount);
+  // console.error(graph);
 
   const linkGenerator = d3.linkVertical();
   const edgePaths = graph.edges.map((d) => {
@@ -264,13 +251,15 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
   });
 
   return {
-    cross,
     leftNodesOrder,
     midNodesOrders,
     rightNodesOrder,
     edgePaths,
     graph,
     edgeColors,
+    cross,
+    totalEdgeCount,
+    midNodesCount,
   };
 };
 
