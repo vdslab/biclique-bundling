@@ -7,6 +7,7 @@ class Confluent {
     this.param = param;
     this.maxDepth = maxDepth;
     this.bicliqueCover = new Array();
+    this.midNodesCount = 0;
   }
 
   build(bipartite, idx = 0, step = 1, depth = 0) {
@@ -30,6 +31,9 @@ class Confluent {
       this.bipartites.push({ h: idx, depth, bipartite, maximalNodes, step });
       return;
     }
+
+    // 中間ノード数をカウントする
+    this.midNodesCount += maximalNodes.length;
 
     this.bicliqueCover.push({ maximalNodes, h: idx });
 
@@ -84,7 +88,6 @@ class Confluent {
         return true;
       }
     }
-
     return false;
   }
 }

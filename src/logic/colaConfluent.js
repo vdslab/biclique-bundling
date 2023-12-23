@@ -22,7 +22,6 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
   const leftNodeNumber = bipartite.length;
   const rightNodeNumber = bipartite[0].length;
   const midLayerNumber = cf.layeredNodes.length;
-
   // //左右中間ノードの順序を初期化
   const leftNodesOrder = new Array();
   const rightNodesOrder = new Array();
@@ -54,6 +53,7 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
   /*
     テスト箇所2
     - ノード、エッジ、制約が適切に入っているか？
+    - 目視で確認した方が早い
   */
   const graphEdges = new Array();
   const graphNodesSet = new Set();
@@ -77,6 +77,7 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
     }
     pad += bipartite.length;
   }
+
   const graphNodes = filterSameNodes(Array.from(graphNodesSet));
 
   // グラフの制約を追加
@@ -183,13 +184,13 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
           const biclique = cbipartites[i]["maximalNodes"][tarEdge["label"]];
 
           for (const rightNode of biclique["right"]) {
-            console.error(cbipartites[i], i);
-            console.error(
-              cbipartites[i]["bipartite"],
-              srcEdge["label"],
-              rightNode,
-              graph.edges
-            );
+            // console.error(cbipartites[i], i);
+            // console.error(
+            //   cbipartites[i]["bipartite"],
+            //   srcEdge["label"],
+            //   rightNode,
+            //   graph.edges
+            // );
             if (cbipartites[i]["bipartite"][srcEdge["label"]][rightNode]) {
               outVerticesCount++;
             }
@@ -214,12 +215,12 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
             }
           }
 
-          console.error(
-            outVerticesCount,
-            biclique["left"].length,
-            outVerticesCount / biclique["left"].length,
-            edgeColorInterpolation(outVerticesCount / biclique["left"].length)
-          );
+          // console.error(
+          //   outVerticesCount,
+          //   biclique["left"].length,
+          //   outVerticesCount / biclique["left"].length,
+          //   edgeColorInterpolation(outVerticesCount / biclique["left"].length)
+          // );
           edgeColors.push(
             edgeColorInterpolation(outVerticesCount / biclique["left"].length)
           );
@@ -235,11 +236,23 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
       - エッジ交差数算出関数が正しいか
       - 中間ノード算出関数が正しいか
   */
+  // エッジ交差数
   const cross = getColaBipartiteCross(cf.bipartites, graph.nodes);
+
+  // 中間ノード数
+  // cf.midNodesCount
+
+  // エッジ数
+  const totalEdgeCount = getConfluentEdgeCount(cbipartites);
+
+  // 損失数
+
   //const midNodes =  getColaMidNodesNumber();
   console.error("pos", graph);
   console.error(cf.bipartites);
   console.error(cf.bicliqueCover);
+  console.error(cf.midNodesCount);
+  console.error(totalEdgeCount);
   //setMidNodes(graph.nodes);
 
   const linkGenerator = d3.linkVertical();
@@ -274,6 +287,18 @@ const filterSameNodes = (nodes) => {
   }
 
   return res.sort((a, b) => a.id - b.id);
+};
+
+const getConfluentEdgeCount = (cbipartites) => {
+  let totalEdgeCount = 0;
+  for (const cbipartite of cbipartites) {
+    const maximalNodes = cbipartite["maximalNodes"];
+    maximalNodes.forEach((nodes) => {
+      totalEdgeCount += nodes["left"].length + nodes["right"].length;
+    });
+  }
+
+  return totalEdgeCount;
 };
 
 export default colaConfluent;
