@@ -321,10 +321,11 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
   const usedLeftNodes = [];
   const usedRightNodes = [];
 
-  const coloredEdges = [];
+  // 準バイクリークカバーの配列
   const quasiBicliques = [];
 
-  const quasiRLF = (G, param) => {
+  const quasiRLF = (G, param, counter = 0) => {
+    // グラフGが空だったらreturn
     if (!Object.entries(G).length) return;
 
     const S = [];
@@ -464,11 +465,11 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
       addedCandNodes.push({ side: "right", node: i });
     }
 
-    //bicliqueNodesの密度が高くなるようなノードを選択する
+    // bicliqueNodesの密度が高くなるようなノードを選択する
+    // 貪欲的に密度が高くなるようなノードを選択しても、最終的な結果が最良であるか限らない
     console.log(bicliqueNodes, addedCandNodes);
     const addedNodes = [];
     const addedNodesNumber = [];
-    const f = [];
     while (true) {
       let maxDensityNode;
       let maxDesity = -1.0;
@@ -484,7 +485,7 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
             ? "l" + addedNode["node"]
             : "r" + addedNode["node"];
         if (
-          bipartiteDensity > maxDesity &&
+          bipartiteDensity >= maxDesity &&
           !addedNodesNumber.includes(nodeNumber)
         ) {
           maxDesity = bipartiteDensity;
@@ -492,11 +493,11 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
         }
       }
 
-      console.error(maxDesity, maxDensityNode, bipartiteNodes, addedNodes);
 
       if (maxDesity < param) {
-        console.log(maxDesity);
         break;
+      } else {
+        console.error("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", maxDesity, bicliqueNodes);
       }
 
       if (maxDensityNode) {
@@ -514,8 +515,14 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
       }
     }
 
-    console.error("SSS", S, G, addedNodes, edge2Node, f, f.includes("r1"));
+    // 準バイクリークの密度がparam未満だったら例外を投げる
+    const bipartiteDensity = calcBipartiteDensity(bicliqueNodes, undefined , g);
+    console.error("SSS", counter , bicliqueNodes, bipartiteDensity);
+    if(bipartiteDensity < param) {
+      throw new Error("code error");
+    }
 
+    // 追加ノードをG_Eから削除する
     for (const addedNode of addedNodes) {
       edge2Node.forEach((GeNode, GEdge) => {
         const edge = GEdge.split(",");
@@ -537,16 +544,18 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
         }
       });
     }
-
     console.error(deletedNode);
+
+    // 準バイクリークカバーの配列
+    quasiBicliques.push(bicliqueNodes);
 
     //Sはエッジの配列
     //S.push(addedNode);
-    quasiBicliques.push(bicliqueNodes);
     console.log("deleted", deletedNode);
     console.error("added", addedNodes, param);
     console.log("node2", edge2Node);
     console.log(bicliqueNodes);
+
     //グラフからSを取り除く
     //グラフから頂点集合Sとそのエッジを取り除く
     //グラフからどう準バイクリークを取り除くか
@@ -558,15 +567,13 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
       }
     }
 
-    coloredEdges.push(S);
-    // Sは同じ色のoriginal Gのエッジ集合
-    // Sに頂点を追加する
-    console.log(G, S, coloredEdges);
-    quasiRLF(G, param);
+    quasiRLF(G, param, counter + 1);
   };
 
   //ここでRFLを実行する
+  console.error("Hasime")
   quasiRLF(G, param);
+  console.error("owari")
   //coloredEdgesをconfluent drawing用にデータを変換してreturn
   return quasiBicliques;
 };
