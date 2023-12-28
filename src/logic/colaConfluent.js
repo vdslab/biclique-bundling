@@ -165,6 +165,7 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
 
   console.error("color", cbipartites, cf.bicliqueCover, cf.bipartitesForColor);
 
+  let missingEdges = 0;
   console.error(graph.edges);
   const edgeColorInterpolation = d3.interpolateRgbBasis(["red", "green"]);
   const edgeColors = [];
@@ -174,12 +175,12 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
         const srcNode = edge["source"];
         const tarNode = edge["target"];
 
-        console.error(
-          "yayay",
-          srcNode["layer"] / 2,
-          Math.floor(srcNode["layer"] / 2),
-          i
-        );
+        // console.error(
+        //   "yayay",
+        //   srcNode["layer"] / 2,
+        //   Math.floor(srcNode["layer"] / 2),
+        //   i
+        // );
         if (Math.floor(srcNode["layer"] / 2) !== i) continue;
 
         if (srcNode["layer"] % 2 === 0) {
@@ -192,10 +193,15 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
               outVerticesCount++;
             }
           }
-          //console.error(outVerticesCount, biclique["right"].length, outVerticesCount / biclique["right"].length)
+          console.error(
+            outVerticesCount,
+            biclique["right"].length,
+            outVerticesCount / biclique["right"].length
+          );
           edgeColors.push(
             edgeColorInterpolation(outVerticesCount / biclique["right"].length)
           );
+          missingEdges +=  biclique["right"].length - outVerticesCount;
         } else {
           //console.error("down", srcNode);
           let outVerticesCount = 0;
@@ -206,10 +212,15 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
               outVerticesCount++;
             }
           }
-          //console.error(outVerticesCount,  biclique["left"].length,outVerticesCount / biclique["left"].length)
+          console.error(
+            outVerticesCount,
+            biclique["left"].length,
+            outVerticesCount / biclique["left"].length
+          );
           edgeColors.push(
             edgeColorInterpolation(outVerticesCount / biclique["left"].length)
           );
+          missingEdges += biclique["left"].length - outVerticesCount;
         }
       }
     }
@@ -232,7 +243,7 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
   const totalEdgeCount = getConfluentEdgeCount(cbipartites);
 
   // 損失数
-  // const loss
+  // missingEdges;
 
   //const midNodes =  getColaMidNodesNumber();
   // console.error("pos", graph);
@@ -250,6 +261,11 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
     });
   });
 
+  console.error(param, cross,
+    totalEdgeCount,
+    midNodesCount,
+    missingEdges);
+
   return {
     leftNodesOrder,
     midNodesOrders,
@@ -260,6 +276,7 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
     cross,
     totalEdgeCount,
     midNodesCount,
+    missingEdges,
   };
 };
 
