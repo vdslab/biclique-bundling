@@ -39,7 +39,7 @@ export const getColaBipartiteCross = (bipartites, nodes) => {
   console.log(bipartites, nodes);
   let crossCount = 0;
   let startIdx = 0;
-  for(const obj of bipartites) {
+  for (const obj of bipartites) {
     const bipartite = obj["bipartite"];
 
     const leftNodesNum = bipartite.length;
@@ -47,36 +47,33 @@ export const getColaBipartiteCross = (bipartites, nodes) => {
     const leftNodes = new Array();
     const rightNodes = new Array();
 
-    for(let i = 0; i < leftNodesNum; i++) {
+    for (let i = 0; i < leftNodesNum; i++) {
       leftNodes.push(nodes[i + startIdx]);
     }
 
-    for(let i = 0; i < rightNodesNum; i++) {
+    for (let i = 0; i < rightNodesNum; i++) {
       rightNodes.push(nodes[i + startIdx + leftNodesNum]);
     }
 
     leftNodes.sort((a, b) => a.x - b.x);
     rightNodes.sort((a, b) => a.x - b.x);
-
     const leftNodesOrder = new Array();
     const rightNodesOrder = new Array();
 
-
-    for(let i = 0; i < leftNodesNum; i++) {
-      leftNodesOrder.push(leftNodes[i]['label']);
+    for (let i = 0; i < leftNodesNum; i++) {
+      leftNodesOrder.push(leftNodes[i]["label"]);
     }
 
-    for(let i = 0; i < rightNodesNum; i++) {
-      rightNodesOrder.push(rightNodes[i]['label']);
+    for (let i = 0; i < rightNodesNum; i++) {
+      rightNodesOrder.push(rightNodes[i]["label"]);
     }
 
     console.log(leftNodesOrder, rightNodesOrder);
 
-    crossCount += getBipartiteCross(bipartite, leftNodesOrder, rightNodesOrder)
+    crossCount += getBipartiteCross(bipartite, leftNodesOrder, rightNodesOrder);
     startIdx += bipartite.length;
   }
 
-  console.error("rf", crossCount)
   return crossCount;
 };
 
