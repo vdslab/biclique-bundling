@@ -66,7 +66,6 @@ const useMuQuasiBiclique = (mu) => {
         for (const v of T) {
           const inVer = inVertices(v, bipartite);
           for (const u of inVer) {
-
             if (u in M) {
               M[u] += 1;
             } else {
@@ -101,9 +100,8 @@ const useMuQuasiBiclique = (mu) => {
         }
       }
 
-
       //fillterNonMaximal*/
-      console.error(SMaximalCandNodes, TMaximalCandNodes)
+      console.error(SMaximalCandNodes, TMaximalCandNodes);
       const [SMaximalNodes, TMaximalNodes] = getMaximalNodes(
         SMaximalCandNodes,
         TMaximalCandNodes

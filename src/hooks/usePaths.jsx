@@ -62,19 +62,16 @@ const usePaths = (
     const leftSideEdge = new Array();
     const rightSideEdge = new Array();
     for (let i = 0; i < maximalNodes.length; i++) {
-
-
-      for(const leftNode of maximalNodes[i].left) {
-        leftSideEdge.push({left: leftNode, right: i })
+      for (const leftNode of maximalNodes[i].left) {
+        leftSideEdge.push({ left: leftNode, right: i });
       }
 
-      for(const rightNode of maximalNodes[i].right) {
-        leftSideEdge.push({left: i, right: rightNode })
+      for (const rightNode of maximalNodes[i].right) {
+        leftSideEdge.push({ left: i, right: rightNode });
       }
     }
 
     console.error(leftSideEdge, rightSideEdge);
-
 
     ///ここまで初期化
 
@@ -173,7 +170,6 @@ const usePaths = (
     //エッジ数1のバイクラスタとして見なす
     //中間層ノードは重ならないようにする
     const lineData = new Array();
-
 
     const midLayerHeight = oneBiclusterNumber + maximalNodes.length;
     const midX = (rightX + leftX) / 2;

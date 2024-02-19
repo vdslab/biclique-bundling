@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import colaConfluent from "../logic/colaConfluent";
+//import colaConfluent from "../logic/colaConfluent";
+import colaConfluent from "../logic/multiColaConfluent";
 
 /*
  confluent drawingに対しての準バイクリークが妥当がどうか
