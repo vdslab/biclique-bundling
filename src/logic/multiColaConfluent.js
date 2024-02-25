@@ -169,11 +169,21 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
   let missingEdges = 0;
   console.error(graph.edges);
   const edgeColorInterpolation = d3.interpolateRgbBasis(["red", "green"]);
-  const edgeColors = Array(graph.edges.length).fill("rgb(128, 128, 128)");
-  console.error(cbipartites, edgeColors);
 
+  // 入力
+  /*
+  graph.edges
+  cbipartites
+  edgeColorInterpolation
+  bipartite
+  */
+
+  // 出力
+  const edgeColors = Array(graph.edges.length).fill("silver");
+
+  console.error(cbipartites, edgeColors);
   // エッジの彩色
-  if (hasEdgeColor && maxDepth > 0) {
+  if (hasEdgeColor) {
     graph.edges.forEach((edge, i) => {
       const srcNode = edge["source"];
       const tarNode = edge["target"];
@@ -208,8 +218,10 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
           if (bipartite[srcNode.label][c]) totalEdgesToi++;
         }
         missingEdges += iConnect - totalEdgesToi;
-        //console.error(edge, totalEdgesToi / iConnect)
-        edgeColors[i] = edgeColorInterpolation(totalEdgesToi / iConnect);
+        console.error(edge, totalEdgesToi / iConnect);
+        if (iConnect) {
+          edgeColors[i] = edgeColorInterpolation(totalEdgesToi / iConnect);
+        }
       } else if (srcNode.layer === Math.pow(2, maxDepth) - 1) {
         // 下外側エッジ
         let cexternals = [];
@@ -247,7 +259,9 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
         }
         missingEdges += iConnect - totalEdgesToi;
         console.error(edge, totalEdgesToi / iConnect);
-        edgeColors[i] = edgeColorInterpolation(totalEdgesToi / iConnect);
+        if (iConnect) {
+          edgeColors[i] = edgeColorInterpolation(totalEdgesToi / iConnect);
+        }
       } else {
         // 中間エッジ
         // missingEdgesを更新しない
@@ -255,7 +269,8 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
           if (Math.floor(srcNode["layer"] / 2) !== cidx) continue;
           if (srcNode["layer"] % 2 === 0) {
             let outVerticesCount = 0;
-            const biclique = cbipartites[cidx]["maximalNodes"][tarNode["label"]];
+            const biclique =
+              cbipartites[cidx]["maximalNodes"][tarNode["label"]];
             for (const rightNode of biclique["right"]) {
               if (cbipartites[cidx]["bipartite"][srcNode["label"]][rightNode]) {
                 outVerticesCount++;
@@ -266,7 +281,8 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
             );
           } else {
             let outVerticesCount = 0;
-            const biclique = cbipartites[cidx]["maximalNodes"][srcNode["label"]];
+            const biclique =
+              cbipartites[cidx]["maximalNodes"][srcNode["label"]];
             for (const leftNode of biclique["left"]) {
               if (cbipartites[cidx]["bipartite"][leftNode][tarNode["label"]]) {
                 outVerticesCount++;
@@ -280,6 +296,8 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
       }
     });
   }
+
+  console.error(edgeColors);
 
   // graph.nodesを用いてedge-crossingをする
   //setCrossCount(getColaBipartiteCross(cf.bipartites, graph.nodes));
