@@ -211,63 +211,76 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
   }
 
   console.error(cbipartites, edgeColors);
-  if (hasEdgeColor && maxDepth == 2) {
+  if (hasEdgeColor && maxDepth > 0) {
+    missingEdges = 0;
     graph.edges.forEach((edge, i) => {
       const srcNode = edge["source"];
       const tarNode = edge["target"];
       if (srcNode.layer === 0) {
         // 上外側エッジ
-        const mids = cbipartites[0].maximalNodes[tarNode.label].right;
-        //console.error(edge, mids);
         let cexternals = [];
-        for (const mid of mids) {
-          for (const cm of cbipartites[1].maximalNodes) {
-            if (cm.left.includes(mid)) {
-              cexternals.push(cm.right);
+        let tarNodes = [tarNode.label];
+
+        for (let cidx = 0; cidx < cbipartites.length; cidx++) {
+          const srcNodes = [];
+          for (const tn of tarNodes) {
+            srcNodes.push(...cbipartites[cidx].maximalNodes[tn].right);
+          }
+
+          if (cidx !== cbipartites.length - 1) {
+            // srcNodes -> tarNodes
+            tarNodes = [];
+            for (const ed of graph.edges) {
+              if (ed["source"]["layer"] !== 2 * (cidx + 1)) continue;
+              if (srcNodes.includes(ed["source"]["label"]))
+                tarNodes.push(ed["target"]["label"]);
             }
-          }
-        }
-
-        cexternals = cexternals.flat();
-        //console.error(edge, srcNode.label ,cexternals);
-        const iConnect = cexternals.length;
-        let totalEdgesToi = 0;
-
-        for (const c of cexternals) {
-          if (bipartite[srcNode.label][c]) {
-            totalEdgesToi++;
-          }
-        }
-
-        //console.error(edge,  totalEdgesToi, iConnect, cexternals);
-        console.error(edge, totalEdgesToi / iConnect);
-        edgeColors[i] = edgeColorInterpolation(totalEdgesToi / iConnect);
-      } else if (srcNode.layer === Math.pow(2, maxDepth) - 1) {
-        // 下外側エッジ
-        const mids = cbipartites[1].maximalNodes[srcNode.label].left;
-        //console.error(edge, mids);
-        let cexternals = [];
-        for (const mid of mids) {
-          for (const cm of cbipartites[0].maximalNodes) {
-            if (cm.right.includes(mid)) {
-              cexternals.push(cm.left);
-            }
-          }
-        }
-
-        cexternals = cexternals.flat();
-        //console.error(edge, cexternals, tarNode.label);
-        const iConnect = cexternals.length;
-        let totalEdgesToi = 0;
-
-        for (const c of cexternals) {
-          if (bipartite[c][tarNode.label]) {
-            totalEdgesToi++;
+          } else {
+            cexternals.push(...srcNodes);
           }
         }
 
         console.error(edge, cexternals);
-        console.error(edge,  totalEdgesToi, iConnect, totalEdgesToi / iConnect);
+        const iConnect = cexternals.length;
+        let totalEdgesToi = 0;
+        for (const c of cexternals) {
+          if (bipartite[srcNode.label][c]) totalEdgesToi++;
+        }
+        missingEdges += iConnect - totalEdgesToi;
+        edgeColors[i] = edgeColorInterpolation(totalEdgesToi / iConnect);
+      } else if (srcNode.layer === Math.pow(2, maxDepth) - 1) {
+        // 下外側エッジ
+        let cexternals = [];
+        let tarNodes = [srcNode.label];
+
+        for (let cidx = cbipartites.length - 1; cidx >= 0; cidx--) {
+          const srcNodes = [];
+          for (const tn of tarNodes) {
+            srcNodes.push(...cbipartites[cidx].maximalNodes[tn].left);
+          }
+
+          if (cidx !== 0) {
+            // srcNodes -> tarNodes
+            tarNodes = [];
+            for (const ed of graph.edges) {
+              // hotfix
+              if (ed["target"]["layer"] !== 2) continue;
+              console.error(ed);
+              if (srcNodes.includes(ed["target"]["label"]))
+                tarNodes.push(ed["source"]["label"]);
+            }
+          } else {
+            cexternals.push(...srcNodes);
+          }
+        }
+
+        console.error(edge, cexternals);
+        const iConnect = cexternals.length;
+        let totalEdgesToi = 0;
+        for (const c of cexternals) {
+          if (bipartite[c][tarNode.label]) totalEdgesToi++;
+        }
+        missingEdges += iConnect - totalEdgesToi;
         edgeColors[i] = edgeColorInterpolation(totalEdgesToi / iConnect);
       }
     });
