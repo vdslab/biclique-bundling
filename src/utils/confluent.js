@@ -10,8 +10,13 @@ class Confluent {
     this.midNodesCount = 0;
   }
 
-  build(bipartite, idx = 0, step = 1, depth = 0) {
-    // /console.error("next", idx, bipartite);
+  build(bipartite) {
+    this.#buildConfluent(bipartite);
+    this.#afterBuildProcess();
+  }
+
+  #buildConfluent(bipartite, idx = 0, step = 1, depth = 0) {
+    // console.error("next", idx, bipartite);
     depth = idx >= 0 ? Math.abs(depth) : -1 * Math.abs(depth);
     const maximalNodes = this.getBicliqueCover(bipartite, this.param);
     console.error("mad", maximalNodes, idx);
@@ -75,10 +80,8 @@ class Confluent {
 
     step = step / 2;
 
-    this.build(rightBipartite, idx + step, step, Math.abs(depth) + 1);
-    this.build(leftBipartite, idx - step, step, Math.abs(depth) + 1);
-
-    this.#afterBuildProcess();
+    this.#buildConfluent(rightBipartite, idx + step, step, Math.abs(depth) + 1);
+    this.#buildConfluent(leftBipartite, idx - step, step, Math.abs(depth) + 1);
   }
 
   // build実行したら必ずこの関数を実行する
