@@ -77,6 +77,25 @@ class Confluent {
 
     this.build(rightBipartite, idx + step, step, Math.abs(depth) + 1);
     this.build(leftBipartite, idx - step, step, Math.abs(depth) + 1);
+
+    this.#afterBuildProcess();
+  }
+
+  // build実行したら必ずこの関数を実行する
+  #afterBuildProcess() {
+    this.layeredNodes.sort((a, b) => {
+      return a.h - b.h;
+    });
+
+    this.bipartites.sort((a, b) => {
+      return a.h - b.h;
+    });
+
+    this.bipartitesForColor = this.bipartitesForColor
+      .filter((item) => {
+        return Math.abs(item.depth) === this.maxDepth - 1;
+      })
+      .sort((a, b) => a.h - b.h);
   }
 
   #allIsIn(maximalBiclusterNodes, left, right) {

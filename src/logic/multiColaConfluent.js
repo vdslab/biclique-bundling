@@ -1,7 +1,7 @@
-import { getQuasiBicliqueCover } from "./../utils/getBicliqueCover.js";
 import * as d3 from "d3";
 import * as cola from "webcola";
 import Confluent from "./../utils/confluent.js";
+import { getQuasiBicliqueCover } from "./../utils/getBicliqueCover.js";
 import getMissingEdgeColors from "./../utils/getMissingEdgeColors.js";
 import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
 
@@ -13,12 +13,6 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
   */
   const cf = new Confluent(getQuasiBicliqueCover, param, maxDepth);
   cf.build(bipartite);
-  cf.layeredNodes.sort((a, b) => {
-    return a.h - b.h;
-  });
-  cf.bipartites.sort((a, b) => {
-    return a.h - b.h;
-  });
 
   const leftNodeNumber = bipartite.length;
   const rightNodeNumber = bipartite[0].length;
@@ -157,16 +151,10 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
   */
   // console.error("cover", cf.bicliqueCover);
   // console.error(cf.bipartites);
-  // console.error(cf.bipartitesForColor);
-  const cbipartites = cf.bipartitesForColor
-    .filter((item) => {
-      return Math.abs(item.depth) === maxDepth - 1;
-    })
-    .sort((a, b) => a.h - b.h);
   // エッジの色付け
   const { edgeColors, missingEdges } = getMissingEdgeColors(
     graph,
-    cbipartites,
+    cf.bipartitesForColor,
     bipartite,
     maxDepth,
     hasEdgeColor
