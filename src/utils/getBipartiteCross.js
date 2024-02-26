@@ -33,7 +33,7 @@ export const getBipartiteCross = (
   return count++;
 };
 
-//cola.jsで並び替えした用
+// cola.jsで並び替えした用
 // 座標からleftNodesOrderとrightNodesOrderを算出する
 export const getColaBipartiteCross = (bipartites, nodes) => {
   console.log(bipartites, nodes);
@@ -77,6 +77,7 @@ export const getColaBipartiteCross = (bipartites, nodes) => {
   return crossCount;
 };
 
+// sugiyama framework用の交差数算出関数
 export const getConfluentCross = (
   bipartites,
   leftNodesOrder,

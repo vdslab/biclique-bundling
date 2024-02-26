@@ -85,7 +85,9 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
   /*
     テスト箇所4
       - エッジ交差数算出関数が正しいか
-      - 中間ノード算出関数が正しいか
+      - 中間ノード数が正しいか
+      - エッジ数が正しいか
+      - 損失数が正しいか
   */
   // エッジ交差数
   const cross = getColaBipartiteCross(cf.bipartites, graph.nodes);

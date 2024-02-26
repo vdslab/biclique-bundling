@@ -1,7 +1,21 @@
 import { expect, test, describe } from "vitest";
-import { getBipartiteCross } from "./../utils/getBipartiteCross";
+import { getBipartiteCross } from "../utils/getBipartiteCross";
 
-describe("二部グラフの交差テスト", () => {
+describe("二部グラフの交差数テスト", () => {
+  test("交差数0", () => {
+    const bipartite0 = [
+      [1, 0],
+      [1, 1],
+      [0, 1],
+    ];
+    const leftNodesOrder0 = [0, 1, 2];
+    const rightNodesOrder0 = [0, 1];
+
+    expect(
+      getBipartiteCross(bipartite0, leftNodesOrder0, rightNodesOrder0)
+    ).toBe(0);
+  });
+
   test("交差数4", () => {
     const bipartite1 = [
       [1, 0, 0, 0, 0, 0],
@@ -55,5 +69,24 @@ describe("二部グラフの交差テスト", () => {
       getBipartiteCross(bipartite4, leftNodesOrder4, rightNodesOrder4)
     ).toBe(1);
   });
+
+  test("交差数9(k_3_3の完全二部グラフ)", () => {
+    const leftNodesOrder5 = [0, 1, 2];
+    const rightNodesOrder5 = [0, 1, 2];
+
+    const bipartite5 = [
+      [1, 1, 1],
+      [1, 1, 1],
+      [1, 1, 1]
+    ];
+
+    expect(
+      getBipartiteCross(bipartite5, leftNodesOrder5, rightNodesOrder5)
+    ).toBe(9);
+  });
 });
 
+
+describe("confluentの交差数テスト(cola.js)", () => {
+
+});
