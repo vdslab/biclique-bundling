@@ -19,6 +19,16 @@ class Confluent {
     // console.error("next", idx, bipartite);
     depth = idx >= 0 ? Math.abs(depth) : -1 * Math.abs(depth);
     const maximalNodes = this.getBicliqueCover(bipartite, this.param);
+
+    // 内側にparam=1.0を適用する
+    // depthを増やしても、missing_edgeが増えない
+    // let maximalNodes
+    // if(Math.abs(depth) < 1) {
+    //   maximalNodes = this.getBicliqueCover(bipartite, this.param);
+    // } else {
+    //   maximalNodes = this.getBicliqueCover(bipartite, 1.0);
+    // }
+
     console.error("mad", maximalNodes, idx);
     this.bipartitesForColor.push({
       h: idx,

@@ -80,7 +80,7 @@ const getMissingEdgeColors = (
               Math.pow(2, maxDepth) - 2 * (cbipartites.length - cidx)
             )
               continue;
-            console.error(ed);
+            //console.error(ed);
             if (srcNodes.includes(ed["target"]["label"]))
               tarNodes.push(ed["source"]["label"]);
           }

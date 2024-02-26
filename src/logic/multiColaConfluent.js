@@ -3,6 +3,7 @@ import * as cola from "webcola";
 import Confluent from "./../utils/confluent.js";
 import { getQuasiBicliqueCover } from "./../utils/getBicliqueCover.js";
 import getMissingEdgeColors from "./../utils/getMissingEdgeColors.js";
+import filterSameNodes from "./../utils/filterSameNodes.js";
 import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
 
 const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
@@ -196,8 +197,12 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
     });
   });
 
-  // パラメター、交差数、エッジ数、中間ノード数、誤差数
-  console.log(param, cross, totalEdgeCount, midNodesCount, missingEdges);
+  // パラメター、交差数、エッジ数、中間ノード数、誤差数のログ
+  console.log("param", param);
+  console.log("cross", cross);
+  console.log("edge number", totalEdgeCount);
+  console.log("mid node", midNodesCount);
+  console.log("missing", missingEdges);
 
   return {
     leftNodesOrder,
@@ -211,21 +216,6 @@ const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
     midNodesCount,
     missingEdges,
   };
-};
-
-const filterSameNodes = (nodes) => {
-  const res = new Array();
-
-  for (let i = 0; i < nodes.length; i++) {
-    let isSame = true;
-    for (let j = i + 1; j < nodes.length; j++) {
-      if (nodes[i].id === nodes[j].id && nodes[i].label === nodes[j].label)
-        isSame = false;
-    }
-    if (isSame) res.push(nodes[i]);
-  }
-
-  return res.sort((a, b) => a.id - b.id);
 };
 
 export default colaConfluent;
