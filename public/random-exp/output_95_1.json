@@ -1,0 +1,2522 @@
+[
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 70,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 3.7333333333333334,
+      "edge": 30.5,
+      "mid": 1.0666666666666667,
+      "miss": 132
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 80,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 30,
+      "mid": 1,
+      "miss": 89.13333333333334
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 90,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 30,
+      "mid": 1,
+      "miss": 43.666666666666664
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 70,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 35,
+      "mid": 1,
+      "miss": 178.2
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 80,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 35,
+      "mid": 1,
+      "miss": 122.13333333333334
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 90,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 35,
+      "mid": 1,
+      "miss": 61.8
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 70,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 40,
+      "mid": 1,
+      "miss": 238.86666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 80,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 40,
+      "mid": 1,
+      "miss": 157.46666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 90,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 40,
+      "mid": 1,
+      "miss": 81.66666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 70,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 45,
+      "mid": 1,
+      "miss": 298.6666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 80,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 45,
+      "mid": 1,
+      "miss": 200
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 90,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 45,
+      "mid": 1,
+      "miss": 102.8
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 70,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 5.333333333333333,
+      "edge": 50.4,
+      "mid": 1.0333333333333334,
+      "miss": 379.6
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 80,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 50,
+      "mid": 1,
+      "miss": 248.46666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 90,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 50,
+      "mid": 1,
+      "miss": 127.13333333333334
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 70,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 55,
+      "mid": 1,
+      "miss": 444.4
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 80,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 55,
+      "mid": 1,
+      "miss": 308.6
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 90,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 55,
+      "mid": 1,
+      "miss": 149.73333333333332
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 70,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 60,
+      "mid": 1,
+      "miss": 538.8666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 80,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 60,
+      "mid": 1,
+      "miss": 353.6666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 90,
+      "param": 65,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 60,
+      "mid": 1,
+      "miss": 172.73333333333332
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 70,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 46.8,
+      "edge": 38.1,
+      "mid": 2.3,
+      "miss": 119
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 80,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 30,
+      "mid": 1,
+      "miss": 89.13333333333334
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 90,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 30,
+      "mid": 1,
+      "miss": 43.666666666666664
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 70,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 72.63333333333334,
+      "edge": 43.53333333333333,
+      "mid": 2.1,
+      "miss": 163.66666666666666
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 80,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 35,
+      "mid": 1,
+      "miss": 122.13333333333334
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 90,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 35,
+      "mid": 1,
+      "miss": 61.8
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 70,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 83.9,
+      "edge": 50.56666666666667,
+      "mid": 2.2,
+      "miss": 220.66666666666666
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 80,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 40,
+      "mid": 1,
+      "miss": 157.46666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 90,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 40,
+      "mid": 1,
+      "miss": 81.66666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 70,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 108.83333333333333,
+      "edge": 56.6,
+      "mid": 2.2,
+      "miss": 278.06666666666666
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 80,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 45,
+      "mid": 1,
+      "miss": 200
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 90,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 45,
+      "mid": 1,
+      "miss": 102.8
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 70,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 252.86666666666667,
+      "edge": 69.6,
+      "mid": 2.8666666666666667,
+      "miss": 348.1333333333333
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 80,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 50,
+      "mid": 1,
+      "miss": 248.46666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 90,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 50,
+      "mid": 1,
+      "miss": 127.13333333333334
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 70,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 120.6,
+      "edge": 64.43333333333334,
+      "mid": 1.7666666666666666,
+      "miss": 429.73333333333335
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 80,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 55,
+      "mid": 1,
+      "miss": 308.6
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 90,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 55,
+      "mid": 1,
+      "miss": 149.73333333333332
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 70,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 318.1,
+      "edge": 80.6,
+      "mid": 2.8,
+      "miss": 506.8
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 80,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 60,
+      "mid": 1,
+      "miss": 353.6666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 90,
+      "param": 70,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 60,
+      "mid": 1,
+      "miss": 172.73333333333332
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 70,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 197.13333333333333,
+      "edge": 58.53333333333333,
+      "mid": 5.066666666666666,
+      "miss": 90
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 80,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 2.1666666666666665,
+      "edge": 30.266666666666666,
+      "mid": 1.0333333333333334,
+      "miss": 88.66666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 90,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 30,
+      "mid": 1,
+      "miss": 43.666666666666664
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 70,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 365.1,
+      "edge": 75.3,
+      "mid": 6.333333333333333,
+      "miss": 120.33333333333333
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 80,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 35,
+      "mid": 1,
+      "miss": 122.13333333333334
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 90,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 35,
+      "mid": 1,
+      "miss": 61.8
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 70,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 605.8333333333334,
+      "edge": 96.43333333333334,
+      "mid": 7.633333333333334,
+      "miss": 158.66666666666666
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 80,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 40,
+      "mid": 1,
+      "miss": 157.46666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 90,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 40,
+      "mid": 1,
+      "miss": 81.66666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 70,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 1033.9666666666667,
+      "edge": 119.03333333333333,
+      "mid": 9,
+      "miss": 196.86666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 80,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 45,
+      "mid": 1,
+      "miss": 200
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 90,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 45,
+      "mid": 1,
+      "miss": 102.8
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 70,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 1643.5,
+      "edge": 151.5,
+      "mid": 11.8,
+      "miss": 232
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 80,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 50,
+      "mid": 1,
+      "miss": 248.46666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 90,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 50,
+      "mid": 1,
+      "miss": 127.13333333333334
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 70,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 2140.5,
+      "edge": 172.53333333333333,
+      "mid": 12.3,
+      "miss": 283.6666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 80,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 55,
+      "mid": 1,
+      "miss": 308.6
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 90,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 55,
+      "mid": 1,
+      "miss": 149.73333333333332
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 70,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 3247.5,
+      "edge": 205.3,
+      "mid": 14.366666666666667,
+      "miss": 332.6
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 80,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 60,
+      "mid": 1,
+      "miss": 353.6666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 90,
+      "param": 75,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 60,
+      "mid": 1,
+      "miss": 172.73333333333332
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 70,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 409.1,
+      "edge": 80.73333333333333,
+      "mid": 7.833333333333333,
+      "miss": 64
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 80,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 55.166666666666664,
+      "edge": 39.3,
+      "mid": 2.066666666666667,
+      "miss": 79.2
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 90,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 30,
+      "mid": 1,
+      "miss": 43.666666666666664
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 70,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 759.6333333333333,
+      "edge": 105.93333333333334,
+      "mid": 9.5,
+      "miss": 81.6
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 80,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 90.33333333333333,
+      "edge": 47.2,
+      "mid": 2.3333333333333335,
+      "miss": 110.8
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 90,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 35,
+      "mid": 1,
+      "miss": 61.8
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 70,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 1278.1,
+      "edge": 134.66666666666666,
+      "mid": 11.8,
+      "miss": 102.73333333333333
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 80,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 113.33333333333333,
+      "edge": 52.1,
+      "mid": 2.033333333333333,
+      "miss": 145.26666666666668
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 90,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 40,
+      "mid": 1,
+      "miss": 81.66666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 70,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 1934.0666666666666,
+      "edge": 163.76666666666668,
+      "mid": 13.366666666666667,
+      "miss": 126.73333333333333
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 80,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 119.8,
+      "edge": 57.9,
+      "mid": 2.2,
+      "miss": 186.66666666666666
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 90,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 45,
+      "mid": 1,
+      "miss": 102.8
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 70,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 3310.9333333333334,
+      "edge": 208.53333333333333,
+      "mid": 16.7,
+      "miss": 142.8
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 80,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 179.13333333333333,
+      "edge": 65.06666666666666,
+      "mid": 2.1,
+      "miss": 232.4
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 90,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 50,
+      "mid": 1,
+      "miss": 127.13333333333334
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 70,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 4768.6,
+      "edge": 247.96666666666667,
+      "mid": 18.766666666666666,
+      "miss": 159.33333333333334
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 80,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 386.1666666666667,
+      "edge": 86.46666666666667,
+      "mid": 3.466666666666667,
+      "miss": 276.3333333333333
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 90,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 55,
+      "mid": 1,
+      "miss": 149.73333333333332
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 70,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 6736.166666666667,
+      "edge": 290.1333333333333,
+      "mid": 21.166666666666668,
+      "miss": 195.06666666666666
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 80,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 248.23333333333332,
+      "edge": 77.2,
+      "mid": 2.2333333333333334,
+      "miss": 335.1333333333333
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 90,
+      "param": 80,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 60,
+      "mid": 1,
+      "miss": 172.73333333333332
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 70,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 563.5,
+      "edge": 92.03333333333333,
+      "mid": 9.3,
+      "miss": 40.93333333333333
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 80,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 276.1,
+      "edge": 65.4,
+      "mid": 5.233333333333333,
+      "miss": 54.666666666666664
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 90,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 30,
+      "mid": 1,
+      "miss": 43.666666666666664
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 70,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 953.8,
+      "edge": 116.96666666666667,
+      "mid": 10.966666666666667,
+      "miss": 56.2
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 80,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 520.4,
+      "edge": 88.5,
+      "mid": 6.7,
+      "miss": 71.33333333333333
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 90,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 35,
+      "mid": 1,
+      "miss": 61.8
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 70,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 1687.8666666666666,
+      "edge": 153.7,
+      "mid": 13.7,
+      "miss": 64.46666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 80,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 729.7333333333333,
+      "edge": 103.6,
+      "mid": 7.2,
+      "miss": 98.4
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 90,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 40,
+      "mid": 1,
+      "miss": 81.66666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 70,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 2639.266666666667,
+      "edge": 185.76666666666668,
+      "mid": 15.266666666666667,
+      "miss": 82.06666666666666
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 80,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 1228.3666666666666,
+      "edge": 131.36666666666667,
+      "mid": 8.666666666666666,
+      "miss": 119.53333333333333
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 90,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 45,
+      "mid": 1,
+      "miss": 102.8
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 70,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 4437.5,
+      "edge": 237.3,
+      "mid": 18.833333333333332,
+      "miss": 87.8
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 80,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 1925.6333333333334,
+      "edge": 158.63333333333333,
+      "mid": 10.6,
+      "miss": 140.73333333333332
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 90,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 50,
+      "mid": 1,
+      "miss": 127.13333333333334
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 70,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 6031.833333333333,
+      "edge": 277.96666666666664,
+      "mid": 20.833333333333332,
+      "miss": 103
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 80,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 2914.266666666667,
+      "edge": 193.53333333333333,
+      "mid": 12.266666666666667,
+      "miss": 170.4
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 90,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 55,
+      "mid": 1,
+      "miss": 149.73333333333332
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 70,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 8420.1,
+      "edge": 323.8333333333333,
+      "mid": 23.5,
+      "miss": 121.26666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 80,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 3510.133333333333,
+      "edge": 213.43333333333334,
+      "mid": 12.966666666666667,
+      "miss": 200.53333333333333
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 90,
+      "param": 85,
+      "depth": 1
+    },
+    "output": {
+      "cross": 0,
+      "edge": 60,
+      "mid": 1,
+      "miss": 172.73333333333332
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 70,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 640.5666666666667,
+      "edge": 98.93333333333334,
+      "mid": 10,
+      "miss": 25.2
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 80,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 475.96666666666664,
+      "edge": 84.43333333333334,
+      "mid": 7.333333333333333,
+      "miss": 35.2
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 90,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 72.46666666666667,
+      "edge": 41.1,
+      "mid": 2.1333333333333333,
+      "miss": 37.8
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 70,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 1116.1333333333334,
+      "edge": 126.53333333333333,
+      "mid": 12.066666666666666,
+      "miss": 34.6
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 80,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 857.1666666666666,
+      "edge": 108.9,
+      "mid": 8.733333333333333,
+      "miss": 45.666666666666664
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 90,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 120.36666666666666,
+      "edge": 48.56666666666667,
+      "mid": 2.2333333333333334,
+      "miss": 54.266666666666666
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 70,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 1997.7666666666667,
+      "edge": 164.56666666666666,
+      "mid": 14.633333333333333,
+      "miss": 39.86666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 80,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 1446.5666666666666,
+      "edge": 138.7,
+      "mid": 10.266666666666667,
+      "miss": 55.46666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 90,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 137.96666666666667,
+      "edge": 56.03333333333333,
+      "mid": 2.1333333333333333,
+      "miss": 72.86666666666666
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 70,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 2981.366666666667,
+      "edge": 199.46666666666667,
+      "mid": 16.8,
+      "miss": 48
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 80,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 2288.233333333333,
+      "edge": 173.23333333333332,
+      "mid": 12.033333333333333,
+      "miss": 64.26666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 90,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 184.1,
+      "edge": 62.8,
+      "mid": 2.3666666666666667,
+      "miss": 92.13333333333334
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 70,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 4916.766666666666,
+      "edge": 250.36666666666667,
+      "mid": 20.166666666666668,
+      "miss": 52.93333333333333
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 80,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 3540.6666666666665,
+      "edge": 210.56666666666666,
+      "mid": 13.933333333333334,
+      "miss": 77.2
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 90,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 258.1666666666667,
+      "edge": 73.2,
+      "mid": 2.6,
+      "miss": 113.86666666666666
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 70,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 7210.733333333334,
+      "edge": 296.8333333333333,
+      "mid": 22.433333333333334,
+      "miss": 60.46666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 80,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 5106.466666666666,
+      "edge": 249.3,
+      "mid": 15.666666666666666,
+      "miss": 90.46666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 90,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 266.56666666666666,
+      "edge": 75.13333333333334,
+      "mid": 2.2333333333333334,
+      "miss": 138.4
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 70,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 9892.666666666666,
+      "edge": 348.6333333333333,
+      "mid": 25.4,
+      "miss": 71.73333333333333
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 80,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 7204.466666666666,
+      "edge": 294.4,
+      "mid": 17.733333333333334,
+      "miss": 97.13333333333334
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 90,
+      "param": 90,
+      "depth": 1
+    },
+    "output": {
+      "cross": 142.06666666666666,
+      "edge": 70.03333333333333,
+      "mid": 1.5,
+      "miss": 166.93333333333334
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 70,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 709.6666666666666,
+      "edge": 103.8,
+      "mid": 11.066666666666666,
+      "miss": 10.133333333333333
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 80,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 623.8,
+      "edge": 95.43333333333334,
+      "mid": 8.6,
+      "miss": 14.333333333333334
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 90,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 309,
+      "edge": 69.3,
+      "mid": 4.866666666666666,
+      "miss": 20.266666666666666
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 70,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 1226.4,
+      "edge": 133.3,
+      "mid": 13,
+      "miss": 14.466666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 80,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 1068.2333333333333,
+      "edge": 121.93333333333334,
+      "mid": 9.966666666666667,
+      "miss": 20
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 90,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 599.9666666666667,
+      "edge": 92.9,
+      "mid": 6.3,
+      "miss": 25.133333333333333
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 70,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 2159.733333333333,
+      "edge": 172.33333333333334,
+      "mid": 15.933333333333334,
+      "miss": 16.8
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 80,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 1876.5,
+      "edge": 156.36666666666667,
+      "mid": 11.566666666666666,
+      "miss": 26.133333333333333
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 90,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 925.5333333333333,
+      "edge": 113.6,
+      "mid": 6.933333333333334,
+      "miss": 35.733333333333334
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 70,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 3292.2,
+      "edge": 208.83333333333334,
+      "mid": 17.966666666666665,
+      "miss": 21.333333333333332
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 80,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 2918.0333333333333,
+      "edge": 191.16666666666666,
+      "mid": 13.366666666666667,
+      "miss": 29.866666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 90,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 1394.9,
+      "edge": 137.5,
+      "mid": 8.1,
+      "miss": 43.46666666666667
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 70,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 5128.533333333334,
+      "edge": 256.06666666666666,
+      "mid": 20.933333333333334,
+      "miss": 24.066666666666666
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 80,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 4224.433333333333,
+      "edge": 230,
+      "mid": 15.166666666666666,
+      "miss": 36.2
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 90,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 2197.0666666666666,
+      "edge": 166,
+      "mid": 8.8,
+      "miss": 52
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 70,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 7668.333333333333,
+      "edge": 307.73333333333335,
+      "mid": 23.4,
+      "miss": 26
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 80,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 6091.633333333333,
+      "edge": 272.2,
+      "mid": 17.166666666666668,
+      "miss": 41.6
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 90,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 2824.233333333333,
+      "edge": 185.83333333333334,
+      "mid": 9.166666666666666,
+      "miss": 64.06666666666666
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 70,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 10616.7,
+      "edge": 360.4,
+      "mid": 26.766666666666666,
+      "miss": 29.333333333333332
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 80,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 8841.466666666667,
+      "edge": 322.8,
+      "mid": 18.9,
+      "miss": 43.8
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 90,
+      "param": 95,
+      "depth": 1
+    },
+    "output": {
+      "cross": 3810.766666666667,
+      "edge": 215.06666666666666,
+      "mid": 9.9,
+      "miss": 77.2
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 70,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 778.3,
+      "edge": 107.6,
+      "mid": 11.666666666666666,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 80,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 733.5333333333333,
+      "edge": 104.5,
+      "mid": 9.433333333333334,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 15,
+      "prob": 90,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 609.2333333333333,
+      "edge": 92.36666666666666,
+      "mid": 6.833333333333333,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 70,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 1345,
+      "edge": 140.16666666666666,
+      "mid": 13.933333333333334,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 80,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 1292.8,
+      "edge": 133.56666666666666,
+      "mid": 11.033333333333333,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 15,
+      "right": 20,
+      "prob": 90,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 964.0666666666667,
+      "edge": 116.13333333333334,
+      "mid": 7.766666666666667,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 70,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 2331.0333333333333,
+      "edge": 181.03333333333333,
+      "mid": 16.933333333333334,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 80,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 2175.0666666666666,
+      "edge": 168.9,
+      "mid": 12.766666666666667,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 20,
+      "prob": 90,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 1687.8333333333333,
+      "edge": 147,
+      "mid": 9.033333333333333,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 70,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 3486.5333333333333,
+      "edge": 217.9,
+      "mid": 19.033333333333335,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 80,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 3370.8333333333335,
+      "edge": 204.96666666666667,
+      "mid": 14.466666666666667,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 20,
+      "right": 25,
+      "prob": 90,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 2495.9,
+      "edge": 175.76666666666668,
+      "mid": 10,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 70,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 5621.7,
+      "edge": 268.8,
+      "mid": 22.466666666666665,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 80,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 5040.1,
+      "edge": 250.76666666666668,
+      "mid": 16.666666666666668,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 25,
+      "prob": 90,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 3754.8333333333335,
+      "edge": 209.9,
+      "mid": 11.033333333333333,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 70,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 8004.5,
+      "edge": 316.23333333333335,
+      "mid": 24.733333333333334,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 80,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 6968.5,
+      "edge": 293.76666666666665,
+      "mid": 18.933333333333334,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 25,
+      "right": 30,
+      "prob": 90,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 5080.266666666666,
+      "edge": 242.46666666666667,
+      "mid": 11.566666666666666,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 70,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 11369.366666666667,
+      "edge": 373.2,
+      "mid": 28.166666666666668,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 80,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 10348.6,
+      "edge": 350.6333333333333,
+      "mid": 20.866666666666667,
+      "miss": 0
+    }
+  },
+  {
+    "input": {
+      "left": 30,
+      "right": 30,
+      "prob": 90,
+      "param": 100,
+      "depth": 1
+    },
+    "output": {
+      "cross": 7069.8,
+      "edge": 280.56666666666666,
+      "mid": 12.6,
+      "miss": 0
+    }
+  }
+]
