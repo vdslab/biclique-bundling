@@ -1,5 +1,21 @@
 import colaConfluent from "../logic/colaConfluent.js";
 import fs from "fs";
+const calcMean = (list) => {
+  let ret = 0;
+  for (const li of list) {
+    ret += li;
+  }
+  return ret / list.length;
+};
+
+const calcMedian = (list) => {
+  const li = list.toSorted((a, b) => a - b);
+  if (li.length % 2) {
+    return li[Math.floor(li.length / 2)];
+  } else {
+    return (li[li.length / 2] + li[li.length / 2 - 1]) / 2;
+  }
+};
 
 const instanceNum = 30;
 const output = [];
@@ -9,12 +25,18 @@ try {
     { recursive: true, withFileTypes: true },
     function (err, files) {
       if (err) throw err;
-      for (let depth = 2; depth <= 2; depth++) {
+      for (let depth = 3; depth <= 3; depth++) {
         for (let param = 65; param <= 100; param += 5) {
-          let [cnt, crossVal, edgeVal, midVal, missVal] = [0, 0, 0, 0, 0];
+          let cnt = 0;
+          let crossVals = new Array();
+          let edgeVals = new Array();
+          let midVals = new Array();
+          let missVals = new Array();
           for (const file of files) {
             if (!file.isFile()) continue;
-            console.log(file.path + "/" + file.name);
+            console.log(
+              param + " " + depth + " " + file.path + "/" + file.name
+            );
 
             const bipartite = JSON.parse(
               fs.readFileSync(file.path + "/" + file.name, "utf-8")
@@ -22,44 +44,71 @@ try {
             const { cross, totalEdgeCount, midNodesCount, missingEdges } =
               colaConfluent(bipartite, param / 100, depth, true);
 
-            crossVal += cross;
-            edgeVal += totalEdgeCount;
-            midVal += midNodesCount;
-            missVal += missingEdges;
-            if (++cnt < instanceNum) continue;
+            crossVals.push(cross);
+            edgeVals.push(totalEdgeCount);
+            midVals.push(midNodesCount);
+            missVals.push(missingEdges);
+            cnt++;
+
+            if (cnt < instanceNum) continue;
             console.log("===================================================");
 
-            crossVal /= instanceNum;
-            edgeVal /= instanceNum;
-            midVal /= instanceNum;
-            missVal /= instanceNum;
-
             output.push({
-              input: {
+              instanceNum,
+              graph: {
                 left: Number(file.path.split("/")[3].split("_")[0]),
                 right: Number(file.path.split("/")[3].split("_")[1]),
                 prob: Number(file.path.split("/")[4]),
+              },
+              input: {
                 param,
                 depth,
               },
               output: {
-                cross: crossVal,
-                edge: edgeVal,
-                mid: midVal,
-                miss: missVal,
+                cross: crossVals,
+                edge: edgeVals,
+                mid: midVals,
+                miss: missVals,
+              },
+              stat: {
+                cross: {
+                  mean: calcMean(crossVals),
+                  median: calcMedian(crossVals),
+                  max: Math.max(...crossVals),
+                  min: Math.min(...crossVals),
+                },
+                edge: {
+                  mean: calcMean(edgeVals),
+                  median: calcMedian(edgeVals),
+                  max: Math.max(...edgeVals),
+                  min: Math.min(...edgeVals),
+                },
+                mid: {
+                  mean: calcMean(midVals),
+                  median: calcMedian(midVals),
+                  max: Math.max(...midVals),
+                  min: Math.min(...midVals),
+                },
+                miss: {
+                  mean: calcMean(missVals),
+                  median: calcMedian(missVals),
+                  max: Math.max(...missVals),
+                  min: Math.min(...missVals),
+                },
               },
             });
 
-            crossVal = 0;
-            edgeVal = 0;
-            midVal = 0;
-            missVal = 0;
+            // 新しい配列objectを作成
             cnt = 0;
+            crossVals = new Array();
+            edgeVals = new Array();
+            midVals = new Array();
+            missVals = new Array();
           }
         }
       }
       fs.writeFileSync(
-        "public/random-exp/json/output_95_2.json",
+        "public/random-exp/outputs_95_3.json",
         JSON.stringify(output, null, 2)
       );
     }
@@ -67,7 +116,7 @@ try {
 } catch (e) {
   console.error(e);
   fs.writeFileSync(
-    "public/random-exp/json/output_95_2.json",
+    "public/random-exp/outputs_95_3.json",
     JSON.stringify(output, null, 2)
   );
 }
