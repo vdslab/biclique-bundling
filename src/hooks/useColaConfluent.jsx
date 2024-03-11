@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import colaConfluent from "../logic/colaConfluent";
-
+import { getBipartiteDensity } from "./../utils/getBipartiteDensity";
 /*
  confluent drawingに対しての準バイクリークが妥当がどうか
  depth = 1は普通の準バイクリークによるエッジバンドリングである。
  depth = 1 と depth >= 2のdrawing結果で比較する→ depth > 2でdepth=1と上下ノードが同じようにリンクしているならばアルゴリズムは妥当
 
 */
-const useColaConfluent = (param, url, maxDepth) => {
+const useColaConfluent = (param, setParam, url, maxDepth) => {
   const [paths, setPaths] = useState([]);
   const [crossCount, setCrossCount] = useState(0);
   const [midNodes, setMidNodes] = useState([]);
@@ -18,6 +18,11 @@ const useColaConfluent = (param, url, maxDepth) => {
       const res = await fetch(url);
       const bipartite = await res.json();
 
+      const parameter =
+        param < 0 || param > 1.0
+          ? (1.0 + getBipartiteDensity(bipartite)) / 2
+          : param;
+
       const {
         cross,
         leftNodesOrder,
@@ -26,7 +31,7 @@ const useColaConfluent = (param, url, maxDepth) => {
         edgePaths,
         graph,
         edgeColors,
-      } = colaConfluent(bipartite, param, maxDepth, true);
+      } = colaConfluent(bipartite, parameter, maxDepth, true);
 
       setCrossCount(cross);
       setMidNodes(graph.nodes);

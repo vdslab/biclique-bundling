@@ -6,7 +6,13 @@ import getMissingEdgeColors from "./../utils/getMissingEdgeColors.js";
 import makeGraphForCola from "./../utils/makeGraphForCola.js";
 import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
 
-const colaConfluent = (bipartite, param, maxDepth, hasEdgeColor = false) => {
+const colaConfluent = (
+  bipartite,
+  param,
+  maxDepth,
+  hasEdgeColor = false,
+  outputForExp = false
+) => {
   // バイクリークカバーの計算
   /*
     テスト箇所1
