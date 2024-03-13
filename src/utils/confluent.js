@@ -3,6 +3,7 @@ class Confluent {
     this.layeredNodes = new Array();
     this.bipartites = new Array();
     this.bipartitesForColor = new Array();
+    this.bipartitesForMiss = new Array();
     this.getBicliqueCover = getBicliqueCover;
     this.param = param;
     this.maxDepth = maxDepth;
@@ -89,7 +90,6 @@ class Confluent {
     }
 
     step = step / 2;
-
     this.#buildConfluent(rightBipartite, idx + step, step, Math.abs(depth) + 1);
     this.#buildConfluent(leftBipartite, idx - step, step, Math.abs(depth) + 1);
   }
@@ -103,6 +103,12 @@ class Confluent {
     this.bipartites.sort((a, b) => {
       return a.h - b.h;
     });
+
+    this.bipartitesForMiss = structuredClone(this.bipartitesForColor)
+      .filter((item) => {
+        return Math.abs(item.depth) <= this.maxDepth - 1;
+      })
+      .sort((a, b) => a.h - b.h);
 
     this.bipartitesForColor = this.bipartitesForColor
       .filter((item) => {

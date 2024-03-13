@@ -20,6 +20,7 @@ const colaConfluent = (
   */
   const cf = new Confluent(getQuasiBicliqueCover, param, maxDepth);
   cf.build(bipartite);
+  console.log(cf.bipartitesForMiss);
 
   const leftNodeNumber = bipartite.length;
   const rightNodeNumber = bipartite[0].length;
@@ -86,6 +87,48 @@ const colaConfluent = (
     hasEdgeColor
   );
 
+  console.log(graph);
+
+  const edgeWidthes = [];
+  for (let depth = 0; depth < maxDepth; depth++) {
+    for (let i = 0; i < cf.bipartitesForMiss.length; i++) {
+      if (Math.abs(cf.bipartitesForMiss[i].depth) !== depth) continue;
+      console.log("bi ", cf.bipartitesForMiss[i], depth);
+
+      const maximalNodes = cf.bipartitesForMiss[i].maximalNodes;
+      const bipartite = cf.bipartitesForMiss[i].bipartite;
+      // depth >= 1からedgeWidthesを用いる
+
+      // 上エッジ
+      for (let left = 0; left < bipartite.length; left++) {
+        for (const node of maximalNodes) {
+          let edgeCount = 0;
+          if (!node.left.includes(left)) continue;
+
+          for (const right of node.right) {
+            edgeCount += bipartite[left][right];
+            // leftからrightまでのエッジのカウントをプラス
+          }
+          edgeWidthes.push(edgeCount);
+        }
+      }
+
+      // 下エッジ
+      for (const node of maximalNodes) {
+        for (const right of node.right) {
+          let edgeCount = 0;
+          for (const left of node.left) {
+            edgeCount += bipartite[left][right];
+            // leftからrightまでのエッジのカウントをプラス
+          }
+          edgeWidthes.push(edgeCount);
+        }
+      }
+    }
+  }
+
+  console.log(edgeWidthes);
+
   // graph.nodesを用いてedge-crossingをする
   //setCrossCount(getColaBipartiteCross(cf.bipartites, graph.nodes));
   /*
@@ -134,6 +177,7 @@ const colaConfluent = (
     totalEdgeCount,
     midNodesCount,
     missingEdges,
+    edgeWidthes,
   };
 };
 
