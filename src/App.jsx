@@ -7,7 +7,7 @@ function App() {
   const width = 2300;
   const height = 3000;
 
-  const [param, setParam] = useState(0.1);
+  const [param, setParam] = useState(-1.0);
   const [rangeParam, setRangeParam] = useState(param);
   const [maxDepth, setMaxDepth] = useState(1);
   const nodeRadius = 4;
@@ -57,7 +57,7 @@ function App() {
         value={rangeParam}
         onChange={(e) => setRangeParam(e.target.value)}
       />
-      <p>{rangeParam}</p>
+      <p>{param < 0 || param > 1.0 ? "default" : rangeParam}</p>
       <button type="button" onClick={() => setParam(rangeParam)}>
         パラメータ適用
       </button>
@@ -69,7 +69,7 @@ function App() {
                 key={key}
                 d={path.path}
                 stroke={path.color}
-                strokeWidth="2.0"
+                strokeWidth={path.width}
                 fill="transparent"
                 opacity={0.5}
               />

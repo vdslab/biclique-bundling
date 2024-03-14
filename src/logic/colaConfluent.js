@@ -90,41 +90,78 @@ const colaConfluent = (
   console.log(graph);
 
   const edgeWidthes = [];
+  let prevInfo;
   for (let depth = 0; depth < maxDepth; depth++) {
+    const edgeInfo = {};
     for (let i = 0; i < cf.bipartitesForMiss.length; i++) {
       if (Math.abs(cf.bipartitesForMiss[i].depth) !== depth) continue;
-      console.log("bi ", cf.bipartitesForMiss[i], depth);
-
       const maximalNodes = cf.bipartitesForMiss[i].maximalNodes;
       const bipartite = cf.bipartitesForMiss[i].bipartite;
       // depth >= 1からedgeWidthesを用いる
 
       // 上エッジ
       for (let left = 0; left < bipartite.length; left++) {
-        for (const node of maximalNodes) {
+        for (let j = 0; j < maximalNodes.length; j++) {
+          const node = maximalNodes[j];
           let edgeCount = 0;
           if (!node.left.includes(left)) continue;
-
           for (const right of node.right) {
-            edgeCount += bipartite[left][right];
+            if (!bipartite[left][right]) continue;
+            const weight = depth
+              ? prevInfo[[left, right, cf.bipartitesForMiss[i].depth].join(",")]
+              : 1;
+            edgeCount += bipartite[left][right] * weight;
+
+              // console.log(
+              //   "wei upper",
+              //   bipartite[left][right],
+              //   weight,
+              //   [left, right, cf.bipartitesForMiss[i].depth].join(","),
+              // );
             // leftからrightまでのエッジのカウントをプラス
           }
-          edgeWidthes.push(edgeCount);
+          if (depth === maxDepth - 1) {
+            //console.log("u", left, j, edgeCount)
+            edgeWidthes.push(edgeCount);
+          }
+          edgeInfo[[left, j, -(depth + 1)].join(",")] = edgeCount;
+          //console.log(left, j, edgeCount, " ", -(depth + 1), i);
         }
       }
 
       // 下エッジ
-      for (const node of maximalNodes) {
+      for (let j = 0; j < maximalNodes.length; j++) {
+        const node = maximalNodes[j];
         for (const right of node.right) {
           let edgeCount = 0;
           for (const left of node.left) {
-            edgeCount += bipartite[left][right];
+            if (!bipartite[left][right]) continue;
+            const weight = depth ? prevInfo[[left,right, cf.bipartitesForMiss[i].depth].join(",")] : 1;
+            edgeCount += bipartite[left][right] * weight;
+            // if(j === 3 && right === 1 && depth === maxDepth - 1) {
+            //   console.log(weight, edgeCount)
+            // }
+
+
+              // console.log(
+              //   "wei under",
+              //   bipartite[left][right],
+              //   weight,
+              //   [left,right, cf.bipartitesForMiss[i].depth].join(","),
+              // );
             // leftからrightまでのエッジのカウントをプラス
           }
-          edgeWidthes.push(edgeCount);
+          //console.log(j, right, edgeCount, " ", depth + 1);
+          edgeInfo[[j, right, depth + 1].join(",")] = edgeCount;
+          if (depth === maxDepth - 1) {
+            // console.log("d", j, right, edgeCount)
+            edgeWidthes.push(edgeCount);
+          }
         }
       }
     }
+    console.log(edgeInfo);
+    prevInfo = Object.assign({}, edgeInfo);
   }
 
   console.log(edgeWidthes);
