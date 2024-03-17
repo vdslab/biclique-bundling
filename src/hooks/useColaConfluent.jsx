@@ -10,8 +10,8 @@ import { getBipartiteDensity } from "./../utils/getBipartiteDensity";
 const useColaConfluent = (param, url, maxDepth) => {
   const [paths, setPaths] = useState([]);
   const [crossCount, setCrossCount] = useState(0);
-  const [midNodes, setMidNodes] = useState([]);
-  const [midNodesOrders, setMidNodesOrders] = useState();
+  const [nodes, setNodes] = useState([]);
+  const [nodeLabels, setNodeLabels] = useState();
 
   useEffect(() => {
     (async () => {
@@ -35,26 +35,22 @@ const useColaConfluent = (param, url, maxDepth) => {
       } = colaConfluent(bipartite, parameter, maxDepth, true);
 
       setCrossCount(cross);
-      setMidNodes(graph.nodes);
+      setNodes(graph.nodes);
       setPaths(
         edgePaths.map((path, key) => {
-          if (key < edgeColors.length) {
-            return { path, color: edgeColors[key], width: edgeWidthes[key] };
-          } else {
-            return { path, color: "silver", width: edgeWidthes[key] };
-          }
+          return { path, color: edgeColors[key], width: edgeWidthes[key] };
         })
       );
-      setMidNodesOrders(
-        [leftNodesOrder, midNodesOrders.flat(), rightNodesOrder].flat()
+      setNodeLabels(
+        [...leftNodesOrder, ...midNodesOrders, ...rightNodesOrder].flat()
       );
     })();
   }, [param, url, maxDepth]);
 
   return {
     paths,
-    midNodes,
-    midNodesOrders,
+    nodes,
+    nodeLabels,
     crossCount,
   };
 };

@@ -87,8 +87,6 @@ const colaConfluent = (
     hasEdgeColor
   );
 
-  console.log(graph);
-
   const edgeWidthes = [];
   let prevInfo;
   for (let depth = 0; depth < maxDepth; depth++) {
@@ -184,6 +182,7 @@ const colaConfluent = (
   console.log("edge number", totalEdgeCount);
   console.log("mid node", midNodesCount);
   console.log("missing", missingEdges);
+  console.log("graph data", graph);
 
   return {
     leftNodesOrder,

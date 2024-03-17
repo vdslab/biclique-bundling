@@ -15,7 +15,7 @@ function App() {
   const [url, setUrl] = useState("public/random/json/random_7_7_75_2.json");
   const [displayUrl, setDisplayUrl] = useState(url);
 
-  const { paths, midNodes, midNodesOrders, crossCount } = useColaConfluent(
+  const { paths, nodes, nodeLabels, crossCount } = useColaConfluent(
     param,
     url,
     maxDepth
@@ -68,53 +68,17 @@ function App() {
               <path
                 key={key}
                 d={path.path}
-                stroke={path.color}
-                strokeWidth={path.width}
+                stroke={path.color || "green"}
+                strokeWidth={path.width || 1.5}
                 fill="transparent"
                 opacity={0.5}
               />
             );
           })}
-
-          {/* {lines?.map((line, key) => {
-            return (
-              <path
-                key={key}
-                d={line}
-                stroke="silver"
-                strokeWidth="0.7"
-                fill="transparent"
-                opacity={0.7}
-              />
-            );
-          })} */}
         </g>
+
         <g>
-          {/* {leftNodes?.map((node, key) => {
-            return (
-              <circle
-                key={key}
-                cx={node.x}
-                cy={node.y}
-                r={nodeRadius}
-                fill="blue"
-              />
-            );
-          })}
-
-          {rightNodes?.map((node, key) => {
-            return (
-              <circle
-                key={key}
-                cx={node.x}
-                cy={node.y}
-                r={nodeRadius}
-                fill="blue"
-              />
-            );
-          })} */}
-
-          {midNodes?.map((node, key) => {
+          {nodes?.map((node, key) => {
             return (
               <circle
                 key={key}
@@ -126,26 +90,10 @@ function App() {
             );
           })}
 
-          {/* {leftNodes?.map((node, key) => {
-            return (
-              <text key={key} x={node.x - 12.5} y={node.y + 10} fontSize="25">
-                {leftNodesOrder[key]}
-              </text>
-            );
-          })}
-
-          {rightNodes?.map((node, key) => {
-            return (
-              <text key={key} x={node.x - 12.5} y={node.y + 10} fontSize="25">
-                {rightNodesOrder[key]}
-              </text>
-            );
-          })} */}
-
-          {midNodes?.map((node, key) => {
+          {nodes?.map((node, key) => {
             return (
               <text key={key} x={node.x} y={node.y + 4} fontSize="15">
-                {midNodesOrders[key]}
+                {nodeLabels[key]}
               </text>
             );
           })}
