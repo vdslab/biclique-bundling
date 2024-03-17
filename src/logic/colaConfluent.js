@@ -93,6 +93,8 @@ const colaConfluent = (
   let prevInfo;
   for (let depth = 0; depth < maxDepth; depth++) {
     const edgeInfo = {};
+    let bipartiteNumber = 0;
+    let prevBipartiteNumber = 0;
     for (let i = 0; i < cf.bipartitesForMiss.length; i++) {
       if (Math.abs(cf.bipartitesForMiss[i].depth) !== depth) continue;
       const maximalNodes = cf.bipartitesForMiss[i].maximalNodes;
@@ -108,26 +110,17 @@ const colaConfluent = (
           for (const right of node.right) {
             if (!bipartite[left][right]) continue;
             const weight = depth
-              ? prevInfo[[left, right, cf.bipartitesForMiss[i].depth].join(",")]
+              ? prevInfo[[left, right, prevBipartiteNumber].join(",")]
               : 1;
             edgeCount += bipartite[left][right] * weight;
-
-              // console.log(
-              //   "wei upper",
-              //   bipartite[left][right],
-              //   weight,
-              //   [left, right, cf.bipartitesForMiss[i].depth].join(","),
-              // );
-            // leftからrightまでのエッジのカウントをプラス
           }
           if (depth === maxDepth - 1) {
-            //console.log("u", left, j, edgeCount)
             edgeWidthes.push(edgeCount);
           }
-          edgeInfo[[left, j, -(depth + 1)].join(",")] = edgeCount;
-          //console.log(left, j, edgeCount, " ", -(depth + 1), i);
+          edgeInfo[[left, j, bipartiteNumber].join(",")] = edgeCount;
         }
       }
+      bipartiteNumber++;
 
       // 下エッジ
       for (let j = 0; j < maximalNodes.length; j++) {
@@ -136,34 +129,23 @@ const colaConfluent = (
           let edgeCount = 0;
           for (const left of node.left) {
             if (!bipartite[left][right]) continue;
-            const weight = depth ? prevInfo[[left,right, cf.bipartitesForMiss[i].depth].join(",")] : 1;
+            const weight = depth
+              ? prevInfo[[left, right, prevBipartiteNumber].join(",")]
+              : 1;
             edgeCount += bipartite[left][right] * weight;
-            // if(j === 3 && right === 1 && depth === maxDepth - 1) {
-            //   console.log(weight, edgeCount)
-            // }
-
-
-              // console.log(
-              //   "wei under",
-              //   bipartite[left][right],
-              //   weight,
-              //   [left,right, cf.bipartitesForMiss[i].depth].join(","),
-              // );
-            // leftからrightまでのエッジのカウントをプラス
           }
-          //console.log(j, right, edgeCount, " ", depth + 1);
-          edgeInfo[[j, right, depth + 1].join(",")] = edgeCount;
+          edgeInfo[[j, right, bipartiteNumber].join(",")] = edgeCount;
           if (depth === maxDepth - 1) {
-            // console.log("d", j, right, edgeCount)
             edgeWidthes.push(edgeCount);
           }
         }
       }
+      bipartiteNumber++;
+      prevBipartiteNumber++;
     }
     console.log(edgeInfo);
     prevInfo = Object.assign({}, edgeInfo);
   }
-
   console.log(edgeWidthes);
 
   // graph.nodesを用いてedge-crossingをする
