@@ -4,6 +4,7 @@ import Confluent from "./../utils/confluent.js";
 import { getQuasiBicliqueCover } from "./../utils/getBicliqueCover.js";
 import getMissingEdgeColors from "./../utils/getMissingEdgeColors.js";
 import makeGraphForCola from "./../utils/makeGraphForCola.js";
+import getEdgeWidths from "./../utils/getEdgeWidths";
 import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
 
 const colaConfluent = (
@@ -18,6 +19,7 @@ const colaConfluent = (
     テスト箇所1
     - 正しくバイクリークカバーを算出できているか
   */
+  // bipartite = [[1, 1, 1, 0], [1, 0, 1, 1], [1, 1, 1, 1], [1, 1, 0, 1], [1, 1, 0, 1]]
   const cf = new Confluent(getQuasiBicliqueCover, param, maxDepth);
   cf.build(bipartite);
   console.log(cf.bipartitesForMiss);
@@ -79,71 +81,15 @@ const colaConfluent = (
   // console.error("cover", cf.bicliqueCover);
   // console.error(cf.bipartites);
   // エッジの色付け
-  const { edgeColors, missingEdges } = getMissingEdgeColors(
+  const { missingEdges } = getMissingEdgeColors(
     graph,
     cf.bipartitesForColor,
     bipartite,
     maxDepth,
     hasEdgeColor
   );
-
-  const edgeWidthes = [];
-  let prevInfo;
-  for (let depth = 0; depth < maxDepth; depth++) {
-    const edgeInfo = {};
-    let bipartiteNumber = 0;
-    let prevBipartiteNumber = 0;
-    for (let i = 0; i < cf.bipartitesForMiss.length; i++) {
-      if (Math.abs(cf.bipartitesForMiss[i].depth) !== depth) continue;
-      const maximalNodes = cf.bipartitesForMiss[i].maximalNodes;
-      const bipartite = cf.bipartitesForMiss[i].bipartite;
-      // depth >= 1からedgeWidthesを用いる
-
-      // 上エッジ
-      for (let left = 0; left < bipartite.length; left++) {
-        for (let j = 0; j < maximalNodes.length; j++) {
-          const node = maximalNodes[j];
-          let edgeCount = 0;
-          if (!node.left.includes(left)) continue;
-          for (const right of node.right) {
-            if (!bipartite[left][right]) continue;
-            const weight = depth
-              ? prevInfo[[left, right, prevBipartiteNumber].join(",")]
-              : 1;
-            edgeCount += bipartite[left][right] * weight;
-          }
-          if (depth === maxDepth - 1) {
-            edgeWidthes.push(edgeCount);
-          }
-          edgeInfo[[left, j, bipartiteNumber].join(",")] = edgeCount;
-        }
-      }
-      bipartiteNumber++;
-
-      // 下エッジ
-      for (let j = 0; j < maximalNodes.length; j++) {
-        const node = maximalNodes[j];
-        for (const right of node.right) {
-          let edgeCount = 0;
-          for (const left of node.left) {
-            if (!bipartite[left][right]) continue;
-            const weight = depth
-              ? prevInfo[[left, right, prevBipartiteNumber].join(",")]
-              : 1;
-            edgeCount += bipartite[left][right] * weight;
-          }
-          edgeInfo[[j, right, bipartiteNumber].join(",")] = edgeCount;
-          if (depth === maxDepth - 1) {
-            edgeWidthes.push(edgeCount);
-          }
-        }
-      }
-      bipartiteNumber++;
-      prevBipartiteNumber++;
-    }
-    console.log(edgeInfo);
-    prevInfo = Object.assign({}, edgeInfo);
-  }
+  const edgeColors = [];
+  const edgeWidthes = getEdgeWidths(cf.bipartitesForMiss);
   console.log(edgeWidthes);
 
   // graph.nodesを用いてedge-crossingをする
@@ -167,12 +113,43 @@ const colaConfluent = (
 
   // 損失数
   // missingEdges;
+  const midNodeWidthes = [];
+  for (const node of graph.nodes) {
+    if (node.layer === 0 || node.layer === Math.pow(2, maxDepth)) continue;
+    let sumWidth = 0;
+    graph.edges.forEach((edge, key) => {
+      if (edge.target.id === node.id) {
+        sumWidth += edgeWidthes[key];
+      }
+    });
+    console.log(sumWidth, node.x - sumWidth / 2);
+    midNodeWidthes.push(sumWidth);
+  }
 
   const linkGenerator = d3.linkVertical();
-  const edgePaths = graph.edges.map((d) => {
+  // const pdd = new Array(midNodesCount).fill(0);
+  // const pdf = new Array(midNodesCount).fill(0);
+  const edgePaths = graph.edges.map((d, key) => {
+    let padSrc = 0;
+    let padTar = 0;
+
+    // padSrc =
+    //   -midNodeWidthes[d.source.label] / 2 -
+    //   edgeWidthes[key] +
+    //   pdf[d.source.label];
+    // pdf[d.source.label] += edgeWidthes[key];
+
+    // padTar =
+    //   -midNodeWidthes[d.target.label] / 2 +
+    //   edgeWidthes[key] +
+    //   pdd[d.target.label];
+    // pdd[d.target.label] += edgeWidthes[key];
+
+    // if (d.source.layer === 0) padSrc = 0;
+    // if (d.target.layer === Math.pow(2, maxDepth)) padTar = 0;
     return linkGenerator({
-      source: [d.source.x, d.source.y],
-      target: [d.target.x, d.target.y],
+      source: [d.source.x + padSrc, d.source.y],
+      target: [d.target.x + padTar, d.target.y],
     });
   });
 
@@ -183,6 +160,7 @@ const colaConfluent = (
   console.log("mid node", midNodesCount);
   console.log("missing", missingEdges);
   console.log("graph data", graph);
+  console.log("color", cf.bipartitesForColor);
 
   return {
     leftNodesOrder,
