@@ -109,14 +109,14 @@ const colaConfluent = (
   // エッジ数
   const totalEdgeCount = graph.edges.length;
   //getConfluentEdgeCount(cbipartites);
-
+  const lastLayer = 2 ** maxDepth;
   // 損失数
   // missingEdges;
   let midNodeWidths = [];
   let midNodeElement = [];
   for (let i = 0; i < graph.nodes.length; i++) {
     const node = graph.nodes[i];
-    if (node.layer === 0 || node.layer === Math.pow(2, maxDepth)) continue;
+    if (node.layer === 0 || node.layer === lastLayer) continue;
 
     let sumWidth = 0;
     graph.edges.forEach((edge, key) => {
@@ -125,57 +125,45 @@ const colaConfluent = (
       }
     });
 
-    console.log(sumWidth, node);
-    midNodeElement.push(sumWidth);
     if (
       i > 0 &&
       graph.nodes[i - 1].layer > 0 &&
       node.layer !== graph.nodes[i - 1].layer
     ) {
-      console.log("UU", node, graph.nodes[i - 1]);
       midNodeWidths.push(midNodeElement);
-      console.log(midNodeElement);
       midNodeElement = [];
     }
+
+    midNodeElement.push(sumWidth);
   }
   midNodeWidths.push(midNodeElement);
   midNodeWidths = [[], ...midNodeWidths, []];
   console.log(midNodeWidths);
 
   const linkGenerator = d3.linkVertical();
-  const pdd = new Array(midNodesCount).fill(0);
-  const pdf = new Array(midNodesCount).fill(0);
+  const pdd = new Array(graph.nodes.length).fill(0);
+  const pdf = new Array(graph.nodes.length).fill(0);
+
   const edgePaths = graph.edges.map((d, key) => {
-    //console.log(d.source.layer, d.target.layer);
     let padSrc = 0;
     let padTar = 0;
 
     // here
-    padSrc =
-      -midNodeWidths[d.source.layer][d.source.label] / 2 +
-      edgeWidthes[key] / 2 + pdf[d.source.label];
-      pdf[d.source.label] += edgeWidthes[key];
-      console.log(pdf)
-
-
-    padTar =
-      -midNodeWidths[d.target.layer][d.target.label] / 2 +
-      edgeWidthes[key] / 2 + pdd[d.target.label];
-      pdd[d.target.label] += edgeWidthes[key];
-
-
-    if (d.source.layer === 0) {
-      padSrc = 0;
-      pdf[d.source.label] -= edgeWidthes[key];
+    if (d.source.layer !== 0) {
+      padSrc =
+        -midNodeWidths[d.source.layer][d.source.label] / 2 +
+        edgeWidthes[key] / 2 +
+        pdf[d.source.id];
+      pdf[d.source.id] += edgeWidthes[key];
     }
 
-    if (d.target.layer === Math.pow(2, maxDepth)) {
-      padTar = 0;
-      pdd[d.target.label] -= edgeWidthes[key];
+    if (d.target.layer !== lastLayer) {
+      padTar =
+        -midNodeWidths[d.target.layer][d.target.label] / 2 +
+        edgeWidthes[key] / 2 +
+        pdd[d.target.id];
+      pdd[d.target.id] += edgeWidthes[key];
     }
-
-    // padSrc = 0;
-    // padTar = 0;
 
     return linkGenerator({
       source: [d.source.x + padSrc, d.source.y],
