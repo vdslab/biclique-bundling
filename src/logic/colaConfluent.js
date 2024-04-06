@@ -141,35 +141,41 @@ const colaConfluent = (
   console.log(midNodeWidths);
 
   const linkGenerator = d3.linkVertical();
-  const pdd = new Array(graph.nodes.length).fill(0);
-  const pdf = new Array(graph.nodes.length).fill(0);
+  const addXpos = new Array(graph.nodes.length);
+  for (let i = 0; i < addXpos.length; i++) addXpos[i] = { src: 0, tar: 0 };
 
-  const edgePaths = graph.edges.map((d, key) => {
+  const edgeAt = graph.edges.map((d) => {
+    return {
+      source: [d.source.x, d.source.y],
+      target: [d.target.x, d.target.y],
+    };
+  });
+
+  graph.edges.forEach((d, key) => {
     let padSrc = 0;
     let padTar = 0;
 
-    // here
     if (d.source.layer !== 0) {
       padSrc =
         -midNodeWidths[d.source.layer][d.source.label] / 2 +
         edgeWidthes[key] / 2 +
-        pdf[d.source.id];
-      pdf[d.source.id] += edgeWidthes[key];
+        addXpos[d.source.id].src;
+      addXpos[d.source.id].src += edgeWidthes[key];
     }
 
-    if (d.target.layer !== lastLayer) {
-      padTar =
-        -midNodeWidths[d.target.layer][d.target.label] / 2 +
-        edgeWidthes[key] / 2 +
-        pdd[d.target.id];
-      pdd[d.target.id] += edgeWidthes[key];
-    }
+      if (d.target.layer !== lastLayer) {
+        padTar =
+          -midNodeWidths[d.target.layer][d.target.label] / 2 +
+          edgeWidthes[key] / 2 +
+          addXpos[d.target.id].tar;
+        addXpos[d.target.id].tar += edgeWidthes[key];
+      }
 
-    return linkGenerator({
-      source: [d.source.x + padSrc, d.source.y],
-      target: [d.target.x + padTar, d.target.y],
-    });
+    edgeAt[key]["source"][0] += padSrc;
+    edgeAt[key]["target"][0] += padTar;
   });
+
+  const edgePaths = edgeAt.map((edge) => linkGenerator(edge));
 
   // パラメター、交差数、エッジ数、中間ノード数、誤差数のログ
   console.log("param", param);
@@ -179,6 +185,7 @@ const colaConfluent = (
   console.log("missing", missingEdges);
   console.log("graph data", graph);
   console.log("color", cf.bipartitesForColor);
+  console.log(edgePaths);
 
   return {
     leftNodesOrder,
