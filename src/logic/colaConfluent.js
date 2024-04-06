@@ -151,28 +151,47 @@ const colaConfluent = (
     };
   });
 
-  graph.edges.forEach((d, key) => {
-    let padSrc = 0;
-    let padTar = 0;
+  const srcNodes = graph.edges
+    .map((d, key) => {
+      const copy = structuredClone(d.source);
+      copy.edgeId = key;
+      return copy;
+    })
+    .sort((a, b) => a.x - b.x);
 
-    if (d.source.layer !== 0) {
-      padSrc =
-        -midNodeWidths[d.source.layer][d.source.label] / 2 +
-        edgeWidthes[key] / 2 +
-        addXpos[d.source.id].src;
-      addXpos[d.source.id].src += edgeWidthes[key];
-    }
+  const tarNodes = graph.edges
+    .map((d, key) => {
+      const copy = structuredClone(d.target);
+      copy.edgeId = key;
+      return copy;
+    })
+    .sort((a, b) => a.x - b.x);
+  console.log(srcNodes, tarNodes);
 
-      if (d.target.layer !== lastLayer) {
-        padTar =
-          -midNodeWidths[d.target.layer][d.target.label] / 2 +
-          edgeWidthes[key] / 2 +
-          addXpos[d.target.id].tar;
-        addXpos[d.target.id].tar += edgeWidthes[key];
-      }
+  tarNodes.forEach((tarNode) => {
+    const srcNode = graph.edges[tarNode.edgeId].source;
 
-    edgeAt[key]["source"][0] += padSrc;
-    edgeAt[key]["target"][0] += padTar;
+    const addPos =
+      -midNodeWidths[srcNode.layer][srcNode.label] / 2 +
+      edgeWidthes[tarNode.edgeId] / 2 +
+      addXpos[srcNode.id].src;
+    addXpos[srcNode.id].src += edgeWidthes[tarNode.edgeId];
+
+    if (srcNode.layer !== 0)
+      edgeAt[tarNode.edgeId]["source"][0] += addPos;
+  });
+
+  srcNodes.forEach((srcNode) => {
+    const tarNode = graph.edges[srcNode.edgeId].target;
+
+    const addPos =
+      -midNodeWidths[tarNode.layer][tarNode.label] / 2 +
+      edgeWidthes[srcNode.edgeId] / 2 +
+      addXpos[tarNode.id].tar;
+    addXpos[tarNode.id].tar += edgeWidthes[srcNode.edgeId];
+
+    if (tarNode.layer !== lastLayer)
+      edgeAt[srcNode.edgeId]["target"][0] += addPos;
   });
 
   const edgePaths = edgeAt.map((edge) => linkGenerator(edge));
