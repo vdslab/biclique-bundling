@@ -6,6 +6,7 @@ import getMissingEdgeColors from "./../utils/getMissingEdgeColors.js";
 import makeGraphForCola from "./../utils/makeGraphForCola.js";
 import getEdgeWidths from "./../utils/getEdgeWidths";
 import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
+import getEdgeEndPos from "./../utils/getEdgeEndPos.js";
 
 const colaConfluent = (
   bipartite,
@@ -88,8 +89,8 @@ const colaConfluent = (
     hasEdgeColor
   );
   const edgeColors = [];
-  const edgeWidthes = getEdgeWidths(cf.bipartitesForMiss);
-  console.log(edgeWidthes);
+  const edgeWidths = getEdgeWidths(cf.bipartitesForMiss);
+  console.log(edgeWidths);
 
   // graph.nodesを用いてedge-crossingをする
   //setCrossCount(getColaBipartiteCross(cf.bipartites, graph.nodes));
@@ -109,91 +110,13 @@ const colaConfluent = (
   // エッジ数
   const totalEdgeCount = graph.edges.length;
   //getConfluentEdgeCount(cbipartites);
-  const lastLayer = 2 ** maxDepth;
+
   // 損失数
   // missingEdges;
-  let midNodeWidths = [];
-  let midNodeElement = [];
-  for (let i = 0; i < graph.nodes.length; i++) {
-    const node = graph.nodes[i];
-    if (node.layer === 0 || node.layer === lastLayer) continue;
 
-    let sumWidth = 0;
-    graph.edges.forEach((edge, key) => {
-      if (edge.target.id === node.id) {
-        sumWidth += edgeWidthes[key];
-      }
-    });
-
-    if (
-      i > 0 &&
-      graph.nodes[i - 1].layer > 0 &&
-      node.layer !== graph.nodes[i - 1].layer
-    ) {
-      midNodeWidths.push(midNodeElement);
-      midNodeElement = [];
-    }
-
-    midNodeElement.push(sumWidth);
-  }
-  midNodeWidths.push(midNodeElement);
-  midNodeWidths = [[], ...midNodeWidths, []];
-  console.log(midNodeWidths);
-
+  const lastLayer = 2 ** maxDepth;
+  const edgeAt = getEdgeEndPos(graph, edgeWidths, lastLayer);
   const linkGenerator = d3.linkVertical();
-  const addXpos = new Array(graph.nodes.length);
-  for (let i = 0; i < addXpos.length; i++) addXpos[i] = { src: 0, tar: 0 };
-
-  const edgeAt = graph.edges.map((d) => {
-    return {
-      source: [d.source.x, d.source.y],
-      target: [d.target.x, d.target.y],
-    };
-  });
-
-  const srcNodes = graph.edges
-    .map((d, key) => {
-      const copy = structuredClone(d.source);
-      copy.edgeId = key;
-      return copy;
-    })
-    .sort((a, b) => a.x - b.x);
-
-  const tarNodes = graph.edges
-    .map((d, key) => {
-      const copy = structuredClone(d.target);
-      copy.edgeId = key;
-      return copy;
-    })
-    .sort((a, b) => a.x - b.x);
-  console.log(srcNodes, tarNodes);
-
-  tarNodes.forEach((tarNode) => {
-    const srcNode = graph.edges[tarNode.edgeId].source;
-
-    const addPos =
-      -midNodeWidths[srcNode.layer][srcNode.label] / 2 +
-      edgeWidthes[tarNode.edgeId] / 2 +
-      addXpos[srcNode.id].src;
-    addXpos[srcNode.id].src += edgeWidthes[tarNode.edgeId];
-
-    if (srcNode.layer !== 0)
-      edgeAt[tarNode.edgeId]["source"][0] += addPos;
-  });
-
-  srcNodes.forEach((srcNode) => {
-    const tarNode = graph.edges[srcNode.edgeId].target;
-
-    const addPos =
-      -midNodeWidths[tarNode.layer][tarNode.label] / 2 +
-      edgeWidthes[srcNode.edgeId] / 2 +
-      addXpos[tarNode.id].tar;
-    addXpos[tarNode.id].tar += edgeWidthes[srcNode.edgeId];
-
-    if (tarNode.layer !== lastLayer)
-      edgeAt[srcNode.edgeId]["target"][0] += addPos;
-  });
-
   const edgePaths = edgeAt.map((edge) => linkGenerator(edge));
 
   // パラメター、交差数、エッジ数、中間ノード数、誤差数のログ
@@ -217,7 +140,7 @@ const colaConfluent = (
     totalEdgeCount,
     midNodesCount,
     missingEdges,
-    edgeWidthes,
+    edgeWidths,
   };
 };
 

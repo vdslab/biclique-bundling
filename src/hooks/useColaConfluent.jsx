@@ -31,14 +31,14 @@ const useColaConfluent = (param, url, maxDepth) => {
         edgePaths,
         graph,
         edgeColors,
-        edgeWidthes,
+        edgeWidths,
       } = colaConfluent(bipartite, parameter, maxDepth, true);
 
       setCrossCount(cross);
       setNodes(graph.nodes);
       setPaths(
         edgePaths.map((path, key) => {
-          return { path, color: edgeColors[key], width: edgeWidthes[key] };
+          return { path, color: edgeColors[key], width: edgeWidths[key] };
         })
       );
       setNodeLabels(

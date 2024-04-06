@@ -12,7 +12,7 @@ const getEdgeWidths = (bipartitesForMiss) => {
       if (Math.abs(bipartitesForMiss[i].depth) !== depth) continue;
       const maximalNodes = bipartitesForMiss[i].maximalNodes;
       const bipartite = bipartitesForMiss[i].bipartite;
-      // depth >= 1からedgeWidthesを用いる
+      // depth >= 1からedgeWidthsを用いる
 
       // 上エッジ
       for (let left = 0; left < bipartite.length; left++) {
