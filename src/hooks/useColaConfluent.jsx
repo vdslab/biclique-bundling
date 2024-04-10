@@ -41,8 +41,28 @@ const useColaConfluent = (param, url, maxDepth) => {
           return { path, color: edgeColors[key], width: edgeWidths[key] };
         })
       );
+      // setNodeLabels(
+      //   [...leftNodesOrder, ...midNodesOrders, ...rightNodesOrder].flat()
+      // );
+
+      const nodeNumbers = [
+        ...leftNodesOrder,
+        ...midNodesOrders,
+        ...rightNodesOrder,
+      ].flat();
       setNodeLabels(
-        [...leftNodesOrder, ...midNodesOrders, ...rightNodesOrder].flat()
+        nodeNumbers.map((nodeNumber, key) => {
+          let isShow = true;
+          if (
+            !(
+              key < leftNodesOrder.length ||
+              key > nodeNumbers.length - rightNodesOrder.length - 1
+            )
+          ) {
+            isShow = false;
+          }
+          return { label: nodeNumber, isShow };
+        })
       );
     })();
   }, [param, url, maxDepth]);

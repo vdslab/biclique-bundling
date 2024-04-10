@@ -84,16 +84,17 @@ function App() {
                 key={key}
                 cx={node.x}
                 cy={node.y}
-                r={0.5 * nodeRadius}
+                r={nodeLabels[key]["isShow"] ? nodeRadius : 0}
                 fill="red"
               />
             );
           })}
 
           {nodes?.map((node, key) => {
+            console.log(nodeLabels);
             return (
-              <text key={key} x={node.x} y={node.y + 4} fontSize="15">
-                {nodeLabels[key]}
+              <text key={key} x={node.x} y={node.y + 4} fontSize="30">
+                {nodeLabels[key]["isShow"] ? nodeLabels[key]["label"] : ""}
               </text>
             );
           })}
