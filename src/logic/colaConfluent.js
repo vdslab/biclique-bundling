@@ -7,6 +7,7 @@ import makeGraphForCola from "./../utils/makeGraphForCola.js";
 import getEdgeWidths from "./../utils/getEdgeWidths";
 import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
 import getEdgeEndPos from "./../utils/getEdgeEndPos.js";
+import getMidNodeWidths from "./../utils/getMidNodeWidths.js";
 
 const colaConfluent = (
   bipartite,
@@ -20,6 +21,7 @@ const colaConfluent = (
     テスト箇所1
     - 正しくバイクリークカバーを算出できているか
   */
+  const lastLayer = 2 ** maxDepth;
   const cf = new Confluent(getQuasiBicliqueCover, param, maxDepth);
   cf.build(bipartite);
   console.log(cf.bipartitesForMiss);
@@ -56,6 +58,9 @@ const colaConfluent = (
     - 目視で確認した方が早い
   */
   const graph = makeGraphForCola(cf);
+  const edgeWidths = getEdgeWidths(cf.bipartitesForMiss);
+  const midNodeWidths = getMidNodeWidths(graph, edgeWidths, lastLayer);
+  // console.error(edgeWidths);
   // console.log(graph);
 
   // 座標決定process
@@ -89,7 +94,6 @@ const colaConfluent = (
     hasEdgeColor
   );
   const edgeColors = [];
-  const edgeWidths = getEdgeWidths(cf.bipartitesForMiss);
   console.log(edgeWidths);
 
   // graph.nodesを用いてedge-crossingをする
@@ -114,10 +118,20 @@ const colaConfluent = (
   // 損失数
   // missingEdges;
 
-  const lastLayer = 2 ** maxDepth;
-  const edgeAt = getEdgeEndPos(graph, edgeWidths, lastLayer);
-  const linkGenerator = d3.linkVertical();
-  const edgePaths = edgeAt.map((edge) => linkGenerator(edge));
+  let edgePaths = [];
+  if (maxDepth > 0) {
+    const linkGenerator = d3.linkVertical();
+    const edgeAt = getEdgeEndPos(graph, edgeWidths, midNodeWidths, lastLayer);
+    edgePaths = edgeAt.map((edge) => linkGenerator(edge));
+  } else {
+    const lineGenerator = d3.line();
+    edgePaths = graph.edges.map((edge) =>
+      lineGenerator([
+        [edge.source.x, edge.source.y],
+        [edge.target.x, edge.target.y],
+      ])
+    );
+  }
 
   // パラメター、交差数、エッジ数、中間ノード数、誤差数のログ
   console.log("param", param);
