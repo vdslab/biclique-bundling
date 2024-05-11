@@ -31,6 +31,7 @@ const makeGraphForCola = (cf) => {
   let idx = 0;
   let prvIdx = 0;
   let curIdx = 0;
+  let layerGap = 100;
   for (let k = 0; k < cf.bipartites.length; k++) {
     const leftNodesNum = cf.bipartites[k].bipartite.length;
     const rightNodesNum = cf.bipartites[k].bipartite[0].length;
@@ -53,7 +54,7 @@ const makeGraphForCola = (cf) => {
         axis: "y",
         left: prvIdx,
         right: curIdx,
-        gap: 100,
+        gap: layerGap,
         equality: "true",
       });
       prvIdx = curIdx;
@@ -73,7 +74,7 @@ const makeGraphForCola = (cf) => {
       axis: "y",
       left: prvIdx,
       right: curIdx,
-      gap: 100,
+      gap: layerGap,
       equality: "true",
     });
     prvIdx = curIdx;
