@@ -1,7 +1,7 @@
 import "./App.css";
-//import useSugiyamaConfluent from "./hooks/useSugiyamaConfluent";
 import useColaConfluent from "./hooks/useColaConfluent";
 import { useState } from "react";
+import * as d3 from "d3";
 
 function App() {
   const width = 2300;
@@ -10,7 +10,7 @@ function App() {
   const [param, setParam] = useState(-1.0);
   const [rangeParam, setRangeParam] = useState(param);
   const [maxDepth, setMaxDepth] = useState(1);
-  const nodeRadius = 4;
+  const nodeRadius = 8;
 
   const [url, setUrl] = useState("public/random/json/random_7_7_75_2.json");
   const [displayUrl, setDisplayUrl] = useState(url);
@@ -68,10 +68,10 @@ function App() {
               <path
                 key={key}
                 d={path.path}
-                stroke={path.color || "green"}
+                stroke={path.color || d3.schemeSet2[7]}
                 strokeWidth={path.width || 1.5}
                 fill="transparent"
-                opacity={0.5}
+                opacity={0.7}
               />
             );
           })}
@@ -82,10 +82,11 @@ function App() {
             return (
               <circle
                 key={key}
+                className="node"
                 cx={node.x}
                 cy={node.y}
-                r={nodeLabels[key]["isShow"] ? nodeRadius : 0}
-                fill="red"
+                r={nodeRadius}
+                fill={d3.schemeCategory10[0]}
               />
             );
           })}
@@ -93,8 +94,14 @@ function App() {
           {nodes?.map((node, key) => {
             console.log(nodeLabels);
             return (
-              <text key={key} x={node.x} y={node.y + 4} fontSize="30">
-                {nodeLabels[key]["isShow"] ? nodeLabels[key]["label"] : ""}
+              <text
+                key={key}
+                x={node.x - nodeRadius / 2}
+                y={node.y + nodeRadius / 2}
+                fontSize="14"
+                fill="white"
+              >
+                {nodeLabels[key]["label"]}
               </text>
             );
           })}
