@@ -7,7 +7,6 @@ import makeGraphForCola from "./../utils/makeGraphForCola.js";
 import getEdgeWidths from "./../utils/getEdgeWidths";
 import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
 import getEdgeEndPos from "./../utils/getEdgeEndPos.js";
-import getMidNodeWidths from "./../utils/getMidNodeWidths.js";
 
 const colaConfluent = (
   bipartite,
@@ -57,11 +56,13 @@ const colaConfluent = (
     - ノード、エッジ、制約が適切に入っているか？
     - 目視で確認した方が早い
   */
-  const graph = makeGraphForCola(cf);
   const edgeWidths = getEdgeWidths(cf.bipartitesForMiss);
-  const midNodeWidths = getMidNodeWidths(graph, edgeWidths, lastLayer);
+  const { graph, midNodeWidths } = makeGraphForCola(cf, edgeWidths, lastLayer);
+
+  //const midNodeWidths = getMidNodeWidths(graph, edgeWidths, lastLayer);
+  //console.error(midNodeWidths);
   // console.error(edgeWidths);
-  // console.log(graph);
+  console.error(graph);
 
   // 座標決定process
   const width = 2000;

@@ -1,6 +1,7 @@
 import filterSameNodes from "./filterSameNodes.js";
+import getMidNodeWidths from "./getMidNodeWidths.js";
 
-const makeGraphForCola = (cf) => {
+const makeGraphForCola = (cf, edgeWidths, lastLayer) => {
   const graphEdges = new Array();
   const graphNodesSet = new Set();
   let pad = 0;
@@ -80,10 +81,51 @@ const makeGraphForCola = (cf) => {
     prvIdx = curIdx;
   }
 
+  const midNodeWidths = getMidNodeWidths(
+    graphNodes,
+    graphEdges,
+    edgeWidths,
+    lastLayer
+  );
+
+  // 分離制約を入れる
+  console.error(graphNodes);
+  for (let i = 0; i < graphNodes.length; i++) {
+    for (let j = i + 1; j < graphNodes.length; j++) {
+      if (graphNodes[i].layer === 0 || graphNodes[i].layer === lastLayer)
+        continue;
+      if (graphNodes[j].layer === 0 || graphNodes[j].layer === lastLayer)
+        continue;
+      console.error(graphNodes[i], graphNodes[j]);
+      const gap =
+        (midNodeWidths[graphNodes[i].layer][graphNodes[i].label] +
+          midNodeWidths[graphNodes[j].layer][graphNodes[j].label]) /
+          2 +
+        10;
+      graphConstraints.push({
+        axis: "x",
+        left: String(i),
+        right: String(j),
+        gap,
+      });
+      graphConstraints.push({
+        axis: "x",
+        left: String(j),
+        right: String(i),
+        gap,
+      });
+    }
+  }
+
+  console.error(graphConstraints);
+
   return {
-    nodes: graphNodes,
-    edges: graphEdges,
-    constraints: graphConstraints,
+    graph: {
+      nodes: graphNodes,
+      edges: graphEdges,
+      constraints: graphConstraints,
+    },
+    midNodeWidths,
   };
 };
 

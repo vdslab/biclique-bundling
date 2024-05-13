@@ -1,22 +1,18 @@
-const getMidNodeWidths = (graph, edgeWidths, lastLayer) => {
+const getMidNodeWidths = (nodes, edges, edgeWidths, lastLayer) => {
   let midNodeWidths = [];
   let midNodeElement = [];
-  for (let i = 0; i < graph.nodes.length; i++) {
-    const node = graph.nodes[i];
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i];
     if (node.layer === 0 || node.layer === lastLayer) continue;
 
     let sumWidth = 0;
-    graph.edges.forEach((edge, key) => {
+    edges.forEach((edge, key) => {
       if (edge.target === node.id) {
         sumWidth += edgeWidths[key];
       }
     });
 
-    if (
-      i > 0 &&
-      graph.nodes[i - 1].layer > 0 &&
-      node.layer !== graph.nodes[i - 1].layer
-    ) {
+    if (i > 0 && nodes[i - 1].layer > 0 && node.layer !== nodes[i - 1].layer) {
       midNodeWidths.push(midNodeElement);
       midNodeElement = [];
     }
