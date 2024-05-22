@@ -2,7 +2,6 @@ import * as d3 from "d3";
 import * as cola from "webcola";
 import Confluent from "./../utils/confluent.js";
 import { getQuasiBicliqueCover } from "./../utils/getBicliqueCover.js";
-import getMissingEdgeColors from "./../utils/getMissingEdgeColors.js";
 import makeGraphForCola from "./../utils/makeGraphForCola.js";
 import getEdgeWidths from "./../utils/getEdgeWidths";
 import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
@@ -28,7 +27,10 @@ const colaConfluent = (
   const leftNodeNumber = bipartite.length;
   const rightNodeNumber = bipartite[0].length;
   const midLayerNumber = cf.layeredNodes.length;
-  // //左右中間ノードの順序を初期化
+  // 左右中間ノードの順序を初期化
+  // ノードのラベル
+  // 現状はインデックスがラベル
+
   const leftNodesOrder = new Array();
   const rightNodesOrder = new Array();
   const midNodesOrders = new Array(); // 中間ノードの層と同じサイズ
@@ -52,17 +54,14 @@ const colaConfluent = (
   //グラフのデータと制約を作る
   //グラフのノードとエッジを作成
   /*
-    テスト箇所2
-    - ノード、エッジ、制約が適切に入っているか？
-    - 目視で確認した方が早い
+    テスト箇所1
   */
   const edgeWidths = getEdgeWidths(cf.bipartitesForMiss);
-  const { graph, midNodeWidths } = makeGraphForCola(cf, edgeWidths, lastLayer);
 
-  //const midNodeWidths = getMidNodeWidths(graph, edgeWidths, lastLayer);
-  //console.error(midNodeWidths);
-  // console.error(edgeWidths);
-  console.error(graph);
+  /*
+    テスト項目2
+  */
+  const { graph, midNodeWidths } = makeGraphForCola(cf, edgeWidths, lastLayer);
 
   // 座標決定process
   const width = 2000;
@@ -78,34 +77,45 @@ const colaConfluent = (
     .avoidOverlaps(true)
     .start(200, 200, 250);
 
-  // 欠けているエッジに色を付ける
-  /*
-    テスト箇所3
-    - 色付けが正しいか
-    - エッジ損失率を調べる
-  */
-  // console.error("cover", cf.bicliqueCover);
-  // console.error(cf.bipartites);
+  console.error(graph);
+  const sortedNodes = structuredClone(graph.nodes).sort((a, b) => {
+    return a.x - b.x;
+  });
+  const insertedNodes = [];
+  for (let i = 0; i < lastLayer + 1; i++) {
+    insertedNodes.push([]);
+  }
+
+  console.error(insertedNodes);
+
+  for (const node of sortedNodes) {
+    // if(node.layer === 0 || node.layer === lastLayer) continue;
+    insertedNodes[node.layer].push(node);
+  }
+
+  for (const nodes of insertedNodes) {
+    for (let i = 0; i < nodes.length - 1; i++) {
+      graph.constraints.push({
+        left: nodes[i].id,
+        right: nodes[i + 1].id,
+        gap: 100,
+        axis: "x",
+      });
+    }
+  }
+
+  d3cola
+    .nodes(graph.nodes)
+    .links(graph.edges)
+    .constraints(graph.constraints)
+    .symmetricDiffLinkLengths(30)
+    .avoidOverlaps(true)
+    .start(200, 200, 250);
+
   // エッジの色付け
-  const { missingEdges } = getMissingEdgeColors(
-    graph,
-    cf.bipartitesForColor,
-    bipartite,
-    maxDepth,
-    hasEdgeColor
-  );
   const edgeColors = [];
   console.log(edgeWidths);
 
-  // graph.nodesを用いてedge-crossingをする
-  //setCrossCount(getColaBipartiteCross(cf.bipartites, graph.nodes));
-  /*
-    テスト箇所4
-      - エッジ交差数算出関数が正しいか
-      - 中間ノード数が正しいか
-      - エッジ数が正しいか
-      - 損失数が正しいか
-  */
   // エッジ交差数
   const cross = getColaBipartiteCross(cf.bipartites, graph.nodes);
 
@@ -114,7 +124,6 @@ const colaConfluent = (
 
   // エッジ数
   const totalEdgeCount = graph.edges.length;
-  //getConfluentEdgeCount(cbipartites);
 
   // 損失数
   // missingEdges;
@@ -139,7 +148,6 @@ const colaConfluent = (
   console.log("cross", cross);
   console.log("edge number", totalEdgeCount);
   console.log("mid node", midNodesCount);
-  console.log("missing", missingEdges);
   console.log("graph data", graph);
   console.log("color", cf.bipartitesForColor);
   console.log(edgePaths);
@@ -154,7 +162,6 @@ const colaConfluent = (
     cross,
     totalEdgeCount,
     midNodesCount,
-    missingEdges,
     edgeWidths,
   };
 };

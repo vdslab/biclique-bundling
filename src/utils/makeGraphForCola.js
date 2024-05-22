@@ -88,34 +88,6 @@ const makeGraphForCola = (cf, edgeWidths, lastLayer) => {
     lastLayer
   );
 
-  // 分離制約を入れる
-  console.error(graphNodes);
-  for (let i = 0; i < graphNodes.length; i++) {
-    for (let j = i + 1; j < graphNodes.length; j++) {
-      if (graphNodes[i].layer === 0 || graphNodes[i].layer === lastLayer)
-        continue;
-      if (graphNodes[j].layer === 0 || graphNodes[j].layer === lastLayer)
-        continue;
-      console.error(graphNodes[i], graphNodes[j]);
-      const gap =
-        (midNodeWidths[graphNodes[i].layer][graphNodes[i].label] +
-          midNodeWidths[graphNodes[j].layer][graphNodes[j].label]) /
-          2 +
-        10;
-      graphConstraints.push({
-        axis: "x",
-        left: String(i),
-        right: String(j),
-        gap,
-      });
-      graphConstraints.push({
-        axis: "x",
-        left: String(j),
-        right: String(i),
-        gap,
-      });
-    }
-  }
 
   console.error(graphConstraints);
 
