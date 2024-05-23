@@ -22,7 +22,6 @@ const colaConfluent = (
   const lastLayer = 2 ** maxDepth;
   const cf = new Confluent(getQuasiBicliqueCover, param, maxDepth);
   cf.build(bipartite);
-  console.log(cf.bipartitesForMiss);
 
   const leftNodeNumber = bipartite.length;
   const rightNodeNumber = bipartite[0].length;
@@ -73,32 +72,38 @@ const colaConfluent = (
     .nodes(graph.nodes)
     .links(graph.edges)
     .constraints(graph.constraints)
-    .symmetricDiffLinkLengths(30)
+    .symmetricDiffLinkLengths(50)
     .avoidOverlaps(true)
-    .start(200, 200, 250);
+    .start(50, 75, 100);
 
   console.error(graph);
+  console.error(midNodeWidths);
   const sortedNodes = structuredClone(graph.nodes).sort((a, b) => {
     return a.x - b.x;
   });
+
   const insertedNodes = [];
   for (let i = 0; i < lastLayer + 1; i++) {
     insertedNodes.push([]);
   }
 
-  console.error(insertedNodes);
-
   for (const node of sortedNodes) {
-    // if(node.layer === 0 || node.layer === lastLayer) continue;
     insertedNodes[node.layer].push(node);
   }
 
   for (const nodes of insertedNodes) {
     for (let i = 0; i < nodes.length - 1; i++) {
+      const gap =
+        (nodes[i].layer !== 0 && nodes[i].layer !== lastLayer) ||
+        (nodes[i + 1].layer !== 0 && nodes[i + 1].layer !== lastLayer)
+          ? (midNodeWidths[nodes[i].layer][nodes[i].label] +
+              midNodeWidths[nodes[i + 1].layer][nodes[i + 1].label]) *
+            1.5
+          : 24;
       graph.constraints.push({
         left: nodes[i].id,
         right: nodes[i + 1].id,
-        gap: 100,
+        gap,
         axis: "x",
       });
     }
@@ -108,13 +113,9 @@ const colaConfluent = (
     .nodes(graph.nodes)
     .links(graph.edges)
     .constraints(graph.constraints)
-    .symmetricDiffLinkLengths(30)
+    .symmetricDiffLinkLengths(50)
     .avoidOverlaps(true)
-    .start(200, 200, 250);
-
-  // エッジの色付け
-  const edgeColors = [];
-  console.log(edgeWidths);
+    .start(30, 30, 30);
 
   // エッジ交差数
   const cross = getColaBipartiteCross(cf.bipartites, graph.nodes);
@@ -158,7 +159,6 @@ const colaConfluent = (
     rightNodesOrder,
     edgePaths,
     graph,
-    edgeColors,
     cross,
     totalEdgeCount,
     midNodesCount,

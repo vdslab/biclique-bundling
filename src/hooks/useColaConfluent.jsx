@@ -30,7 +30,6 @@ const useColaConfluent = (param, url, maxDepth) => {
         rightNodesOrder,
         edgePaths,
         graph,
-        edgeColors,
         edgeWidths,
       } = colaConfluent(bipartite, parameter, maxDepth, true);
 
@@ -38,12 +37,9 @@ const useColaConfluent = (param, url, maxDepth) => {
       setNodes(graph.nodes);
       setPaths(
         edgePaths.map((path, key) => {
-          return { path, color: edgeColors[key], width: edgeWidths[key] };
+          return { path, width: edgeWidths[key] };
         })
       );
-      // setNodeLabels(
-      //   [...leftNodesOrder, ...midNodesOrders, ...rightNodesOrder].flat()
-      // );
 
       const nodeNumbers = [
         ...leftNodesOrder,

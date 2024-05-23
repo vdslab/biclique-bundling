@@ -32,7 +32,7 @@ const makeGraphForCola = (cf, edgeWidths, lastLayer) => {
   let idx = 0;
   let prvIdx = 0;
   let curIdx = 0;
-  let layerGap = 100;
+  const layerGap = 150;
   for (let k = 0; k < cf.bipartites.length; k++) {
     const leftNodesNum = cf.bipartites[k].bipartite.length;
     const rightNodesNum = cf.bipartites[k].bipartite[0].length;
@@ -87,7 +87,6 @@ const makeGraphForCola = (cf, edgeWidths, lastLayer) => {
     edgeWidths,
     lastLayer
   );
-
 
   console.error(graphConstraints);
 
