@@ -18,7 +18,8 @@ function App() {
   const { paths, nodes, nodeLabels, crossCount } = useColaConfluent(
     param,
     url,
-    maxDepth
+    maxDepth,
+    nodeRadius
   );
 
   return (

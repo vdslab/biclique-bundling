@@ -7,7 +7,7 @@ import { getBipartiteDensity } from "./../utils/getBipartiteDensity";
  depth = 1 と depth >= 2のdrawing結果で比較する→ depth > 2でdepth=1と上下ノードが同じようにリンクしているならばアルゴリズムは妥当
 
 */
-const useColaConfluent = (param, url, maxDepth) => {
+const useColaConfluent = (param, url, maxDepth, nodeRadius) => {
   const [paths, setPaths] = useState([]);
   const [crossCount, setCrossCount] = useState(0);
   const [nodes, setNodes] = useState([]);
@@ -31,7 +31,7 @@ const useColaConfluent = (param, url, maxDepth) => {
         edgePaths,
         graph,
         edgeWidths,
-      } = colaConfluent(bipartite, parameter, maxDepth, true);
+      } = colaConfluent(bipartite, parameter, maxDepth, nodeRadius, true);
 
       setCrossCount(cross);
       setNodes(graph.nodes);

@@ -11,6 +11,7 @@ const colaConfluent = (
   bipartite,
   param,
   maxDepth,
+  nodeRadius,
   hasEdgeColor = false,
   outputForExp = false
 ) => {
@@ -72,12 +73,9 @@ const colaConfluent = (
     .nodes(graph.nodes)
     .links(graph.edges)
     .constraints(graph.constraints)
-    .symmetricDiffLinkLengths(50)
-    .avoidOverlaps(true)
-    .start(50, 75, 100);
+    .symmetricDiffLinkLengths(55)  // ノードの数によって増やす
+    .start(30, 40, 50);
 
-  console.error(graph);
-  console.error(midNodeWidths);
   const sortedNodes = structuredClone(graph.nodes).sort((a, b) => {
     return a.x - b.x;
   });
@@ -97,9 +95,9 @@ const colaConfluent = (
         (nodes[i].layer !== 0 && nodes[i].layer !== lastLayer) ||
         (nodes[i + 1].layer !== 0 && nodes[i + 1].layer !== lastLayer)
           ? (midNodeWidths[nodes[i].layer][nodes[i].label] +
-              midNodeWidths[nodes[i + 1].layer][nodes[i + 1].label]) *
-            1.5
-          : 24;
+              midNodeWidths[nodes[i + 1].layer][nodes[i + 1].label]) **
+            1.1
+          : nodeRadius * 4;
       graph.constraints.push({
         left: nodes[i].id,
         right: nodes[i + 1].id,
@@ -113,9 +111,8 @@ const colaConfluent = (
     .nodes(graph.nodes)
     .links(graph.edges)
     .constraints(graph.constraints)
-    .symmetricDiffLinkLengths(50)
-    .avoidOverlaps(true)
-    .start(30, 30, 30);
+    .symmetricDiffLinkLengths(55)
+    .start(30, 40, 50);
 
   // エッジ交差数
   const cross = getColaBipartiteCross(cf.bipartites, graph.nodes);
