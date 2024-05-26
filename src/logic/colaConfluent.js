@@ -61,11 +61,18 @@ const colaConfluent = (
   /*
     テスト項目2
   */
-  const { graph, midNodeWidths } = makeGraphForCola(cf, edgeWidths, lastLayer);
+  // ノードの数によって増やす
+  const layerGap = 200;
+  const { graph, midNodeWidths } = makeGraphForCola(
+    cf,
+    edgeWidths,
+    layerGap,
+    lastLayer
+  );
 
   // 座標決定process
   const width = 2000;
-  const height = 1000;
+  const height = 1500;
   const d3cola = cola.d3adaptor(d3).linkDistance(300).size([width, height]);
 
   // stress最小化
@@ -73,7 +80,7 @@ const colaConfluent = (
     .nodes(graph.nodes)
     .links(graph.edges)
     .constraints(graph.constraints)
-    .symmetricDiffLinkLengths(55)  // ノードの数によって増やす
+    .symmetricDiffLinkLengths(30) // ノードの数によって増やす
     .start(30, 40, 50);
 
   const sortedNodes = structuredClone(graph.nodes).sort((a, b) => {
@@ -111,7 +118,7 @@ const colaConfluent = (
     .nodes(graph.nodes)
     .links(graph.edges)
     .constraints(graph.constraints)
-    .symmetricDiffLinkLengths(55)
+    .symmetricDiffLinkLengths(60)
     .start(30, 40, 50);
 
   // エッジ交差数
