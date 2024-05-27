@@ -4,6 +4,7 @@ import { makeGraphData } from "./makeGraphForCola.js";
 const getEdgeWidths = (graph, bipartitesForMiss, bipartitesAll, lastLayer) => {
   const edgeWidths = [];
   let prevInfo;
+  let prevMidNodeWidths = [];
   console.error(bipartitesForMiss);
   const maxDepth = bipartitesForMiss.length
     ? Math.abs(bipartitesForMiss.at(-1).depth) + 1
@@ -70,32 +71,38 @@ const getEdgeWidths = (graph, bipartitesForMiss, bipartitesAll, lastLayer) => {
       )
     );
 
-    console.error(
-      bipartitesAll.filter(
-        (bipartite) => Math.abs(bipartite.depth) === depth + 1
-      )
+    const curMidNodeWidths = getMidNodeWidths(
+      nodes,
+      edges,
+      edgeWidths,
+      2 ** (depth + 1)
     );
 
     console.error(nodes, edges);
-    console.error("hhff ", edgeWidths);
+    console.error("edgeWidths ", edgeWidths);
     console.error(
-      "ff  ",
+      "midNodeWidths  ",
       getMidNodeWidths(nodes, edges, edgeWidths, 2 ** (depth + 1))
     );
+
+    for (let prev = 0; prev < prevMidNodeWidths.length; prev++) {
+      const offset = (curMidNodeWidths.length - prevMidNodeWidths.length) / 2;
+      const cur = prev + offset;
+
+      for (let m = 0; m < prevMidNodeWidths[prev].length; m++) {
+        curMidNodeWidths[cur][m] = prevMidNodeWidths[prev][m];
+      }
+    }
 
     while (depth < maxDepth - 1 && edgeWidths.length) {
       edgeWidths.pop();
     }
+
+    prevMidNodeWidths = curMidNodeWidths;
   }
 
-  const midNodeWidths = getMidNodeWidths(
-    graph.nodes,
-    graph.edges,
-    edgeWidths,
-    lastLayer
-  );
-
-  return { edgeWidths, midNodeWidths };
+  console.error(prevMidNodeWidths);
+  return { edgeWidths, midNodeWidths: prevMidNodeWidths };
 };
 
 export default getEdgeWidths;

@@ -24,7 +24,6 @@ const getEdgeEndPos = (graph, edgeWidths, midNodeWidths, lastLayer) => {
       return copy;
     })
     .sort((a, b) => a.x - b.x);
-  // console.log(srcNodes, tarNodes);
 
   tarNodes.forEach((tarNode) => {
     const srcNode = graph.edges[tarNode.edgeId].source;
@@ -35,7 +34,9 @@ const getEdgeEndPos = (graph, edgeWidths, midNodeWidths, lastLayer) => {
       addXpos[srcNode.id].src;
     addXpos[srcNode.id].src += edgeWidths[tarNode.edgeId];
 
-    if (srcNode.layer !== 0) edgeAt[tarNode.edgeId]["source"][0] += addPos;
+    if (srcNode.layer !== 0) {
+      edgeAt[tarNode.edgeId]["source"][0] += addPos;
+    }
   });
 
   srcNodes.forEach((srcNode) => {
@@ -47,8 +48,9 @@ const getEdgeEndPos = (graph, edgeWidths, midNodeWidths, lastLayer) => {
       addXpos[tarNode.id].tar;
     addXpos[tarNode.id].tar += edgeWidths[srcNode.edgeId];
 
-    if (tarNode.layer !== lastLayer)
+    if (tarNode.layer !== lastLayer) {
       edgeAt[srcNode.edgeId]["target"][0] += addPos;
+    }
   });
 
   return edgeAt;
