@@ -1,12 +1,22 @@
 import filterSameNodes from "./filterSameNodes.js";
-import getMidNodeWidths from "./getMidNodeWidths.js";
 
-const makeGraphForCola = (cf, edgeWidths, layerGap, lastLayer) => {
+export const makeGraphForCola = (cf, layerGap) => {
+  const { nodes, edges } = makeGraphData(cf.bipartites);
+  const { constraints } = makeConstraintData(cf.bipartites, layerGap);
+
+  return {
+    nodes,
+    edges,
+    constraints,
+  };
+};
+
+export const makeGraphData = (bipartites) => {
   const graphEdges = new Array();
   const graphNodesSet = new Set();
   let pad = 0;
-  for (let k = 0; k < cf.bipartites.length; k++) {
-    const bipartite = cf.bipartites[k].bipartite;
+  for (let k = 0; k < bipartites.length; k++) {
+    const bipartite = bipartites[k].bipartite;
     for (let i = 0; i < bipartite.length; i++) {
       for (let j = 0; j < bipartite[i].length; j++) {
         if (!bipartite[i][j]) continue;
@@ -24,17 +34,22 @@ const makeGraphForCola = (cf, edgeWidths, layerGap, lastLayer) => {
     }
     pad += bipartite.length;
   }
-
   const graphNodes = filterSameNodes(Array.from(graphNodesSet));
 
-  // グラフの制約を追加
+  return {
+    nodes: graphNodes,
+    edges: graphEdges,
+  };
+};
+
+export const makeConstraintData = (bipartites, layerGap) => {
   const graphConstraints = new Array();
   let idx = 0;
   let prvIdx = 0;
   let curIdx = 0;
-  for (let k = 0; k < cf.bipartites.length; k++) {
-    const leftNodesNum = cf.bipartites[k].bipartite.length;
-    const rightNodesNum = cf.bipartites[k].bipartite[0].length;
+  for (let k = 0; k < bipartites.length; k++) {
+    const leftNodesNum = bipartites[k].bipartite.length;
+    const rightNodesNum = bipartites[k].bipartite[0].length;
     const constraint = { type: "alignment", axis: "y" };
     const offsets = new Array();
 
@@ -68,7 +83,7 @@ const makeGraphForCola = (cf, edgeWidths, layerGap, lastLayer) => {
     graphConstraints.push(constraint);
 
     // 一番下
-    if (k === cf.bipartites.length - 1) continue;
+    if (k === bipartites.length - 1) continue;
     curIdx = idx;
     graphConstraints.push({
       axis: "y",
@@ -80,23 +95,7 @@ const makeGraphForCola = (cf, edgeWidths, layerGap, lastLayer) => {
     prvIdx = curIdx;
   }
 
-  const midNodeWidths = getMidNodeWidths(
-    graphNodes,
-    graphEdges,
-    edgeWidths,
-    lastLayer
-  );
-
-  console.error(graphConstraints);
-
   return {
-    graph: {
-      nodes: graphNodes,
-      edges: graphEdges,
-      constraints: graphConstraints,
-    },
-    midNodeWidths,
+    constraints: graphConstraints,
   };
 };
-
-export default makeGraphForCola;

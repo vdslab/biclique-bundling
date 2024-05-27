@@ -3,6 +3,7 @@ class Confluent {
     this.layeredNodes = new Array();
     this.bipartites = new Array();
     this.bipartitesForColor = new Array();
+    this.bipartitesAll = new Array();
     this.bipartitesForMiss = new Array();
     this.getBicliqueCover = getBicliqueCover;
     this.param = param;
@@ -32,6 +33,14 @@ class Confluent {
 
     console.error("mad", maximalNodes, idx);
     this.bipartitesForColor.push({
+      h: idx,
+      depth,
+      bipartite,
+      maximalNodes,
+      step,
+    });
+
+    this.bipartitesAll.push({
       h: idx,
       depth,
       bipartite,
@@ -115,6 +124,10 @@ class Confluent {
         return Math.abs(item.depth) === this.maxDepth - 1;
       })
       .sort((a, b) => a.h - b.h);
+
+    this.bipartitesAll.sort((a, b) => {
+      return a.h - b.h;
+    });
   }
 
   #allIsIn(maximalBiclusterNodes, left, right) {

@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import * as cola from "webcola";
 import Confluent from "./../utils/confluent.js";
 import { getQuasiBicliqueCover } from "./../utils/getBicliqueCover.js";
-import makeGraphForCola from "./../utils/makeGraphForCola.js";
+import { makeGraphForCola } from "./../utils/makeGraphForCola.js";
 import getEdgeWidths from "./../utils/getEdgeWidths";
 import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
 import getEdgeEndPos from "./../utils/getEdgeEndPos.js";
@@ -56,19 +56,21 @@ const colaConfluent = (
   /*
     テスト箇所1
   */
-  const edgeWidths = getEdgeWidths(cf.bipartitesForMiss);
 
   /*
     テスト項目2
   */
   // ノードの数によって増やす
   const layerGap = 200;
-  const { graph, midNodeWidths } = makeGraphForCola(
-    cf,
-    edgeWidths,
-    layerGap,
+  const graph = makeGraphForCola(cf, layerGap);
+  const { edgeWidths, midNodeWidths } = getEdgeWidths(
+    graph,
+    cf.bipartitesForMiss,
+    cf.bipartitesAll,
     lastLayer
   );
+
+  console.error(cf);
 
   // 座標決定process
   const width = 2000;
@@ -80,9 +82,10 @@ const colaConfluent = (
     .nodes(graph.nodes)
     .links(graph.edges)
     .constraints(graph.constraints)
-    .symmetricDiffLinkLengths(30) // ノードの数によって増やす
+    .symmetricDiffLinkLengths(40) // ノードの数によって増やす
     .start(30, 40, 50);
 
+  // 制約の再追加
   const sortedNodes = structuredClone(graph.nodes).sort((a, b) => {
     return a.x - b.x;
   });
@@ -101,9 +104,12 @@ const colaConfluent = (
       const gap =
         (nodes[i].layer !== 0 && nodes[i].layer !== lastLayer) ||
         (nodes[i + 1].layer !== 0 && nodes[i + 1].layer !== lastLayer)
-          ? (midNodeWidths[nodes[i].layer][nodes[i].label] +
-              midNodeWidths[nodes[i + 1].layer][nodes[i + 1].label]) **
-            1.1
+          ? Math.max(
+              (midNodeWidths[nodes[i].layer][nodes[i].label] +
+                midNodeWidths[nodes[i + 1].layer][nodes[i + 1].label]) **
+                1.1,
+              nodeRadius * 4
+            )
           : nodeRadius * 4;
       graph.constraints.push({
         left: nodes[i].id,
@@ -118,7 +124,7 @@ const colaConfluent = (
     .nodes(graph.nodes)
     .links(graph.edges)
     .constraints(graph.constraints)
-    .symmetricDiffLinkLengths(60)
+    .symmetricDiffLinkLengths(40)
     .start(30, 40, 50);
 
   // エッジ交差数

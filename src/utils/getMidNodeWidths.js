@@ -21,7 +21,7 @@ const getMidNodeWidths = (nodes, edges, edgeWidths, lastLayer) => {
   }
   midNodeWidths.push(midNodeElement);
   midNodeWidths = [[], ...midNodeWidths, []];
-  console.error(midNodeWidths);
+  // console.error(midNodeWidths);
 
   return midNodeWidths;
 };

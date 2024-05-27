@@ -6,11 +6,11 @@ import * as d3 from "d3";
 function App() {
   const width = 2300;
   const height = 3000;
+  const nodeRadius = 4;
 
   const [param, setParam] = useState(-1.0);
   const [rangeParam, setRangeParam] = useState(param);
   const [maxDepth, setMaxDepth] = useState(1);
-  const nodeRadius = 8;
 
   const [url, setUrl] = useState("public/random/json/random_7_7_75_2.json");
   const [displayUrl, setDisplayUrl] = useState(url);
@@ -97,10 +97,14 @@ function App() {
             return (
               <text
                 key={key}
-                x={node.x - nodeRadius / 2}
+                x={
+                  nodeLabels[key]["label"] >= 10
+                    ? node.x - nodeRadius / 1.3
+                    : node.x - nodeRadius / 2
+                }
                 y={node.y + nodeRadius / 2}
                 fontSize="14"
-                fill="white"
+                fill="black"
               >
                 {nodeLabels[key]["label"]}
               </text>
