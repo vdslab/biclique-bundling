@@ -3,7 +3,7 @@ const getMidNodeWidths = (nodes, edges, edgeWidths, lastLayer) => {
   let midNodeElement = [];
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i];
-    if (node.layer === 0 || node.layer === lastLayer) continue;
+    if (node.layer === 0) continue;
 
     let sumWidth = 0;
     edges.forEach((edge, key) => {
@@ -20,10 +20,28 @@ const getMidNodeWidths = (nodes, edges, edgeWidths, lastLayer) => {
     midNodeElement.push(sumWidth);
   }
   midNodeWidths.push(midNodeElement);
-  midNodeWidths = [[], ...midNodeWidths, []];
-  // console.error(midNodeWidths);
 
-  return midNodeWidths;
+  let upperNodeWidths = [];
+  let upperNodeElement = [];
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i];
+    if (node.layer !== 0) continue;
+
+    let sumWidth = 0;
+    edges.forEach((edge, key) => {
+      console.error(edge.src, node);
+      if (edge.source === node.id) {
+        sumWidth += edgeWidths[key];
+      }
+    });
+
+    if (i > 0 && nodes[i - 1].layer > 0 && node.layer !== nodes[i - 1].layer) {
+      upperNodeWidths.push(midNodeElement);
+    }
+    upperNodeElement.push(sumWidth);
+  }
+  upperNodeWidths.push(upperNodeElement);
+  return [...upperNodeWidths, ...midNodeWidths];
 };
 
 export default getMidNodeWidths;
