@@ -9,6 +9,7 @@ const getEdgeWidths = (graph, bipartitesForMiss, bipartitesAll, lastLayer) => {
   const maxDepth = bipartitesForMiss.length
     ? Math.abs(bipartitesForMiss.at(-1).depth) + 1
     : 0;
+  const div = {};
   for (let depth = 0; depth < maxDepth; depth++) {
     const edgeInfo = {};
     let bipartiteNumber = 0;
@@ -19,6 +20,23 @@ const getEdgeWidths = (graph, bipartitesForMiss, bipartitesAll, lastLayer) => {
       const bipartite = bipartitesForMiss[i].bipartite;
       // depth >= 1からedgeWidthsを用いる
 
+      if (depth) {
+        for (let j = 0; j < bipartite.length; j++) {
+          for (let k = 0; k < bipartite[j].length; k++) {
+            if (!bipartite[j][k]) continue;
+            for (let l = 0; l < maximalNodes.length; l++) {
+              const nodes = maximalNodes[l];
+              if (nodes.left.includes(j) && nodes.right.includes(k)) {
+                div[[j, k, bipartitesForMiss[i].depth].join(",")] = div[
+                  [j, k, bipartitesForMiss[i].depth].join(",")
+                ]
+                  ? div[[j, k, bipartitesForMiss[i].depth].join(",")] + 1
+                  : 1;
+              }
+            }
+          }
+        }
+      }
       // 上エッジ
       for (let left = 0; left < bipartite.length; left++) {
         for (let j = 0; j < maximalNodes.length; j++) {
@@ -31,7 +49,9 @@ const getEdgeWidths = (graph, bipartitesForMiss, bipartitesAll, lastLayer) => {
             const weight = depth
               ? prevInfo[[left, right, prevBipartiteNumber].join(",")]
               : 1;
-            edgeCount += bipartite[left][right] * weight;
+            edgeCount +=
+              (bipartite[left][right] * weight) /
+              (div[[left, right, bipartitesForMiss[i].depth].join(",")] || 1);
           }
 
           edgeWidths.push(edgeCount);
@@ -52,7 +72,9 @@ const getEdgeWidths = (graph, bipartitesForMiss, bipartitesAll, lastLayer) => {
             const weight = depth
               ? prevInfo[[left, right, prevBipartiteNumber].join(",")]
               : 1;
-            edgeCount += bipartite[left][right] * weight;
+            edgeCount +=
+              (bipartite[left][right] * weight) /
+              (div[[left, right, bipartitesForMiss[i].depth].join(",")] || 1);
           }
           edgeInfo[[j, right, bipartiteNumber].join(",")] = edgeCount;
 

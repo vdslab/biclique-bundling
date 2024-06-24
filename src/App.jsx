@@ -79,7 +79,7 @@ function App() {
         </g>
 
         <g>
-          {nodes?.map((node, key) => {
+          {/* {nodes?.map((node, key) => {
             return (
               <circle
                 key={key}
@@ -90,7 +90,7 @@ function App() {
                 fill={d3.schemeCategory10[0]}
               />
             );
-          })}
+          })} */}
 
           {nodes?.map((node, key) => {
             console.log(nodeLabels);
