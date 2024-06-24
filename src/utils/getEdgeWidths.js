@@ -1,7 +1,8 @@
 import getMidNodeWidths from "./getMidNodeWidths.js";
 import { makeGraphData } from "./makeGraphForCola.js";
 
-const getEdgeWidths = (graph, bipartitesForMiss, bipartitesAll, lastLayer) => {
+const getEdgeWidths = (bipartitesForMiss, bipartitesAll) => {
+  const edgeMag = 1.5;
   const edgeWidths = [];
   let prevInfo;
   let prevMidNodeWidths = [];
@@ -32,6 +33,7 @@ const getEdgeWidths = (graph, bipartitesForMiss, bipartitesAll, lastLayer) => {
                 ]
                   ? div[[j, k, bipartitesForMiss[i].depth].join(",")] + 1
                   : 1;
+                // div[[j, k, bipartitesForMiss[i].depth].join(",")] = 1;
               }
             }
           }
@@ -54,7 +56,9 @@ const getEdgeWidths = (graph, bipartitesForMiss, bipartitesAll, lastLayer) => {
               (div[[left, right, bipartitesForMiss[i].depth].join(",")] || 1);
           }
 
-          edgeWidths.push(edgeCount);
+          if (depth === maxDepth - 1) {
+            edgeWidths.push(edgeMag * edgeCount);
+          }
 
           edgeInfo[[left, j, bipartiteNumber].join(",")] = edgeCount;
         }
@@ -78,53 +82,31 @@ const getEdgeWidths = (graph, bipartitesForMiss, bipartitesAll, lastLayer) => {
           }
           edgeInfo[[j, right, bipartiteNumber].join(",")] = edgeCount;
 
-          edgeWidths.push(edgeCount);
+          if (depth === maxDepth - 1) {
+            edgeWidths.push(edgeMag * edgeCount);
+          }
         }
       }
       bipartiteNumber++;
       prevBipartiteNumber++;
     }
-    console.error("AHHHHHHHHHHHHHHHHHHHHHHHHHHHH ", edgeInfo);
+    console.error("edgeInfo ", edgeInfo);
     prevInfo = Object.assign({}, edgeInfo);
-
-    const { nodes, edges } = makeGraphData(
-      bipartitesAll.filter(
-        (bipartite) => Math.abs(bipartite.depth) === depth + 1
-      )
-    );
-
-    const curMidNodeWidths = getMidNodeWidths(
-      nodes,
-      edges,
-      edgeWidths,
-      2 ** (depth + 1)
-    );
-
-    console.error(nodes, edges);
-    console.error("edgeWidths ", edgeWidths);
-    console.error(
-      "midNodeWidths  ",
-      getMidNodeWidths(nodes, edges, edgeWidths, 2 ** (depth + 1))
-    );
-
-    for (let prev = 0; prev < prevMidNodeWidths.length; prev++) {
-      const offset = (curMidNodeWidths.length - prevMidNodeWidths.length) / 2;
-      const cur = prev + offset;
-
-      for (let m = 0; m < prevMidNodeWidths[prev].length; m++) {
-        curMidNodeWidths[cur][m] = prevMidNodeWidths[prev][m];
-      }
-    }
-
-    while (depth < maxDepth - 1 && edgeWidths.length) {
-      edgeWidths.pop();
-    }
-
-    prevMidNodeWidths = curMidNodeWidths;
   }
 
+  const { nodes, edges } = makeGraphData(
+    bipartitesAll.filter((bipartite) => Math.abs(bipartite.depth) === maxDepth)
+  );
+
+  const midNodeWidths = getMidNodeWidths(
+    nodes,
+    edges,
+    edgeWidths,
+    2 ** maxDepth
+  );
+
   console.error(prevMidNodeWidths);
-  return { edgeWidths, midNodeWidths: prevMidNodeWidths };
+  return { edgeWidths, midNodeWidths };
 };
 
 export default getEdgeWidths;

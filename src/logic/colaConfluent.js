@@ -61,15 +61,14 @@ const colaConfluent = (
     テスト項目2
   */
   // ノードの数によって増やす
-  const layerGap = 200;
+  const layerGap = 150;
   const graph = makeGraphForCola(cf, layerGap);
   const { edgeWidths, midNodeWidths } = getEdgeWidths(
-    graph,
     cf.bipartitesForMiss,
-    cf.bipartitesAll,
-    lastLayer
+    cf.bipartitesAll
   );
 
+  console.error(midNodeWidths);
   console.error(cf);
 
   // 座標決定process
@@ -102,15 +101,8 @@ const colaConfluent = (
   for (const nodes of insertedNodes) {
     for (let i = 0; i < nodes.length - 1; i++) {
       const gap =
-        (nodes[i].layer !== 0 && nodes[i].layer !== lastLayer) ||
-        (nodes[i + 1].layer !== 0 && nodes[i + 1].layer !== lastLayer)
-          ? Math.max(
-              (midNodeWidths[nodes[i].layer][nodes[i].label] +
-                midNodeWidths[nodes[i + 1].layer][nodes[i + 1].label]) **
-                1.1,
-              nodeRadius * 4
-            )
-          : nodeRadius * 4;
+        midNodeWidths[nodes[i].layer][nodes[i].label] +
+        midNodeWidths[nodes[i + 1].layer][nodes[i + 1].label];
       graph.constraints.push({
         left: nodes[i].id,
         right: nodes[i + 1].id,
@@ -127,6 +119,9 @@ const colaConfluent = (
     .symmetricDiffLinkLengths(40)
     .start(30, 40, 50);
 
+  console.error(graph);
+  console.error(insertedNodes);
+
   // エッジ交差数
   const cross = getColaBipartiteCross(cf.bipartites, graph.nodes);
 
@@ -142,7 +137,7 @@ const colaConfluent = (
   let edgePaths = [];
   if (maxDepth > 0) {
     const linkGenerator = d3.linkVertical();
-    const edgeAt = getEdgeEndPos(graph, edgeWidths, midNodeWidths, lastLayer);
+    const edgeAt = getEdgeEndPos(graph, edgeWidths, midNodeWidths);
     edgePaths = edgeAt.map((edge) => linkGenerator(edge));
   } else {
     const lineGenerator = d3.line();

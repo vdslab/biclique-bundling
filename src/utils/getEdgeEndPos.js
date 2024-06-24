@@ -1,4 +1,4 @@
-const getEdgeEndPos = (graph, edgeWidths, midNodeWidths, lastLayer) => {
+const getEdgeEndPos = (graph, edgeWidths, midNodeWidths) => {
   const addXpos = new Array(graph.nodes.length);
   for (let i = 0; i < addXpos.length; i++) addXpos[i] = { src: 0, tar: 0 };
 
@@ -28,23 +28,11 @@ const getEdgeEndPos = (graph, edgeWidths, midNodeWidths, lastLayer) => {
   tarNodes.forEach((tarNode) => {
     const srcNode = graph.edges[tarNode.edgeId].source;
 
-    let addPos =
+    const addPos =
       -midNodeWidths[srcNode.layer][srcNode.label] / 2 +
       edgeWidths[tarNode.edgeId] / 2 +
       addXpos[srcNode.id].src;
     addXpos[srcNode.id].src += edgeWidths[tarNode.edgeId];
-
-    if (addXpos[srcNode.id].tar > midNodeWidths[srcNode.layer][srcNode.label]) {
-      console.error("edge src stick out");
-      console.error(
-        addXpos[srcNode.id].src,
-        midNodeWidths[srcNode.layer][srcNode.label]
-      );
-      console.error(tarNode);
-      const stickOutDiff =
-        midNodeWidths[srcNode.layer][srcNode.label] - addXpos[srcNode.id].src;
-      addPos += stickOutDiff;
-    }
 
     edgeAt[tarNode.edgeId]["source"][0] += addPos;
   });
@@ -52,7 +40,7 @@ const getEdgeEndPos = (graph, edgeWidths, midNodeWidths, lastLayer) => {
   srcNodes.forEach((srcNode) => {
     const tarNode = graph.edges[srcNode.edgeId].target;
 
-    let addPos =
+    const addPos =
       -midNodeWidths[tarNode.layer][tarNode.label] / 2 +
       edgeWidths[srcNode.edgeId] / 2 +
       addXpos[tarNode.id].tar;
