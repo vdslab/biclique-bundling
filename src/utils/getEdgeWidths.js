@@ -28,12 +28,31 @@ const getEdgeWidths = (bipartitesForMiss, bipartitesAll) => {
             for (let l = 0; l < maximalNodes.length; l++) {
               const nodes = maximalNodes[l];
               if (nodes.left.includes(j) && nodes.right.includes(k)) {
-                div[[j, k, bipartitesForMiss[i].depth].join(",")] = div[
-                  [j, k, bipartitesForMiss[i].depth].join(",")
+                div[
+                  [
+                    j,
+                    k,
+                    bipartitesForMiss[i].depth,
+                    bipartitesForMiss[i].h,
+                  ].join(",")
+                ] = div[
+                  [
+                    j,
+                    k,
+                    bipartitesForMiss[i].depth,
+                    bipartitesForMiss[i].h,
+                  ].join(",")
                 ]
-                  ? div[[j, k, bipartitesForMiss[i].depth].join(",")] + 1
+                  ? div[
+                      [
+                        j,
+                        k,
+                        bipartitesForMiss[i].depth,
+                        bipartitesForMiss[i].h,
+                      ].join(",")
+                    ] + 1
                   : 1;
-                // div[[j, k, bipartitesForMiss[i].depth].join(",")] = 1;
+                // div[[j, k, bipartitesForMiss[i].depth, bipartitesForMiss[i].h].join(",")] = 1;
               }
             }
           }
@@ -53,7 +72,14 @@ const getEdgeWidths = (bipartitesForMiss, bipartitesAll) => {
               : 1;
             edgeCount +=
               (bipartite[left][right] * weight) /
-              (div[[left, right, bipartitesForMiss[i].depth].join(",")] || 1);
+              (div[
+                [
+                  left,
+                  right,
+                  bipartitesForMiss[i].depth,
+                  bipartitesForMiss[i].h,
+                ].join(",")
+              ] || 1);
           }
 
           if (depth === maxDepth - 1) {
@@ -78,7 +104,14 @@ const getEdgeWidths = (bipartitesForMiss, bipartitesAll) => {
               : 1;
             edgeCount +=
               (bipartite[left][right] * weight) /
-              (div[[left, right, bipartitesForMiss[i].depth].join(",")] || 1);
+              (div[
+                [
+                  left,
+                  right,
+                  bipartitesForMiss[i].depth,
+                  bipartitesForMiss[i].h,
+                ].join(",")
+              ] || 1);
           }
           edgeInfo[[j, right, bipartiteNumber].join(",")] = edgeCount;
 
@@ -92,6 +125,14 @@ const getEdgeWidths = (bipartitesForMiss, bipartitesAll) => {
     }
     console.error("edgeInfo ", edgeInfo);
     prevInfo = Object.assign({}, edgeInfo);
+  }
+
+  console.error(div);
+  console.error(bipartitesForMiss);
+  for (const [key, value] of Object.entries(div)) {
+    if (value > 1) {
+      console.error(key, value);
+    }
   }
 
   const { nodes, edges } = makeGraphData(
