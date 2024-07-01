@@ -61,7 +61,7 @@ const useColaConfluent = (param, url, maxDepth, nodeRadius) => {
         })
       );
     })();
-  }, [param, url, maxDepth]);
+  }, [param, url, maxDepth, nodeRadius]);
 
   return {
     paths,

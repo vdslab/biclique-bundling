@@ -65,15 +65,45 @@ function App() {
       <svg width={width} height={height} style={{ border: "solid 1px" }}>
         <g>
           {paths?.map((path, key) => {
+            // const d =
+            //   path.path.top +
+            //   " " +
+            //   path.path.right +
+            //   " " +
+            //   path.path.bottom +
+            //   " " +
+            //   path.path.left;
+
+            const d =
+              path.path.left +
+              " " +
+              path.path.bottom +
+              "" +
+              path.path.right +
+              " " +
+              path.path.top +
+              " z";
+            // console.log(path.path.top);
+            // console.log(path.path.left);
+            // console.log(path.path.bottom);
+            // console.log(path.path.right);
+            // console.log(path.path.top);
+            console.log(path.path.mid);
+            console.log(
+              "______________________________________________________"
+            );
             return (
-              <path
-                key={key}
-                d={path.path}
-                stroke={path.color || d3.schemeSet2[7]}
-                strokeWidth={path.width || 1.5}
-                fill="transparent"
-                opacity={0.7}
-              />
+              <g key={key}>
+                <path
+                  // strokeLinecap="square"
+                  key={key}
+                  d={path.path.mid}
+                  stroke={path.color || d3.schemeSet2[7]}
+                  strokeWidth={path.width || 1.5}
+                  fill="transparent"
+                  opacity={0.7}
+                />
+              </g>
             );
           })}
         </g>
@@ -93,7 +123,7 @@ function App() {
           })} */}
 
           {nodes?.map((node, key) => {
-            console.log(nodeLabels);
+            //console.log(nodeLabels);
             return (
               <text
                 key={key}

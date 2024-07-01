@@ -49,7 +49,20 @@ const getEdgeEndPos = (graph, edgeWidths, midNodeWidths) => {
     edgeAt[srcNode.edgeId]["target"][0] += addPos;
   });
 
-  return edgeAt;
+  const edgeL = structuredClone(edgeAt);
+  const edgeR = structuredClone(edgeAt);
+
+  edgeL.map((edge, key) => {
+    edge["source"][0] -= edgeWidths[key] / 2;
+    edge["target"][0] -= edgeWidths[key] / 2;
+  });
+
+  edgeR.map((edge, key) => {
+    edge["source"][0] += edgeWidths[key] / 2;
+    edge["target"][0] += edgeWidths[key] / 2;
+  });
+
+  return { edgeL, edgeR, edgeAt };
 };
 
 export default getEdgeEndPos;

@@ -61,7 +61,7 @@ const colaConfluent = (
     テスト項目2
   */
   // ノードの数によって増やす
-  const layerGap = 150;
+  const layerGap = 200;
   const graph = makeGraphForCola(cf, layerGap);
   const { edgeWidths, midNodeWidths } = getEdgeWidths(
     cf.bipartitesForMiss,
@@ -133,14 +133,40 @@ const colaConfluent = (
 
   // 損失数
   // missingEdges;
-
+  const lineGenerator = d3.line();
+  const linkGenerator = d3.linkVertical();
   let edgePaths = [];
   if (maxDepth > 0) {
-    const linkGenerator = d3.linkVertical();
-    const edgeAt = getEdgeEndPos(graph, edgeWidths, midNodeWidths);
-    edgePaths = edgeAt.map((edge) => linkGenerator(edge));
+    const { edgeAt, edgeR, edgeL } = getEdgeEndPos(
+      graph,
+      edgeWidths,
+      midNodeWidths
+    );
+    edgePaths = edgeAt.map((edge, key) => {
+      return {
+        left: linkGenerator(edgeL[key]),
+        right: trimPathM(
+          linkGenerator({
+            source: edgeR[key]["target"],
+            target: edgeR[key]["source"],
+          })
+        ),
+        mid: linkGenerator(edge),
+        top: trimPathM(
+          lineGenerator([
+            [edgeR[key]["source"][0], edgeR[key]["source"][1]],
+            [edgeL[key]["source"][0], edgeL[key]["source"][1]],
+          ])
+        ),
+        bottom: trimPathM(
+          lineGenerator([
+            [edgeL[key]["target"][0], edgeL[key]["target"][1]],
+            [edgeR[key]["target"][0], edgeR[key]["target"][1]],
+          ])
+        ),
+      };
+    });
   } else {
-    const lineGenerator = d3.line();
     edgePaths = graph.edges.map((edge) =>
       lineGenerator([
         [edge.source.x, edge.source.y],
@@ -169,6 +195,19 @@ const colaConfluent = (
     midNodesCount,
     edgeWidths,
   };
+};
+
+const trimPathM = (path) => {
+  let idx = 0;
+  for (let i = 2; i < path.length; i++) {
+    if (!path[i].match(/[^A-Z]/)) {
+      idx = i;
+      break;
+    }
+  }
+
+  console.log(path.substring(idx));
+  return path.substring(idx);
 };
 
 export default colaConfluent;
