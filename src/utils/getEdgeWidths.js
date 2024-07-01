@@ -2,7 +2,7 @@ import getMidNodeWidths from "./getMidNodeWidths.js";
 import { makeGraphData } from "./makeGraphForCola.js";
 
 const getEdgeWidths = (bipartitesForMiss, bipartitesAll) => {
-  const edgeMag = 1.5;
+  const edgeMag = 1;
   const edgeWidths = [];
   let prevInfo;
   let prevMidNodeWidths = [];
@@ -19,6 +19,8 @@ const getEdgeWidths = (bipartitesForMiss, bipartitesAll) => {
       if (Math.abs(bipartitesForMiss[i].depth) !== depth) continue;
       const maximalNodes = bipartitesForMiss[i].maximalNodes;
       const bipartite = bipartitesForMiss[i].bipartite;
+      const bipartiteDepth = bipartitesForMiss[i].depth;
+      const bipartiteH = bipartitesForMiss[i].h;
       // depth >= 1からedgeWidthsを用いる
 
       if (depth) {
@@ -28,31 +30,12 @@ const getEdgeWidths = (bipartitesForMiss, bipartitesAll) => {
             for (let l = 0; l < maximalNodes.length; l++) {
               const nodes = maximalNodes[l];
               if (nodes.left.includes(j) && nodes.right.includes(k)) {
-                div[
-                  [
-                    j,
-                    k,
-                    bipartitesForMiss[i].depth,
-                    bipartitesForMiss[i].h,
-                  ].join(",")
-                ] = div[
-                  [
-                    j,
-                    k,
-                    bipartitesForMiss[i].depth,
-                    bipartitesForMiss[i].h,
-                  ].join(",")
+                div[[j, k, bipartiteDepth, bipartiteH].join(",")] = div[
+                  [j, k, bipartiteDepth, bipartiteH].join(",")
                 ]
-                  ? div[
-                      [
-                        j,
-                        k,
-                        bipartitesForMiss[i].depth,
-                        bipartitesForMiss[i].h,
-                      ].join(",")
-                    ] + 1
+                  ? div[[j, k, bipartiteDepth, bipartiteH].join(",")] + 1
                   : 1;
-                // div[[j, k, bipartitesForMiss[i].depth, bipartitesForMiss[i].h].join(",")] = 1;
+                // div[[j, k, bipartiteDepth, bipartiteH].join(",")] = 1;
               }
             }
           }
@@ -70,16 +53,9 @@ const getEdgeWidths = (bipartitesForMiss, bipartitesAll) => {
             const weight = depth
               ? prevInfo[[left, right, prevBipartiteNumber].join(",")]
               : 1;
-            edgeCount +=
-              (bipartite[left][right] * weight) /
-              (div[
-                [
-                  left,
-                  right,
-                  bipartitesForMiss[i].depth,
-                  bipartitesForMiss[i].h,
-                ].join(",")
-              ] || 1);
+            const edgeDiv =
+              div[[left, right, bipartiteDepth, bipartiteH].join(",")] || 1;
+            edgeCount += (bipartite[left][right] * weight) / edgeDiv;
           }
 
           if (depth === maxDepth - 1) {
@@ -102,16 +78,9 @@ const getEdgeWidths = (bipartitesForMiss, bipartitesAll) => {
             const weight = depth
               ? prevInfo[[left, right, prevBipartiteNumber].join(",")]
               : 1;
-            edgeCount +=
-              (bipartite[left][right] * weight) /
-              (div[
-                [
-                  left,
-                  right,
-                  bipartitesForMiss[i].depth,
-                  bipartitesForMiss[i].h,
-                ].join(",")
-              ] || 1);
+            const edgeDiv =
+              div[[left, right, bipartiteDepth, bipartiteH].join(",")] || 1;
+            edgeCount += (bipartite[left][right] * weight) / edgeDiv;
           }
           edgeInfo[[j, right, bipartiteNumber].join(",")] = edgeCount;
 
