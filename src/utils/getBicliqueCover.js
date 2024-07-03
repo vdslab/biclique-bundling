@@ -576,6 +576,13 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
   quasiRLF(G, param);
   //console.error("owari");
   //coloredEdgesをconfluent drawing用にデータを変換してreturn
+
+  // バイクリーク内のindexをソート
+  // エッジの端がずれるバグが発生
+  quasiBicliques.forEach((biclique) => {
+    biclique.left.sort((a, b) => a - b);
+    biclique.right.sort((a, b) => a - b);
+  });
   return quasiBicliques;
 };
 
