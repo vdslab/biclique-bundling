@@ -44,14 +44,15 @@ const useColaConfluent = (param, url, maxDepth, fontSize) => {
       setNodes(
         graph.nodes.map((node, key) => {
           // 上ノード
+          const digitNum = String(node.label).length;
           if (key < leftNodesOrder.length) {
-            node.x -= fontSize / 4;
+            node.x -= fontSize / (4 / digitNum);
             node.y -= fontSize / 3;
           }
 
           // 下ノード
           if (key > nodeNumbers.length - rightNodesOrder.length - 1) {
-            node.x -= fontSize / 4;
+            node.x -= fontSize / (4 / digitNum);
             node.y += fontSize / 1;
           }
 
