@@ -11,6 +11,7 @@ function App() {
   const [param, setParam] = useState(-1.0);
   const [rangeParam, setRangeParam] = useState(param);
   const [maxDepth, setMaxDepth] = useState(1);
+  const [isMidShow, setIsMidShow] = useState(false);
 
   const [url, setUrl] = useState("public/random/json/random_7_7_75_2.json");
   const [displayUrl, setDisplayUrl] = useState(url);
@@ -62,6 +63,19 @@ function App() {
       <button type="button" onClick={() => setParam(rangeParam)}>
         パラメータ適用
       </button>
+
+      <div>
+        <input
+          type="checkbox"
+          id="mid"
+          checked={isMidShow}
+          onChange={() => {
+            setIsMidShow(!isMidShow);
+          }}
+        />
+        <label htmlFor="mid">中間ノードを表示</label>
+      </div>
+
       <svg width={width} height={height} style={{ border: "solid 1px" }}>
         <g>
           {paths?.map((path, key) => {
@@ -82,18 +96,20 @@ function App() {
 
         <g>
           {nodes?.map((node, key) => {
+            console.log(
+              isMidShow ? fontSize : nodeLabels[key].isShow && fontSize
+            );
             return (
               <text
                 key={key}
                 x={node.x}
                 y={node.y}
-                fontSize={fontSize}
+                fontSize={
+                  isMidShow ? fontSize : nodeLabels[key].isShow ? fontSize : 0
+                }
                 fill="black"
               >
-                {
-                  // nodeLabels[key].isShow &&
-                  nodeLabels[key]["label"]
-                }
+                {nodeLabels[key]["label"]}
               </text>
             );
           })}
