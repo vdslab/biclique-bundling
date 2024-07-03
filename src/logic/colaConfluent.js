@@ -11,7 +11,6 @@ const colaConfluent = (
   bipartite,
   param,
   maxDepth,
-  nodeRadius,
   hasEdgeColor = false,
   outputForExp = false
 ) => {
@@ -61,7 +60,7 @@ const colaConfluent = (
     テスト項目2
   */
   // ノードの数によって増やす
-  const layerGap = 200;
+  const layerGap = 250;
   const graph = makeGraphForCola(cf, layerGap);
   const { edgeWidths, midNodeWidths } = getEdgeWidths(
     cf.bipartitesForMiss,
@@ -143,27 +142,26 @@ const colaConfluent = (
       midNodeWidths
     );
     edgePaths = edgeAt.map((edge, key) => {
-      return {
-        left: linkGenerator(edgeL[key]),
-        right: trimPathM(
-          linkGenerator({
-            source: edgeR[key]["target"],
-            target: edgeR[key]["source"],
-          })
-        ),
-        mid: linkGenerator(edge),
-        top: trimPathM(
-          lineGenerator([
-            [edgeR[key]["source"][0], edgeR[key]["source"][1]],
-            [edgeL[key]["source"][0], edgeL[key]["source"][1]],
-          ])
-        ),
-        bottom: trimPathM(
+      const d =
+        linkGenerator(edgeL[key]) +
+        " " +
+        trimPathM(
           lineGenerator([
             [edgeL[key]["target"][0], edgeL[key]["target"][1]],
             [edgeR[key]["target"][0], edgeR[key]["target"][1]],
           ])
-        ),
+        ) +
+        " " +
+        trimPathM(
+          linkGenerator({
+            source: edgeR[key]["target"],
+            target: edgeR[key]["source"],
+          })
+        ) +
+        " z";
+      return {
+        widthd: linkGenerator(edge),
+        d,
       };
     });
   } else {
@@ -189,7 +187,7 @@ const colaConfluent = (
     midNodesOrders,
     rightNodesOrder,
     edgePaths,
-    graph,
+    graph: structuredClone(graph),
     cross,
     totalEdgeCount,
     midNodesCount,
@@ -198,16 +196,12 @@ const colaConfluent = (
 };
 
 const trimPathM = (path) => {
-  let idx = 0;
-  for (let i = 2; i < path.length; i++) {
-    if (!path[i].match(/[^A-Z]/)) {
-      idx = i;
-      break;
+  for (let i = 1; i < path.length; i++) {
+    if (path[i].match(/[A-Z]/)) {
+      return path.substring(i);
     }
   }
-
-  console.log(path.substring(idx));
-  return path.substring(idx);
+  return path;
 };
 
 export default colaConfluent;

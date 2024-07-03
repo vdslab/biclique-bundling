@@ -7,7 +7,7 @@ import { getBipartiteDensity } from "./../utils/getBipartiteDensity";
  depth = 1 と depth >= 2のdrawing結果で比較する→ depth > 2でdepth=1と上下ノードが同じようにリンクしているならばアルゴリズムは妥当
 
 */
-const useColaConfluent = (param, url, maxDepth, nodeRadius) => {
+const useColaConfluent = (param, url, maxDepth, fontSize) => {
   const [paths, setPaths] = useState([]);
   const [crossCount, setCrossCount] = useState(0);
   const [nodes, setNodes] = useState([]);
@@ -31,37 +31,52 @@ const useColaConfluent = (param, url, maxDepth, nodeRadius) => {
         edgePaths,
         graph,
         edgeWidths,
-      } = colaConfluent(bipartite, parameter, maxDepth, nodeRadius, true);
+      } = colaConfluent(bipartite, parameter, maxDepth, true);
 
       setCrossCount(cross);
-      setNodes(graph.nodes);
+      const nodeNumbers = [
+        ...leftNodesOrder,
+        ...midNodesOrders,
+        ...rightNodesOrder,
+      ].flat();
+
+      // granph.nodesの座標を調整する
+      setNodes(
+        graph.nodes.map((node, key) => {
+          // 上ノード
+          if (key < leftNodesOrder.length) {
+            node.x -= fontSize / 4;
+            node.y -= fontSize / 3;
+          }
+
+          // 下ノード
+          if (key > nodeNumbers.length - rightNodesOrder.length - 1) {
+            node.x -= fontSize / 4;
+            node.y += fontSize / 1;
+          }
+
+          return node;
+        })
+      );
       setPaths(
         edgePaths.map((path, key) => {
           return { path, width: edgeWidths[key] };
         })
       );
 
-      const nodeNumbers = [
-        ...leftNodesOrder,
-        ...midNodesOrders,
-        ...rightNodesOrder,
-      ].flat();
       setNodeLabels(
         nodeNumbers.map((nodeNumber, key) => {
-          let isShow = true;
           if (
-            !(
-              key < leftNodesOrder.length ||
-              key > nodeNumbers.length - rightNodesOrder.length - 1
-            )
+            key >= leftNodesOrder.length &&
+            key <= nodeNumbers.length - rightNodesOrder.length - 1
           ) {
-            isShow = false;
+            return { label: nodeNumber, isShow: false };
           }
-          return { label: nodeNumber, isShow };
+          return { label: nodeNumber, isShow: true };
         })
       );
     })();
-  }, [param, url, maxDepth, nodeRadius]);
+  }, [param, url, maxDepth, fontSize]);
 
   return {
     paths,

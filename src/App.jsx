@@ -6,7 +6,7 @@ import * as d3 from "d3";
 function App() {
   const width = 2300;
   const height = 3000;
-  const nodeRadius = 4;
+  const fontSize = 14;
 
   const [param, setParam] = useState(-1.0);
   const [rangeParam, setRangeParam] = useState(param);
@@ -19,7 +19,7 @@ function App() {
     param,
     url,
     maxDepth,
-    nodeRadius
+    fontSize
   );
 
   return (
@@ -65,42 +65,14 @@ function App() {
       <svg width={width} height={height} style={{ border: "solid 1px" }}>
         <g>
           {paths?.map((path, key) => {
-            // const d =
-            //   path.path.top +
-            //   " " +
-            //   path.path.right +
-            //   " " +
-            //   path.path.bottom +
-            //   " " +
-            //   path.path.left;
-
-            const d =
-              path.path.left +
-              " " +
-              path.path.bottom +
-              "" +
-              path.path.right +
-              " " +
-              path.path.top +
-              " z";
-            // console.log(path.path.top);
-            // console.log(path.path.left);
-            // console.log(path.path.bottom);
-            // console.log(path.path.right);
-            // console.log(path.path.top);
-            console.log(path.path.mid);
-            console.log(
-              "______________________________________________________"
-            );
             return (
               <g key={key}>
                 <path
-                  // strokeLinecap="square"
                   key={key}
-                  d={path.path.mid}
+                  d={path.path.d}
                   stroke={path.color || d3.schemeSet2[7]}
-                  strokeWidth={path.width || 1.5}
-                  fill="transparent"
+                  strokeWidth={0.2}
+                  fill="silver"
                   opacity={0.7}
                 />
               </g>
@@ -109,34 +81,19 @@ function App() {
         </g>
 
         <g>
-          {/* {nodes?.map((node, key) => {
-            return (
-              <circle
-                key={key}
-                className="node"
-                cx={node.x}
-                cy={node.y}
-                r={nodeRadius}
-                fill={d3.schemeCategory10[0]}
-              />
-            );
-          })} */}
-
           {nodes?.map((node, key) => {
-            //console.log(nodeLabels);
             return (
               <text
                 key={key}
-                x={
-                  nodeLabels[key]["label"] >= 10
-                    ? node.x - nodeRadius / 1.3
-                    : node.x - nodeRadius / 2
-                }
-                y={node.y + nodeRadius / 2}
-                fontSize="14"
+                x={node.x}
+                y={node.y}
+                fontSize={fontSize}
                 fill="black"
               >
-                {nodeLabels[key]["label"]}
+                {
+                  // nodeLabels[key].isShow &&
+                  nodeLabels[key]["label"]
+                }
               </text>
             );
           })}
