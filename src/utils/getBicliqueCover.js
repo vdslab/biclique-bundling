@@ -19,7 +19,7 @@ export const convertG2Ge = (G) => {
     }
   }
 
-  console.log(edge2Node);
+  // console.log(edge2Node);
 
   for (let i = 0; i < edges.length; i++) {
     const iG = edges[i]["row"];
@@ -41,20 +41,20 @@ export const convertG2Ge = (G) => {
     }
   }
 
-  console.log(Ge);
+  console.error("hehe", Ge);
   return [Ge, edge2Node];
 };
 
 export const RLF = (G, depth) => {
-  console.log("start");
+  // console.log("start");
   if (!Object.entries(G).length) return;
-  console.log(G);
-  console.log("YES");
+  // console.log(G);
+  // console.log("YES");
   const S = [];
   let maxDegNode = -1;
   let maxNum = -1;
   for (const [key, neighbors] of Object.entries(G)) {
-    console.log("huhu", key, neighbors);
+    // console.log("huhu", key, neighbors);
     if (neighbors.length > maxNum) {
       maxDegNode = Number(key);
       maxNum = neighbors.length;
@@ -62,7 +62,7 @@ export const RLF = (G, depth) => {
   }
 
   //vertex-disjointを選ぶ
-  console.log("max degree", maxDegNode);
+  // console.log("max degree", maxDegNode);
   // if(depth === 1) {
   //   maxDegNode = 1;
   // }
@@ -77,13 +77,13 @@ export const RLF = (G, depth) => {
     }
   }
 
-  console.log("U2", U2);
+  // console.log("U2", U2);
   for (const [key] of Object.entries(G)) {
     if (U2.has(Number(key)) || maxDegNode === Number(key)) continue;
     U1.add(Number(key));
   }
 
-  console.log("U1", U1);
+  // console.log("U1", U1);
   //U1から選ぶでSに入れる；
 
   while (U1.size) {
@@ -108,8 +108,8 @@ export const RLF = (G, depth) => {
         cand.push(element.u1);
       }
     });
-    console.log("cand", cand, candObj);
-    console.log("end");
+    // console.log("cand", cand, candObj);
+    // console.log("end");
 
     //candからU1に最小に繋がっているやつを選ぶ。
     //maxDegNodeとvertex-disjointのエッジを
@@ -129,7 +129,7 @@ export const RLF = (G, depth) => {
       }
     }
 
-    console.log("disi", disi);
+    // console.log("disi", disi);
     S.push(disi);
     U1.delete(disi);
 
@@ -138,11 +138,11 @@ export const RLF = (G, depth) => {
       U1.delete(n);
     }
 
-    //console.log("S", S);
-    //console.log("U1", U1);
+    //// console.log("S", S);
+    //// console.log("U1", U1);
   }
 
-  console.log("S", depth, S);
+  // console.log("S", depth, S);
 
   //グラフから頂点集合Sとそのエッジを取り除く
   for (const sElement of S) {
@@ -153,12 +153,13 @@ export const RLF = (G, depth) => {
     }
   }
 
-  console.log(G);
+  // console.log(G);
   RLF(G, depth + 1);
 };
 
 export const getBicliqueCover = (g) => {
   const [G, edge2Node] = convertG2Ge(g);
+  console.error("GG", G);
 
   const coloredEdges = [];
 
@@ -180,7 +181,7 @@ export const getBicliqueCover = (g) => {
       }
     }
 
-    console.log(maxDegNode);
+    // console.log(maxDegNode);
     const U1 = new Set();
     const U2 = new Set();
     S.push(maxDegNode);
@@ -191,13 +192,13 @@ export const getBicliqueCover = (g) => {
       }
     }
 
-    console.log("U2", U2);
+    // console.log("U2", U2);
     for (const [key] of Object.entries(G)) {
       if (U2.has(Number(key)) || maxDegNode === Number(key)) continue;
       U1.add(Number(key));
     }
 
-    console.log("U1", U1);
+    // console.log("U1", U1);
     //U1から選ぶでSに入れる；
     //U1からdisjointになるedgesを優先的に選ぶ
 
@@ -223,8 +224,8 @@ export const getBicliqueCover = (g) => {
           cands.push(element.u1);
         }
       });
-      console.log("cands", cands, candObj);
-      console.log("end");
+      // console.log("cands", cands, candObj);
+      // console.log("end");
 
       //candからU1に最小に繋がっているやつを選ぶ。
       let minU1deg = 1e12;
@@ -263,7 +264,7 @@ export const getBicliqueCover = (g) => {
         }
       }
 
-      console.log("disi", disi);
+      // console.log("disi", disi);
       S.push(disi);
       U1.delete(disi);
 
@@ -272,20 +273,20 @@ export const getBicliqueCover = (g) => {
         U1.delete(n);
       }
 
-      //console.log("S", S);
-      //console.log("U1", U1);
+      //// console.log("S", S);
+      //// console.log("U1", U1);
     }
 
-    console.log("S", S);
+    // console.log("S", S);
 
     //グラフからSを取り除く
     //グラフから頂点集合Sとそのエッジを取り除く
-    console.log(
-      "resultfssssssssssssssssssssss",
-      S,
-      coloredEdge2biclique(S, edge2Node),
-      G
-    );
+    // console.log(
+    //   "resultfssssssssssssssssssssss",
+    //   S,
+    //   coloredEdge2biclique(S, edge2Node),
+    //   G
+    // );
     for (const sElement of S) {
       delete G[sElement];
       for (let [key, neighbors] of Object.entries(G)) {
@@ -295,7 +296,7 @@ export const getBicliqueCover = (g) => {
     }
 
     coloredEdges.push(S);
-    console.log(G, S, coloredEdges);
+    // console.log(G, S, coloredEdges);
 
     RLF(G);
   };
@@ -308,6 +309,7 @@ export const getBicliqueCover = (g) => {
 
 export const getQuasiBicliqueCover = (g, param = 1.0) => {
   const [G, edge2Node] = convertG2Ge(g);
+  console.error("GG", G);
 
   const bipartiteNodes = { left: [], right: [] };
   for (let i = 0; i < g.length; i++) {
@@ -340,7 +342,7 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
       }
     }
 
-    console.log(maxDegNode);
+    //console.log(maxDegNode);
     const U1 = new Set();
     const U2 = new Set();
     S.push(maxDegNode);
@@ -351,13 +353,13 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
       }
     }
 
-    console.log("U2", U2);
+    //console.log("U2", U2);
     for (const [key] of Object.entries(G)) {
       if (U2.has(Number(key)) || maxDegNode === Number(key)) continue;
       U1.add(Number(key));
     }
 
-    console.log("U1", U1);
+    //console.log("U1", U1);
     //U1から選ぶでSに入れる；
     //U1からdisjointになるedgesを優先的に選ぶ
 
@@ -383,8 +385,8 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
           cands.push(element.u1);
         }
       });
-      console.log("cands", cands, candObj);
-      console.log("end");
+      //console.log("cands", cands, candObj);
+      //console.log("end");
 
       //candからU1に最小に繋がっているやつを選ぶ。
       let minU1deg = 1e12;
@@ -423,7 +425,7 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
         }
       }
 
-      console.log("disi", disi);
+      //console.log("disi", disi);
       S.push(disi);
       U1.delete(disi);
 
@@ -436,7 +438,7 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
       //console.log("U1", U1);
     }
 
-    console.log("S", S);
+    //console.log("S", S);
 
     // bipartiteNodes
     const addedCandNodes = []; // [{side: 'left', node:1},{side: 'right', node: 2} ]
@@ -467,10 +469,10 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
 
     // bicliqueNodesの密度が高くなるようなノードを選択する
     // 貪欲的に密度が高くなるようなノードを選択しても、最終的な結果が最良であるか限らない
-    console.log(bicliqueNodes, addedCandNodes);
+    //console.log(bicliqueNodes, addedCandNodes);
     const addedNodes = [];
     const addedNodesNumber = [];
-    while (true) {
+    for (;;) {
       let maxDensityNode;
       let maxDesity = -1.0;
       for (const addedNode of addedCandNodes) {
@@ -493,11 +495,10 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
         }
       }
 
-
       if (maxDesity < param) {
         break;
       } else {
-        console.error("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", maxDesity, bicliqueNodes);
+        // console.error("density log", maxDesity, bicliqueNodes);
       }
 
       if (maxDensityNode) {
@@ -516,9 +517,9 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
     }
 
     // 準バイクリークの密度がparam未満だったら例外を投げる
-    const bipartiteDensity = calcBipartiteDensity(bicliqueNodes, undefined , g);
-    console.error("SSS", counter , bicliqueNodes, bipartiteDensity);
-    if(bipartiteDensity < param) {
+    const bipartiteDensity = calcBipartiteDensity(bicliqueNodes, undefined, g);
+    //console.error("SSS", counter, bicliqueNodes, bipartiteDensity);
+    if (bipartiteDensity < param) {
       throw new Error("code error");
     }
 
@@ -544,17 +545,17 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
         }
       });
     }
-    console.error(deletedNode);
+    //console.error(deletedNode);
 
     // 準バイクリークカバーの配列
     quasiBicliques.push(bicliqueNodes);
 
     //Sはエッジの配列
     //S.push(addedNode);
-    console.log("deleted", deletedNode);
-    console.error("added", addedNodes, param);
-    console.log("node2", edge2Node);
-    console.log(bicliqueNodes);
+    //console.log("deleted", deletedNode);
+    //console.error("added", addedNodes, param);
+    //console.log("node2", edge2Node);
+    //console.log(bicliqueNodes);
 
     //グラフからSを取り除く
     //グラフから頂点集合Sとそのエッジを取り除く
@@ -571,9 +572,9 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
   };
 
   //ここでRFLを実行する
-  console.error("Hasime")
+  // console.error("Hasime");
   quasiRLF(G, param);
-  console.error("owari")
+  //console.error("owari");
   //coloredEdgesをconfluent drawing用にデータを変換してreturn
   return quasiBicliques;
 };
@@ -590,22 +591,22 @@ const coloredEdges2bicliques = (coloredEdges, edge2Node) => {
         }
       });
     }
-    console.log(" bicliqueEdges", bicliqueEdges);
+    //console.log(" bicliqueEdges", bicliqueEdges);
 
     const bicliqueObj = { left: [], right: [] };
     for (const edge of bicliqueEdges) {
       bicliqueObj["left"].push(Number(edge[0]));
       bicliqueObj["right"].push(Number(edge[1]));
     }
-    console.log(bicliqueObj);
+    //console.log(bicliqueObj);
     //bicliqueObjの重複削除とソート
     bicliqueObj["left"] = Array.from(new Set(bicliqueObj["left"])).sort();
     bicliqueObj["right"] = Array.from(new Set(bicliqueObj["right"])).sort();
     bicliques.push(bicliqueObj);
   }
 
-  console.log("coloredEdges", coloredEdges);
-  console.error("bicliques", bicliques);
+  // console.log("coloredEdges", coloredEdges);
+  // console.error("bicliques", bicliques);
   return bicliques;
 };
 
@@ -624,7 +625,7 @@ const coloredEdge2biclique = (coloredEdge, edge2Node) => {
     bicliqueObj["left"].push(Number(edge[0]));
     bicliqueObj["right"].push(Number(edge[1]));
   }
-  console.log(bicliqueObj);
+  //console.log(bicliqueObj);
   //bicliqueObjの重複削除とソート
   bicliqueObj["left"] = Array.from(new Set(bicliqueObj["left"])).sort();
   bicliqueObj["right"] = Array.from(new Set(bicliqueObj["right"])).sort();

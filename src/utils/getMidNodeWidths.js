@@ -29,7 +29,7 @@ const getMidNodeWidths = (nodes, edges, edgeWidths, lastLayer) => {
 
     let sumWidth = 0;
     edges.forEach((edge, key) => {
-      console.error(edge.src, node);
+      // console.error(edge.src, node);
       if (edge.source === node.id) {
         sumWidth += edgeWidths[key];
       }
