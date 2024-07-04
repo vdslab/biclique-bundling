@@ -12,9 +12,8 @@ const colaConfluent = (
   param,
   maxDepth,
   hasEdgeColor = false,
-  outputForExp = false,
+  outputForExp = false
 ) => {
-  
   // バイクリークカバーの計算
   const lastLayer = 2 ** maxDepth;
   const cf = new Confluent(getQuasiBicliqueCover, param, maxDepth);
@@ -61,7 +60,8 @@ const colaConfluent = (
     for (let i = 0; i < nodes.length - 1; i++) {
       const gap =
         (midNodeWidths[nodes[i].layer][nodes[i].label] +
-        midNodeWidths[nodes[i + 1].layer][nodes[i + 1].label]) / 1.5;
+          midNodeWidths[nodes[i + 1].layer][nodes[i + 1].label]) /
+        1.5;
       graph.constraints.push({
         left: nodes[i].id,
         right: nodes[i + 1].id,
@@ -125,12 +125,14 @@ const colaConfluent = (
       };
     });
   } else {
-    edgePaths = graph.edges.map((edge) =>
-      lineGenerator([
-        [edge.source.x, edge.source.y],
-        [edge.target.x, edge.target.y],
-      ])
-    );
+    edgePaths = graph.edges.map((edge) => {
+      return {
+        d: lineGenerator([
+          [edge.source.x, edge.source.y],
+          [edge.target.x, edge.target.y],
+        ]),
+      };
+    });
   }
 
   // パラメター、交差数、エッジ数、中間ノード数、誤差数のログ

@@ -23,12 +23,12 @@ const useColaConfluent = (param, url, maxDepth, fontSize) => {
           ? (1.0 + getBipartiteDensity(bipartite)) / 2
           : param;
 
-      const {
-        cross,
-        edgePaths,
-        graph,
-        edgeWidths,
-      } = colaConfluent(bipartite, parameter, maxDepth, true);
+      const { cross, edgePaths, graph, edgeWidths } = colaConfluent(
+        bipartite,
+        parameter,
+        maxDepth,
+        true
+      );
 
       const leftNodeIds = new Array();
       const rightNodeIds = new Array();
@@ -37,21 +37,21 @@ const useColaConfluent = (param, url, maxDepth, fontSize) => {
       for (let i = 0; i < bipartite.length; i++) {
         leftNodeIds.push(i);
       }
-    
+
       for (let i = 0; i < bipartite[0].length; i++) {
         rightNodeIds.push(i);
       }
 
-      for(let i = 0; i < graph.nodes.length; i++) {
-        if(graph.nodes[i].layer === 0 || graph.nodes[i].layer === 2**maxDepth) continue;
+      for (let i = 0; i < graph.nodes.length; i++) {
+        if (
+          graph.nodes[i].layer === 0 ||
+          graph.nodes[i].layer === 2 ** maxDepth
+        )
+          continue;
         midNodeIds.push(graph.nodes[i].label);
       }
 
-      const nodeNumbers = [
-        ...leftNodeIds,
-        ...midNodeIds,
-        ...rightNodeIds,
-      ];
+      const nodeNumbers = [...leftNodeIds, ...midNodeIds, ...rightNodeIds];
 
       setCrossCount(cross);
       // granph.nodesの座標を調整する
