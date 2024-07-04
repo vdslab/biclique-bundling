@@ -12,54 +12,14 @@ const colaConfluent = (
   param,
   maxDepth,
   hasEdgeColor = false,
-  outputForExp = false
+  outputForExp = false,
 ) => {
+  
   // バイクリークカバーの計算
-  /*
-    テスト箇所1
-    - 正しくバイクリークカバーを算出できているか
-  */
   const lastLayer = 2 ** maxDepth;
   const cf = new Confluent(getQuasiBicliqueCover, param, maxDepth);
   cf.build(bipartite);
 
-  const leftNodeNumber = bipartite.length;
-  const rightNodeNumber = bipartite[0].length;
-  const midLayerNumber = cf.layeredNodes.length;
-  // 左右中間ノードの順序を初期化
-  // ノードのラベル
-  // 現状はインデックスがラベル
-
-  const leftNodesOrder = new Array();
-  const rightNodesOrder = new Array();
-  const midNodesOrders = new Array(); // 中間ノードの層と同じサイズ
-
-  for (let i = 0; i < leftNodeNumber; i++) {
-    leftNodesOrder.push(i);
-  }
-
-  for (let i = 0; i < rightNodeNumber; i++) {
-    rightNodesOrder.push(i);
-  }
-
-  for (let i = 0; i < midLayerNumber; i++) {
-    const midNodesOrder = new Array();
-    for (let j = 0; j < cf.layeredNodes[i].maximalNodes.length; j++) {
-      midNodesOrder.push(j);
-    }
-    midNodesOrders.push(midNodesOrder);
-  }
-
-  //グラフのデータと制約を作る
-  //グラフのノードとエッジを作成
-  /*
-    テスト箇所1
-  */
-
-  /*
-    テスト項目2
-  */
-  // ノードの数によって増やす
   const layerGap = 250;
   const graph = makeGraphForCola(cf, layerGap);
   const { edgeWidths, midNodeWidths } = getEdgeWidths(
@@ -100,8 +60,8 @@ const colaConfluent = (
   for (const nodes of insertedNodes) {
     for (let i = 0; i < nodes.length - 1; i++) {
       const gap =
-        midNodeWidths[nodes[i].layer][nodes[i].label] +
-        midNodeWidths[nodes[i + 1].layer][nodes[i + 1].label];
+        (midNodeWidths[nodes[i].layer][nodes[i].label] +
+        midNodeWidths[nodes[i + 1].layer][nodes[i + 1].label]) / 1.5;
       graph.constraints.push({
         left: nodes[i].id,
         right: nodes[i + 1].id,
@@ -183,9 +143,6 @@ const colaConfluent = (
   console.log(edgePaths);
 
   return {
-    leftNodesOrder,
-    midNodesOrders,
-    rightNodesOrder,
     edgePaths,
     graph: structuredClone(graph),
     cross,

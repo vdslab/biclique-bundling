@@ -25,33 +25,47 @@ const useColaConfluent = (param, url, maxDepth, fontSize) => {
 
       const {
         cross,
-        leftNodesOrder,
-        midNodesOrders,
-        rightNodesOrder,
         edgePaths,
         graph,
         edgeWidths,
       } = colaConfluent(bipartite, parameter, maxDepth, true);
 
-      setCrossCount(cross);
-      const nodeNumbers = [
-        ...leftNodesOrder,
-        ...midNodesOrders,
-        ...rightNodesOrder,
-      ].flat();
+      const leftNodeIds = new Array();
+      const rightNodeIds = new Array();
+      const midNodeIds = new Array();
 
+      for (let i = 0; i < bipartite.length; i++) {
+        leftNodeIds.push(i);
+      }
+    
+      for (let i = 0; i < bipartite[0].length; i++) {
+        rightNodeIds.push(i);
+      }
+
+      for(let i = 0; i < graph.nodes.length; i++) {
+        if(graph.nodes[i].layer === 0 || graph.nodes[i].layer === 2**maxDepth) continue;
+        midNodeIds.push(graph.nodes[i].label);
+      }
+
+      const nodeNumbers = [
+        ...leftNodeIds,
+        ...midNodeIds,
+        ...rightNodeIds,
+      ];
+
+      setCrossCount(cross);
       // granph.nodesの座標を調整する
       setNodes(
         graph.nodes.map((node, key) => {
           // 上ノード
           const digitNum = String(node.label).length;
-          if (key < leftNodesOrder.length) {
+          if (key < leftNodeIds.length) {
             node.x -= fontSize / (4 / digitNum);
             node.y -= fontSize / 3;
           }
 
           // 下ノード
-          if (key > nodeNumbers.length - rightNodesOrder.length - 1) {
+          if (key > nodeNumbers.length - rightNodeIds.length - 1) {
             node.x -= fontSize / (4 / digitNum);
             node.y += fontSize / 1;
           }
@@ -68,8 +82,8 @@ const useColaConfluent = (param, url, maxDepth, fontSize) => {
       setNodeLabels(
         nodeNumbers.map((nodeNumber, key) => {
           if (
-            key >= leftNodesOrder.length &&
-            key <= nodeNumbers.length - rightNodesOrder.length - 1
+            key >= leftNodeIds.length &&
+            key <= nodeNumbers.length - rightNodeIds.length - 1
           ) {
             return { label: nodeNumber, isShow: false };
           }
