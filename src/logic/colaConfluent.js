@@ -6,6 +6,7 @@ import { makeGraphForCola } from "./../utils/makeGraphForCola.js";
 import getEdgeWidths from "./../utils/getEdgeWidths";
 import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
 import getEdgeEndPos from "./../utils/getEdgeEndPos.js";
+import { setColaConstraint } from "./../utils/constraints.js";
 
 const colaConfluent = (
   bipartite,
@@ -20,7 +21,6 @@ const colaConfluent = (
   cf.build(bipartite);
 
   const layerGap = 250;
-  const graph = makeGraphForCola(cf, layerGap);
   const { edgeWidths, midNodeWidths } = getEdgeWidths(
     cf.bipartitesForMiss,
     cf.bipartitesAll
@@ -35,41 +35,8 @@ const colaConfluent = (
   const d3cola = cola.d3adaptor(d3).linkDistance(300).size([width, height]);
 
   // stress最小化
-  d3cola
-    .nodes(graph.nodes)
-    .links(graph.edges)
-    .constraints(graph.constraints)
-    .symmetricDiffLinkLengths(40) // ノードの数によって増やす
-    .start(30, 40, 50);
-
-  // 制約の再追加
-  const sortedNodes = structuredClone(graph.nodes).sort((a, b) => {
-    return a.x - b.x;
-  });
-
-  const insertedNodes = [];
-  for (let i = 0; i < lastLayer + 1; i++) {
-    insertedNodes.push([]);
-  }
-
-  for (const node of sortedNodes) {
-    insertedNodes[node.layer].push(node);
-  }
-
-  for (const nodes of insertedNodes) {
-    for (let i = 0; i < nodes.length - 1; i++) {
-      const gap =
-        (midNodeWidths[nodes[i].layer][nodes[i].label] +
-          midNodeWidths[nodes[i + 1].layer][nodes[i + 1].label]) /
-        1.5;
-      graph.constraints.push({
-        left: nodes[i].id,
-        right: nodes[i + 1].id,
-        gap,
-        axis: "x",
-      });
-    }
-  }
+  const graph = makeGraphForCola(cf, layerGap);
+  setColaConstraint(d3cola, graph, midNodeWidths, lastLayer);
 
   d3cola
     .nodes(graph.nodes)
@@ -79,7 +46,6 @@ const colaConfluent = (
     .start(30, 40, 50);
 
   console.error(graph);
-  console.error(insertedNodes);
 
   // エッジ交差数
   const cross = getColaBipartiteCross(cf.bipartites, graph.nodes);
