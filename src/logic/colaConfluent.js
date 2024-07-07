@@ -6,7 +6,10 @@ import { makeGraphForCola } from "./../utils/makeGraphForCola.js";
 import getEdgeWidths from "./../utils/getEdgeWidths";
 import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
 import getEdgeEndPos from "./../utils/getEdgeEndPos.js";
-import { setColaConstraint } from "./../utils/constraints.js";
+import {
+  setColaConstraint,
+  setCrossConstraint,
+} from "./../utils/constraints.js";
 
 const colaConfluent = (
   bipartite,
@@ -37,6 +40,7 @@ const colaConfluent = (
   // stress最小化
   const graph = makeGraphForCola(cf, layerGap);
   setColaConstraint(d3cola, graph, midNodeWidths, lastLayer);
+  // setCrossConstraint(bipartite, cf.bipartites, cf.layeredNodes, graph, midNodeWidths);
 
   d3cola
     .nodes(graph.nodes)
