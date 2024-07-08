@@ -5,7 +5,7 @@ import { getQuasiBicliqueCover } from "./../utils/getBicliqueCover.js";
 import { makeGraphForCola } from "./../utils/makeGraphForCola.js";
 import getEdgeWidths from "./../utils/getEdgeWidths";
 import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
-import getEdgeEndPos from "./../utils/getEdgeEndPos.js";
+import getEdgePaths from "./../utils/getEdgePaths.js";
 import {
   setColaConstraint,
   setCrossConstraint,
@@ -62,48 +62,7 @@ const colaConfluent = (
 
   // 損失数
   // missingEdges;
-  const lineGenerator = d3.line();
-  const linkGenerator = d3.linkVertical();
-  let edgePaths = [];
-  if (maxDepth > 0) {
-    const { edgeAt, edgeR, edgeL } = getEdgeEndPos(
-      graph,
-      edgeWidths,
-      midNodeWidths
-    );
-    edgePaths = edgeAt.map((edge, key) => {
-      const d =
-        linkGenerator(edgeL[key]) +
-        " " +
-        trimPathM(
-          lineGenerator([
-            [edgeL[key]["target"][0], edgeL[key]["target"][1]],
-            [edgeR[key]["target"][0], edgeR[key]["target"][1]],
-          ])
-        ) +
-        " " +
-        trimPathM(
-          linkGenerator({
-            source: edgeR[key]["target"],
-            target: edgeR[key]["source"],
-          })
-        ) +
-        " z";
-      return {
-        widthd: linkGenerator(edge),
-        d,
-      };
-    });
-  } else {
-    edgePaths = graph.edges.map((edge) => {
-      return {
-        d: lineGenerator([
-          [edge.source.x, edge.source.y],
-          [edge.target.x, edge.target.y],
-        ]),
-      };
-    });
-  }
+  const edgePaths = getEdgePaths(graph, edgeWidths, midNodeWidths, maxDepth);
 
   // パラメター、交差数、エッジ数、中間ノード数、誤差数のログ
   console.log("param", param);
@@ -122,15 +81,6 @@ const colaConfluent = (
     midNodesCount,
     edgeWidths,
   };
-};
-
-const trimPathM = (path) => {
-  for (let i = 1; i < path.length; i++) {
-    if (path[i].match(/[A-Z]/)) {
-      return path.substring(i);
-    }
-  }
-  return path;
 };
 
 export default colaConfluent;

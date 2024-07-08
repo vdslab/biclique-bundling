@@ -29,7 +29,7 @@ export const setColaConstraint = (d3cola, graph, midNodeWidths, lastLayer) => {
       const gap =
         (midNodeWidths[nodes[i].layer][nodes[i].label] +
           midNodeWidths[nodes[i].layer][nodes[i + 1].label]) /
-        1.5;
+        1.25;
       graph.constraints.push({
         left: nodes[i].id,
         right: nodes[i + 1].id,
