@@ -1,4 +1,4 @@
-import { getConfluentCross } from "../utils/getBipartiteCross";
+import { getConfluentCrossCount } from "../utils/getBipartiteCross";
 
 export const setColaConstraint = (d3cola, graph, midNodeWidths, lastLayer) => {
   d3cola
@@ -72,6 +72,7 @@ export const setCrossConstraint = (
     midNodesOrders.push(midNodesOrder);
   }
 
+  const nodeOrders = [leftNodesOrder, ...midNodesOrders, rightNodesOrder];
   let count = 1e16;
 
   //左から右
@@ -85,31 +86,20 @@ export const setCrossConstraint = (
         const rightSideNodesNumber = bipartite[0].length;
 
         const sum = new Array();
-        for (let i = 0; i < rightSideNodesNumber; i++) {
+        for (let v = 0; v < rightSideNodesNumber; v++) {
           let degree = 0;
           let ouh = 0;
-          for (let j = 0; j < leftSideNodesNumber; j++) {
-            if (!bipartite[j][i]) continue;
+          for (let u = 0; u < leftSideNodesNumber; u++) {
+            if (!bipartite[u][v]) continue;
             degree++;
-
-            if (k !== 0) {
-              ouh += midNodesOrders[k - 1].indexOf(j);
-            } else {
-              ouh += leftNodesOrder.indexOf(j);
-            }
+            ouh += nodeOrders[k].indexOf(u);
           }
           sum.push(ouh / degree);
         }
 
-        if (k !== bipartites.length - 1) {
-          midNodesOrders[k].sort((a, b) => {
-            return sum[a] - sum[b];
-          });
-        } else {
-          rightNodesOrder.sort((a, b) => {
-            return sum[a] - sum[b];
-          });
-        }
+        nodeOrders[k + 1].sort((a, b) => {
+          return sum[a] - sum[b];
+        });
       }
     } else {
       for (let k = bipartites.length - 1; k >= 0; k--) {
@@ -119,54 +109,34 @@ export const setCrossConstraint = (
         const rightSideNodesNumber = bipartite[0].length;
 
         const sum = new Array();
-        for (let i = 0; i < leftSideNodesNumber; i++) {
+        for (let v = 0; v < leftSideNodesNumber; v++) {
           let degree = 0;
           let ouh = 0;
-          for (let j = 0; j < rightSideNodesNumber; j++) {
-            if (!bipartite[i][j]) continue;
+          for (let u = 0; u < rightSideNodesNumber; u++) {
+            if (!bipartite[v][u]) continue;
             degree++;
-
-            if (k !== bipartites.length - 1) {
-              ouh += midNodesOrders[k].indexOf(j);
-            } else {
-              ouh += rightNodesOrder.indexOf(j);
-            }
+            ouh += nodeOrders[k + 1].indexOf(u);
           }
           sum.push(ouh / degree);
         }
-
-        if (k !== 0) {
-          midNodesOrders[k - 1].sort((a, b) => {
-            return sum[a] - sum[b];
-          });
-        } else {
-          leftNodesOrder.sort((a, b) => {
-            return sum[a] - sum[b];
-          });
-        }
+        nodeOrders[k].sort((a, b) => {
+          return sum[a] - sum[b];
+        });
       }
     }
 
     fromLeft = !fromLeft;
-    const newCount = getConfluentCross(
-      bipartites,
-      leftNodesOrder,
-      rightNodesOrder,
-      midNodesOrders
-    );
+    const newCount = getConfluentCrossCount(bipartites, nodeOrders);
     if (count <= newCount) {
       break;
     }
 
     count = newCount;
-    console.log(count);
+    console.error("cross count: ", count);
   }
 
-  const insertedNodes = [leftNodesOrder, ...midNodesOrders, rightNodesOrder];
-
-  console.error("setCrossConstraint in insertedNodes", insertedNodes);
   let Id = 0;
-  insertedNodes.forEach((nodes, key) => {
+  nodeOrders.forEach((nodes, key) => {
     for (let i = 0; i < nodes.length - 1; i++) {
       console.error(key, nodes[i]);
       const gap =

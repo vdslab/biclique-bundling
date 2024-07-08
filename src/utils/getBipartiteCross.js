@@ -106,3 +106,14 @@ export const getConfluentCross = (
 
   return count++;
 };
+
+export const getConfluentCrossCount = (bipartites, nodeOrders) => {
+  let count = 0;
+
+  for (let i = 0; i < bipartites.length; i++) {
+    const bipartite = bipartites[i].bipartite;
+    count += getBipartiteCross(bipartite, nodeOrders[i], nodeOrders[i + 1]);
+  }
+
+  return count;
+};
