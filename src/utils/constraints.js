@@ -75,32 +75,33 @@ export const setCrossConstraint = (
     midNodesOrders.push(midNodesOrder);
   }
 
-  let nodeOrders = [leftNodesOrder, ...midNodesOrders, rightNodesOrder];
+  d3cola
+    .nodes(graph.nodes)
+    .links(graph.edges)
+    .constraints(graph.constraints)
+    .symmetricDiffLinkLengths(40) // ノードの数によって増やす
+    .start(30, 40, 50);
 
-  //   d3cola
-  //   .nodes(graph.nodes)
-  //   .links(graph.edges)
-  //   .constraints(graph.constraints)
-  //   .symmetricDiffLinkLengths(40) // ノードの数によって増やす
-  //   .start(30, 40, 50);
+  // 制約の再追加
+  const sortedNodes = structuredClone(graph.nodes).sort((a, b) => {
+    return a.x - b.x;
+  });
 
-  // // 制約の再追加
-  // const sortedNodes = structuredClone(graph.nodes).sort((a, b) => {
-  //   return a.x - b.x;
-  // });
+  let nodeOrders = [];
+  for (let i = 0; i < lastLayer + 1; i++) {
+    nodeOrders.push([]);
+  }
 
-  // const nodeOrders = [];
-  // for (let i = 0; i < lastLayer + 1; i++) {
-  //   nodeOrders.push([]);
-  // }
+  for (const node of sortedNodes) {
+    nodeOrders[node.layer].push(node.label);
+  }
 
-  // for (const node of sortedNodes) {
-  //   nodeOrders[node.layer].push(node.label);
-  // }
+  // nodeOrders = [leftNodesOrder, ...midNodesOrders, rightNodesOrder];
 
   let count = getConfluentCrossCount(bipartites, nodeOrders);
   console.error("cross count initial: ", count);
   console.error(structuredClone(nodeOrders));
+
   //左から右
   let fromLeft = true;
 
@@ -125,8 +126,13 @@ export const setCrossConstraint = (
           sum.push(ouh / degree);
         }
 
+        console.error(sum);
         CopyNodeOrders[k + 1].sort((a, b) => {
-          return sum[a] - sum[b];
+          if (sum[a] !== sum[b]) {
+            return sum[a] - sum[b];
+          } else {
+            return a - b;
+          }
         });
       }
     } else {
@@ -149,15 +155,30 @@ export const setCrossConstraint = (
         }
 
         CopyNodeOrders[k].sort((a, b) => {
-          return sum[a] - sum[b];
+          if (sum[a] !== sum[b]) {
+            return sum[a] - sum[b];
+          } else {
+            return a - b;
+          }
         });
       }
     }
 
     fromLeft = !fromLeft;
     const newCount = getConfluentCrossCount(bipartites, CopyNodeOrders);
-    console.error("old cross count: ", count);
-    console.error("new cross count: ", newCount);
+    console.error(
+      "old cross count: ",
+      count,
+      structuredClone(nodeOrders),
+      bipartites
+    );
+    console.error(
+      "new cross count: ",
+      newCount,
+      structuredClone(CopyNodeOrders),
+      bipartites
+    );
+    console.error("----------------------------------------------");
     if (count <= newCount) {
       console.error("result: ", getConfluentCrossCount(bipartites, nodeOrders));
       break;
