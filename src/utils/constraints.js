@@ -13,31 +13,32 @@ export const setColaConstraint = (d3cola, graph, midNodeWidths, lastLayer) => {
     return a.x - b.x;
   });
 
-  const insertedNodes = [];
+  const nodeOrders = [];
   for (let i = 0; i < lastLayer + 1; i++) {
-    insertedNodes.push([]);
+    nodeOrders.push([]);
   }
 
   for (const node of sortedNodes) {
-    insertedNodes[node.layer].push(node);
+    nodeOrders[node.layer].push(node.label);
   }
 
-  console.error("setColaConstraint in insertedNodes", insertedNodes);
+  console.error("setColaConstraint in nodeOrders", nodeOrders);
 
-  for (const nodes of insertedNodes) {
+  let Id = 0;
+  console.log(nodeOrders);
+  nodeOrders.forEach((nodes, key) => {
     for (let i = 0; i < nodes.length - 1; i++) {
       const gap =
-        (midNodeWidths[nodes[i].layer][nodes[i].label] +
-          midNodeWidths[nodes[i].layer][nodes[i + 1].label]) /
-        1.25;
+        (midNodeWidths[key][nodes[i]] + midNodeWidths[key][nodes[i + 1]]) / 1.5;
       graph.constraints.push({
-        left: nodes[i].id,
-        right: nodes[i + 1].id,
+        left: nodes[i] + Id,
+        right: nodes[i + 1] + Id,
         gap,
         axis: "x",
       });
     }
-  }
+    Id += nodes.length;
+  });
 };
 
 export const setCrossConstraint = (
@@ -45,7 +46,9 @@ export const setCrossConstraint = (
   bipartites,
   layeredNodes,
   graph,
-  midNodeWidths
+  midNodeWidths,
+  d3cola,
+  lastLayer
 ) => {
   const leftNodeNumber = bipartite.length;
   const rightNodeNumber = bipartite[0].length;
@@ -72,12 +75,37 @@ export const setCrossConstraint = (
     midNodesOrders.push(midNodesOrder);
   }
 
-  const nodeOrders = [leftNodesOrder, ...midNodesOrders, rightNodesOrder];
-  let count = 1e16;
+  let nodeOrders = [leftNodesOrder, ...midNodesOrders, rightNodesOrder];
 
+  //   d3cola
+  //   .nodes(graph.nodes)
+  //   .links(graph.edges)
+  //   .constraints(graph.constraints)
+  //   .symmetricDiffLinkLengths(40) // ノードの数によって増やす
+  //   .start(30, 40, 50);
+
+  // // 制約の再追加
+  // const sortedNodes = structuredClone(graph.nodes).sort((a, b) => {
+  //   return a.x - b.x;
+  // });
+
+  // const nodeOrders = [];
+  // for (let i = 0; i < lastLayer + 1; i++) {
+  //   nodeOrders.push([]);
+  // }
+
+  // for (const node of sortedNodes) {
+  //   nodeOrders[node.layer].push(node.label);
+  // }
+
+  let count = getConfluentCrossCount(bipartites, nodeOrders);
+  console.error("cross count initial: ", count);
+  console.error(structuredClone(nodeOrders));
   //左から右
   let fromLeft = true;
+
   for (;;) {
+    const CopyNodeOrders = structuredClone(nodeOrders);
     if (fromLeft) {
       for (let k = 0; k < bipartites.length; k++) {
         const bipartite = bipartites[k].bipartite;
@@ -92,12 +120,12 @@ export const setCrossConstraint = (
           for (let u = 0; u < leftSideNodesNumber; u++) {
             if (!bipartite[u][v]) continue;
             degree++;
-            ouh += nodeOrders[k].indexOf(u);
+            ouh += CopyNodeOrders[k].indexOf(u);
           }
           sum.push(ouh / degree);
         }
 
-        nodeOrders[k + 1].sort((a, b) => {
+        CopyNodeOrders[k + 1].sort((a, b) => {
           return sum[a] - sum[b];
         });
       }
@@ -115,24 +143,28 @@ export const setCrossConstraint = (
           for (let u = 0; u < rightSideNodesNumber; u++) {
             if (!bipartite[v][u]) continue;
             degree++;
-            ouh += nodeOrders[k + 1].indexOf(u);
+            ouh += CopyNodeOrders[k + 1].indexOf(u);
           }
           sum.push(ouh / degree);
         }
-        nodeOrders[k].sort((a, b) => {
+
+        CopyNodeOrders[k].sort((a, b) => {
           return sum[a] - sum[b];
         });
       }
     }
 
     fromLeft = !fromLeft;
-    const newCount = getConfluentCrossCount(bipartites, nodeOrders);
+    const newCount = getConfluentCrossCount(bipartites, CopyNodeOrders);
+    console.error("old cross count: ", count);
+    console.error("new cross count: ", newCount);
     if (count <= newCount) {
+      console.error("result: ", getConfluentCrossCount(bipartites, nodeOrders));
       break;
     }
 
     count = newCount;
-    console.error("cross count: ", count);
+    nodeOrders = CopyNodeOrders.slice();
   }
 
   let Id = 0;
