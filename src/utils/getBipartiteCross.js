@@ -2,7 +2,8 @@
 export const getBipartiteCross = (
   bipartite,
   leftNodesOrder,
-  rightNodesOrder
+  rightNodesOrder,
+  edgeWidths
 ) => {
   let count = 0;
 
@@ -13,24 +14,34 @@ export const getBipartiteCross = (
       edges.push({
         left: leftNodesOrder.indexOf(i),
         right: rightNodesOrder.indexOf(j),
+        source: i,
+        target: j,
       });
     }
   }
 
+  edges.sort((a, b) => {
+    if (a.source !== b.source) {
+      return a.source - b.source;
+    } else {
+      return a.target - b.target;
+    }
+  });
+
   for (let i = 0; i < edges.length; i++) {
-    for (let j = i; j < edges.length; j++) {
+    for (let j = i + 1; j < edges.length; j++) {
       if (edges[i].left < edges[j].left && edges[i].right > edges[j].right) {
-        count++;
+        count = edgeWidths ? count + edgeWidths[i] * edgeWidths[j] : count + 1;
       } else if (
         edges[i].left > edges[j].left &&
         edges[i].right < edges[j].right
       ) {
-        count++;
+        count = edgeWidths ? count + edgeWidths[i] * edgeWidths[j] : count + 1;
       }
     }
   }
 
-  return count++;
+  return count;
 };
 
 // cola.jsで並び替えした用
@@ -113,6 +124,39 @@ export const getConfluentCrossCount = (bipartites, nodeOrders) => {
   for (let i = 0; i < bipartites.length; i++) {
     const bipartite = bipartites[i].bipartite;
     count += getBipartiteCross(bipartite, nodeOrders[i], nodeOrders[i + 1]);
+  }
+
+  return count;
+};
+
+export const getConfluentWeightedCrossCount = (
+  bipartites,
+  nodeOrders,
+  edgeWidths
+) => {
+  let count = 0;
+  let offset = 0;
+  for (let i = 0; i < bipartites.length; i++) {
+    const bipartite = bipartites[i].bipartite;
+    const edgeCount = getEdgeCount(bipartite);
+    count += getBipartiteCross(
+      bipartite,
+      nodeOrders[i],
+      nodeOrders[i + 1],
+      edgeWidths.slice(offset, offset + edgeCount)
+    );
+    offset += edgeCount;
+  }
+
+  return count;
+};
+
+const getEdgeCount = (bipartite) => {
+  let count = 0;
+  for (let i = 0; i < bipartite.length; i++) {
+    for (let j = 0; j < bipartite[i].length; j++) {
+      if (bipartite[i][j]) count++;
+    }
   }
 
   return count;

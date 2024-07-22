@@ -1,4 +1,7 @@
-import { getConfluentCrossCount } from "../utils/getBipartiteCross";
+import {
+  getConfluentCrossCount,
+  getConfluentWeightedCrossCount,
+} from "../utils/getBipartiteCross";
 
 export const setColaConstraint = (d3cola, graph, midNodeWidths, lastLayer) => {
   d3cola
@@ -47,6 +50,7 @@ export const setCrossConstraint = (
   layeredNodes,
   graph,
   midNodeWidths,
+  edgeWidths,
   d3cola,
   lastLayer
 ) => {
@@ -98,7 +102,11 @@ export const setCrossConstraint = (
 
   // nodeOrders = [leftNodesOrder, ...midNodesOrders, rightNodesOrder];
 
-  let count = getConfluentCrossCount(bipartites, nodeOrders);
+  let count = getConfluentWeightedCrossCount(
+    bipartites,
+    nodeOrders,
+    edgeWidths
+  );
   console.error("cross count initial: ", count);
   console.error(structuredClone(nodeOrders));
 
@@ -165,22 +173,19 @@ export const setCrossConstraint = (
     }
 
     fromLeft = !fromLeft;
-    const newCount = getConfluentCrossCount(bipartites, CopyNodeOrders);
-    console.error(
-      "old cross count: ",
-      count,
-      structuredClone(nodeOrders),
-      bipartites
+    const newCount = getConfluentWeightedCrossCount(
+      bipartites,
+      CopyNodeOrders,
+      edgeWidths
     );
-    console.error(
-      "new cross count: ",
-      newCount,
-      structuredClone(CopyNodeOrders),
-      bipartites
-    );
+    console.error("old cross count: ", count, nodeOrders, bipartites);
+    console.error("new cross count: ", newCount, CopyNodeOrders, bipartites);
     console.error("----------------------------------------------");
     if (count <= newCount) {
-      console.error("result: ", getConfluentCrossCount(bipartites, nodeOrders));
+      console.error(
+        "result weight: ",
+        getConfluentWeightedCrossCount(bipartites, nodeOrders, edgeWidths)
+      );
       break;
     }
 

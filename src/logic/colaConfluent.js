@@ -29,7 +29,7 @@ const colaConfluent = (
     cf.bipartitesAll
   );
 
-  console.error(midNodeWidths);
+  console.error(edgeWidths, midNodeWidths);
   console.error(cf);
 
   // 座標決定process
@@ -39,8 +39,17 @@ const colaConfluent = (
 
   // stress最小化
   const graph = makeGraphForCola(cf, layerGap);
-  setColaConstraint(d3cola, graph, midNodeWidths, lastLayer);
-  // setCrossConstraint(bipartite, cf.bipartites, cf.layeredNodes, graph, midNodeWidths);
+  //setColaConstraint(d3cola, graph, midNodeWidths, lastLayer);
+  setCrossConstraint(
+    bipartite,
+    cf.bipartites,
+    cf.layeredNodes,
+    graph,
+    midNodeWidths,
+    edgeWidths,
+    d3cola,
+    lastLayer
+  );
 
   d3cola
     .nodes(graph.nodes)
