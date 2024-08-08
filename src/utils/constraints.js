@@ -81,13 +81,6 @@ export const setCrossConstraint = (
     midNodesOrders.push(midNodesOrder);
   }
 
-  // d3cola
-  //   .nodes(graph.nodes)
-  //   .links(graph.edges)
-  //   .constraints(graph.constraints)
-  //   .symmetricDiffLinkLengths(40) // ノードの数によって増やす
-  //   .start(30, 40, 50);
-
   // 制約の再追加
   const sortedNodes = structuredClone(graph.nodes).sort((a, b) => {
     return a.x - b.x;
@@ -112,6 +105,18 @@ export const setCrossConstraint = (
   console.error("cross count initial: ", count);
   console.error(structuredClone(nodeOrders));
 
+  const edge2Width = {};
+  edgeWidths.forEach((width, index) => {
+    const edges = graph.edges[index];
+    const key = [
+      edges["sourceLabel"],
+      edges["targetLabel"],
+      edges["bipartiteIdx"],
+    ].join(",");
+    console.error(edges, key, width);
+    edge2Width[key] = width;
+  });
+  console.error(edge2Width);
   //左から右
   let fromLeft = true;
 
@@ -130,8 +135,9 @@ export const setCrossConstraint = (
           let ouh = 0;
           for (let u = 0; u < leftSideNodesNumber; u++) {
             if (!bipartite[u][v]) continue;
-            degree++;
-            ouh += CopyNodeOrders[k].indexOf(u);
+            const width = edge2Width[[u, v, k].join(",")];
+            degree += width;
+            ouh += width * CopyNodeOrders[k].indexOf(u);
           }
           sum.push(ouh / degree);
         }
@@ -158,8 +164,9 @@ export const setCrossConstraint = (
           let ouh = 0;
           for (let u = 0; u < rightSideNodesNumber; u++) {
             if (!bipartite[v][u]) continue;
-            degree++;
-            ouh += CopyNodeOrders[k + 1].indexOf(u);
+            const width = edge2Width[[v, u, k].join(",")];
+            degree += width;
+            ouh += width * CopyNodeOrders[k + 1].indexOf(u);
           }
           sum.push(ouh / degree);
         }

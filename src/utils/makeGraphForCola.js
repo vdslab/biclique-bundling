@@ -23,6 +23,9 @@ export const makeGraphData = (bipartites) => {
         graphEdges.push({
           source: i + pad,
           target: j + pad + bipartite.length,
+          sourceLabel: i,
+          targetLabel: j,
+          bipartiteIdx: k,
         });
         graphNodesSet.add({ id: i + pad, label: i, layer: k });
         graphNodesSet.add({
