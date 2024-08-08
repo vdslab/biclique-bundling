@@ -18,12 +18,10 @@ const colaConfluent = (
   hasEdgeColor = false,
   outputForExp = false
 ) => {
-  // バイクリークカバーの計算
   const lastLayer = 2 ** maxDepth;
   const cf = new Confluent(getQuasiBicliqueCover, param, maxDepth);
   cf.build(bipartite);
 
-  const layerGap = 250;
   const { edgeWidths, midNodeWidths } = getEdgeWidths(
     cf.bipartitesForMiss,
     cf.bipartitesAll
@@ -33,14 +31,16 @@ const colaConfluent = (
   console.error(cf);
 
   // 座標決定process
-  const width = 2000;
+  const width = 2750;
   const height = 1500;
   const d3cola = cola.d3adaptor(d3).linkDistance(300).size([width, height]);
 
   // stress最小化
+  const layerGap = 150;
   const graph = makeGraphForCola(cf, layerGap);
-  //setColaConstraint(d3cola, graph, midNodeWidths, lastLayer);
-  setCrossConstraint(
+  // setColaConstraint(d3cola, graph, midNodeWidths, lastLayer);
+  // 重み付きエッジ交差数
+  const weightedCross = setCrossConstraint(
     bipartite,
     cf.bipartites,
     cf.layeredNodes,
@@ -86,6 +86,7 @@ const colaConfluent = (
     edgePaths,
     graph: structuredClone(graph),
     cross,
+    weightedCross,
     totalEdgeCount,
     midNodesCount,
     edgeWidths,

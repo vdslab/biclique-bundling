@@ -16,12 +16,8 @@ function App() {
   const [url, setUrl] = useState("public/random/json/random_7_7_75_2.json");
   const [displayUrl, setDisplayUrl] = useState(url);
 
-  const { paths, nodes, nodeLabels, crossCount } = useColaConfluent(
-    param,
-    url,
-    maxDepth,
-    fontSize
-  );
+  const { paths, nodes, nodeLabels, crossCount, weightedCrossCount } =
+    useColaConfluent(param, url, maxDepth, fontSize);
 
   return (
     <>
@@ -29,6 +25,7 @@ function App() {
       <div>
         <p>param:{param}</p>
         <p>crossCount:{crossCount}</p>
+        <p>weightedCross:{weightedCrossCount}</p>
         <div>
           <p>{url}</p>
           <input

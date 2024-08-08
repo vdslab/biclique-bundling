@@ -42,6 +42,8 @@ export const setColaConstraint = (d3cola, graph, midNodeWidths, lastLayer) => {
     }
     Id += nodes.length;
   });
+
+  return 0;
 };
 
 export const setCrossConstraint = (
@@ -79,12 +81,12 @@ export const setCrossConstraint = (
     midNodesOrders.push(midNodesOrder);
   }
 
-  d3cola
-    .nodes(graph.nodes)
-    .links(graph.edges)
-    .constraints(graph.constraints)
-    .symmetricDiffLinkLengths(40) // ノードの数によって増やす
-    .start(30, 40, 50);
+  // d3cola
+  //   .nodes(graph.nodes)
+  //   .links(graph.edges)
+  //   .constraints(graph.constraints)
+  //   .symmetricDiffLinkLengths(40) // ノードの数によって増やす
+  //   .start(30, 40, 50);
 
   // 制約の再追加
   const sortedNodes = structuredClone(graph.nodes).sort((a, b) => {
@@ -186,6 +188,7 @@ export const setCrossConstraint = (
         "result weight: ",
         getConfluentWeightedCrossCount(bipartites, nodeOrders, edgeWidths)
       );
+      console.error(bipartites, nodeOrders, edgeWidths);
       break;
     }
 
@@ -208,4 +211,6 @@ export const setCrossConstraint = (
     }
     Id += nodes.length;
   });
+
+  return count;
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import colaConfluent from "../logic/colaConfluent";
 import { getBipartiteDensity } from "./../utils/getBipartiteDensity";
 /*
@@ -9,9 +9,10 @@ import { getBipartiteDensity } from "./../utils/getBipartiteDensity";
 */
 const useColaConfluent = (param, url, maxDepth, fontSize) => {
   const [paths, setPaths] = useState([]);
-  const [crossCount, setCrossCount] = useState(0);
   const [nodes, setNodes] = useState([]);
-  const [nodeLabels, setNodeLabels] = useState();
+  const [nodeLabels, setNodeLabels] = useState([]);
+  const weightedCrossCount = useRef(0);
+  const crossCount = useRef(0);
 
   useEffect(() => {
     (async () => {
@@ -23,12 +24,11 @@ const useColaConfluent = (param, url, maxDepth, fontSize) => {
           ? (1.0 + getBipartiteDensity(bipartite)) / 2
           : param;
 
-      const { cross, edgePaths, graph, edgeWidths } = colaConfluent(
-        bipartite,
-        parameter,
-        maxDepth,
-        true
-      );
+      const { cross, weightedCross, edgePaths, graph, edgeWidths } =
+        colaConfluent(bipartite, parameter, maxDepth, true);
+
+      weightedCrossCount.current = weightedCross;
+      crossCount.current = cross;
 
       const leftNodeIds = new Array();
       const rightNodeIds = new Array();
@@ -53,7 +53,6 @@ const useColaConfluent = (param, url, maxDepth, fontSize) => {
 
       const nodeNumbers = [...leftNodeIds, ...midNodeIds, ...rightNodeIds];
 
-      setCrossCount(cross);
       // granph.nodesの座標を調整する
       setNodes(
         graph.nodes.map((node, key) => {
@@ -97,7 +96,8 @@ const useColaConfluent = (param, url, maxDepth, fontSize) => {
     paths,
     nodes,
     nodeLabels,
-    crossCount,
+    crossCount: crossCount.current,
+    weightedCrossCount: weightedCrossCount.current,
   };
 };
 
