@@ -1,7 +1,7 @@
 import {
   getConfluentCrossCount,
   getConfluentWeightedCrossCount,
-} from "../utils/getBipartiteCross";
+} from "../utils/getBipartiteCross.js";
 
 export const setColaConstraint = (d3cola, graph, midNodeWidths, lastLayer) => {
   d3cola
@@ -25,10 +25,10 @@ export const setColaConstraint = (d3cola, graph, midNodeWidths, lastLayer) => {
     nodeOrders[node.layer].push(node.label);
   }
 
-  console.error("setColaConstraint in nodeOrders", nodeOrders);
+  // console.error("setColaConstraint in nodeOrders", nodeOrders);
 
   let Id = 0;
-  console.log(nodeOrders);
+  // console.log(nodeOrders);
   nodeOrders.forEach((nodes, key) => {
     for (let i = 0; i < nodes.length - 1; i++) {
       const gap =
@@ -53,8 +53,9 @@ export const setCrossConstraint = (
   graph,
   midNodeWidths,
   edgeWidths,
-  d3cola,
-  lastLayer
+  lastLayer,
+  isBaryWeighted,
+  d3cola
 ) => {
   const leftNodeNumber = bipartite.length;
   const rightNodeNumber = bipartite[0].length;
@@ -81,6 +82,13 @@ export const setCrossConstraint = (
     midNodesOrders.push(midNodesOrder);
   }
 
+  d3cola
+    .nodes(graph.nodes)
+    .links(graph.edges)
+    .constraints(graph.constraints)
+    .symmetricDiffLinkLengths(40) // ノードの数によって増やす
+    .start(30, 40, 50);
+
   // 制約の再追加
   const sortedNodes = structuredClone(graph.nodes).sort((a, b) => {
     return a.x - b.x;
@@ -95,17 +103,16 @@ export const setCrossConstraint = (
     nodeOrders[node.layer].push(node.label);
   }
 
-  // nodeOrders = [leftNodesOrder, ...midNodesOrders, rightNodesOrder];
-
   let count = getConfluentWeightedCrossCount(
     bipartites,
     nodeOrders,
     edgeWidths
   );
-  console.error("cross count initial: ", count);
-  console.error(structuredClone(nodeOrders));
+  // console.error("cross count initial: ", count);
+  // console.error(structuredClone(nodeOrders));
 
   const edge2Width = {};
+  // console.error(edgeWidths, graph.edges);
   edgeWidths.forEach((width, index) => {
     const edges = graph.edges[index];
     const key = [
@@ -113,10 +120,11 @@ export const setCrossConstraint = (
       edges["targetLabel"],
       edges["bipartiteIdx"],
     ].join(",");
-    console.error(edges, key, width);
+    // console.error(edges, key, width);
     edge2Width[key] = width;
   });
-  console.error(edge2Width);
+  // console.error(edgeWidths)
+  // console.error(edge2Width);
   //左から右
   let fromLeft = true;
 
@@ -135,14 +143,16 @@ export const setCrossConstraint = (
           let ouh = 0;
           for (let u = 0; u < leftSideNodesNumber; u++) {
             if (!bipartite[u][v]) continue;
-            const width = edge2Width[[u, v, k].join(",")];
+            const width = isBaryWeighted ? edge2Width[[u, v, k].join(",")] : 1;
             degree += width;
             ouh += width * CopyNodeOrders[k].indexOf(u);
           }
+
+          // console.error(ouh, degree, 'ueeeeeeeeeeeee', v, ouh/degree, edge2Width)
           sum.push(ouh / degree);
         }
 
-        console.error(sum);
+        // console.error(sum, 'sum');
         CopyNodeOrders[k + 1].sort((a, b) => {
           if (sum[a] !== sum[b]) {
             return sum[a] - sum[b];
@@ -150,6 +160,8 @@ export const setCrossConstraint = (
             return a - b;
           }
         });
+
+        //console.error()
       }
     } else {
       for (let k = bipartites.length - 1; k >= 0; k--) {
@@ -164,10 +176,11 @@ export const setCrossConstraint = (
           let ouh = 0;
           for (let u = 0; u < rightSideNodesNumber; u++) {
             if (!bipartite[v][u]) continue;
-            const width = edge2Width[[v, u, k].join(",")];
+            const width = isBaryWeighted ? edge2Width[[v, u, k].join(",")] : 1;
             degree += width;
             ouh += width * CopyNodeOrders[k + 1].indexOf(u);
           }
+          // console.error(ouh, degree, 'sitaaaaaaaaaaaaa')
           sum.push(ouh / degree);
         }
 
@@ -189,24 +202,25 @@ export const setCrossConstraint = (
     );
     console.error("old cross count: ", count, nodeOrders, bipartites);
     console.error("new cross count: ", newCount, CopyNodeOrders, bipartites);
-    console.error("----------------------------------------------");
+    // console.error("----------------------------------------------");
     if (count <= newCount) {
-      console.error(
-        "result weight: ",
-        getConfluentWeightedCrossCount(bipartites, nodeOrders, edgeWidths)
-      );
-      console.error(bipartites, nodeOrders, edgeWidths);
+      // console.error(
+      //   "result weight: ",
+      //   getConfluentWeightedCrossCount(bipartites, nodeOrders, edgeWidths)
+      // );
+      // console.error(bipartites, nodeOrders, edgeWidths);
       break;
     }
 
     count = newCount;
     nodeOrders = CopyNodeOrders.slice();
   }
+  // console.error(nodeOrders)
 
   let Id = 0;
   nodeOrders.forEach((nodes, key) => {
     for (let i = 0; i < nodes.length - 1; i++) {
-      console.error(key, nodes[i]);
+      // console.error(key, nodes[i]);
       const gap =
         (midNodeWidths[key][nodes[i]] + midNodeWidths[key][nodes[i + 1]]) / 1.5;
       graph.constraints.push({

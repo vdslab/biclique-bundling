@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import colaConfluent from "../logic/colaConfluent";
 import { getBipartiteDensity } from "./../utils/getBipartiteDensity";
+import getEdgePaths from "./../utils/getEdgePaths.js";
 /*
  confluent drawingに対しての準バイクリークが妥当がどうか
  depth = 1は普通の準バイクリークによるエッジバンドリングである。
@@ -24,8 +25,14 @@ const useColaConfluent = (param, url, maxDepth, fontSize) => {
           ? (1.0 + getBipartiteDensity(bipartite)) / 2
           : param;
 
-      const { cross, weightedCross, edgePaths, graph, edgeWidths } =
+      const { cross, weightedCross, midNodeWidths, graph, edgeWidths } =
         colaConfluent(bipartite, parameter, maxDepth, true);
+      const edgePaths = getEdgePaths(
+        graph,
+        edgeWidths,
+        midNodeWidths,
+        maxDepth
+      );
 
       weightedCrossCount.current = weightedCross;
       crossCount.current = cross;

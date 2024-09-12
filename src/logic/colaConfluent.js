@@ -5,17 +5,10 @@ import { getQuasiBicliqueCover } from "./../utils/getBicliqueCover.js";
 import { makeGraphForCola } from "./../utils/makeGraphForCola.js";
 import getEdgeWidths from "./../utils/getEdgeWidths.js";
 import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
-import getEdgePaths from "./../utils/getEdgePaths.js";
-import {
-  setCrossConstraint,
-} from "./../utils/constraints.js";
+import { setCrossConstraint } from "./../utils/constraints.js";
+import getMissingEdgeColors from "./../utils/getMissingEdgeColors.js";
 
-const colaConfluent = (
-  bipartite,
-  param,
-  maxDepth,
-  isBaryWeighted,
-) => {
+const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
   const lastLayer = 2 ** maxDepth;
   const cf = new Confluent(getQuasiBicliqueCover, param, maxDepth);
   cf.build(bipartite);
@@ -28,12 +21,12 @@ const colaConfluent = (
   // .error(edgeWidths, midNodeWidths);
   // .error(cf);
 
-  const width = 2750;
+  const width = 2650;
   const height = 1500;
   const d3cola = cola.d3adaptor(d3).linkDistance(300).size([width, height]);
-  const layerGap = 200;
+  const layerGap = 250;
   const graph = makeGraphForCola(cf, layerGap);
-  
+
   // 重み付きエッジ交差数
   // const weightedCross = setColaConstraint(d3cola, graph, midNodeWidths, lastLayer);
   const weightedCross = setCrossConstraint(
@@ -44,7 +37,8 @@ const colaConfluent = (
     midNodeWidths,
     edgeWidths,
     lastLayer,
-    isBaryWeighted
+    isBaryWeighted,
+    d3cola
   );
 
   // stress最小化
@@ -68,8 +62,13 @@ const colaConfluent = (
   const totalEdgeCount = graph.edges.length;
 
   // 損失数
-  // missingEdges;
-  const edgePaths = getEdgePaths(graph, edgeWidths, midNodeWidths, maxDepth);
+  const { missingEdges } = getMissingEdgeColors(
+    graph,
+    cf.bipartitesForColor,
+    bipartite,
+    maxDepth,
+    true
+  );
 
   // パラメター、交差数、エッジ数、中間ノード数、誤差数のログ
   console.log("param", param);
@@ -81,14 +80,17 @@ const colaConfluent = (
   // console.log("color", cf.bipartitesForColor);
   // console.log(edgePaths);
 
+  console.log("missssssssssssssssssssssssssss", missingEdges);
+
   return {
-    edgePaths,
     graph: structuredClone(graph),
     cross,
     weightedCross,
     totalEdgeCount,
     midNodesCount,
     edgeWidths,
+    midNodeWidths,
+    missingEdges,
   };
 };
 
