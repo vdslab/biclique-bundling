@@ -1,7 +1,17 @@
 import * as d3 from "d3";
 import getEdgeEndPos from "./getEdgeEndPos.js";
 
-const getEdgePaths = (graph, edgeWidths, midNodeWidths, maxDepth) => {
+export const getNodeLinkPath = (graph) => {
+  const linkGenerator = d3.linkVertical();
+  return graph.edges.map((d) => {
+    return linkGenerator({
+      source: [d.source.x, d.source.y],
+      target: [d.target.x, d.target.y],
+    });
+  });
+};
+
+export const getEdgePaths = (graph, edgeWidths, midNodeWidths, maxDepth) => {
   const lineGenerator = d3.line();
   const linkGenerator = d3.linkVertical();
   if (maxDepth > 0) {
@@ -53,5 +63,3 @@ const trimPathM = (path) => {
   }
   return path;
 };
-
-export default getEdgePaths;
