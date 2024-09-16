@@ -49,14 +49,14 @@ const getMissingEdgeColors = (
         }
       }
 
-      console.error(edge, cexternals);
+      //.error(edge, cexternals);
       const iConnect = cexternals.length;
       let totalEdgesToi = 0;
       for (const c of cexternals) {
         if (bipartite[srcNode.label][c]) totalEdgesToi++;
       }
       missingEdges += iConnect - totalEdgesToi;
-      console.error(edge, totalEdgesToi / iConnect);
+      console.error(srcNode.label, totalEdgesToi, iConnect);
       if (iConnect && hasEdgeColor) {
         edgeColors[i] = edgeColorInterpolation(totalEdgesToi / iConnect);
       }
@@ -96,7 +96,7 @@ const getMissingEdgeColors = (
         if (bipartite[c][tarNode.label]) totalEdgesToi++;
       }
       missingEdges += iConnect - totalEdgesToi;
-      console.error(edge, totalEdgesToi / iConnect);
+      console.error(tarNode.label, totalEdgesToi, iConnect);
       if (iConnect && hasEdgeColor) {
         edgeColors[i] = edgeColorInterpolation(totalEdgesToi / iConnect);
       }
@@ -135,6 +135,39 @@ const getMissingEdgeColors = (
   });
 
   return { edgeColors, missingEdges };
+};
+
+export const getMissConnectionCount = (bipartite, cbipartites) => {
+  let missCount = 0;
+  for (let leftIdx = 0; leftIdx < bipartite.length; leftIdx++) {
+    let srcNodes = [leftIdx];
+    for (let cidx = 0; cidx < cbipartites.length; cidx++) {
+      const inBipartite = cbipartites[cidx].bipartite;
+      const tarNodes = [];
+
+      for (const srcNode of srcNodes) {
+        inBipartite[srcNode].forEach((value, key) => {
+          if (value) tarNodes.push(key);
+        });
+      }
+
+      console.log(leftIdx, srcNodes);
+      srcNodes = [...new Set(tarNodes)];
+
+      if (cidx === cbipartites.length - 1) {
+        console.log("connect node", leftIdx, srcNodes);
+        console.log(
+          srcNodes.length,
+          bipartite[leftIdx].filter((item) => item === 1).length
+        );
+        missCount +=
+          srcNodes.length -
+          bipartite[leftIdx].filter((item) => item === 1).length;
+      }
+    }
+  }
+
+  return missCount;
 };
 
 export default getMissingEdgeColors;

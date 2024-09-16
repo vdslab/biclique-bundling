@@ -4,9 +4,9 @@ import { useState } from "react";
 import * as d3 from "d3";
 
 function App() {
-  const width = 2300;
+  const width = 3000;
   const height = 3000;
-  const fontSize = 14;
+  const fontSize = 32;
 
   const [param, setParam] = useState(-1.0);
   const [rangeParam, setRangeParam] = useState(param);
@@ -78,7 +78,6 @@ function App() {
       <svg width={width} height={height} style={{ border: "solid 1px" }}>
         <g>
           {paths?.map((path, key) => {
-            console.log(Number(maxDepth) ? "t" : "f", maxDepth);
             return (
               <path
                 key={key}

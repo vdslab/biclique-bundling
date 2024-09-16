@@ -6,7 +6,7 @@ import { makeGraphForCola } from "./../utils/makeGraphForCola.js";
 import getEdgeWidths from "./../utils/getEdgeWidths.js";
 import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
 import { setCrossConstraint } from "./../utils/constraints.js";
-import getMissingEdgeColors from "./../utils/getMissingEdgeColors.js";
+import { getMissConnectionCount } from "./../utils/getMissingEdgeColors.js";
 
 const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
   const lastLayer = 2 ** maxDepth;
@@ -22,9 +22,9 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
   // .error(cf);
 
   const width = 2650;
-  const height = 1500;
+  const height = 2000;
   const d3cola = cola.d3adaptor(d3).linkDistance(300).size([width, height]);
-  const layerGap = 250;
+  const layerGap = 200;
   const graph = makeGraphForCola(cf, layerGap);
 
   // 重み付きエッジ交差数
@@ -62,12 +62,9 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
   const totalEdgeCount = graph.edges.length;
 
   // 損失数
-  const { missingEdges } = getMissingEdgeColors(
-    graph,
-    cf.bipartitesForColor,
+  const missConectCount = getMissConnectionCount(
     bipartite,
-    maxDepth,
-    true
+    cf.bipartitesForMissConnect
   );
 
   // パラメター、交差数、エッジ数、中間ノード数、誤差数のログ
@@ -80,7 +77,8 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
   // console.log("color", cf.bipartitesForColor);
   // console.log(edgePaths);
 
-  console.log("missssssssssssssssssssssssssss", missingEdges);
+  console.log("missssssssssssssssssssssssssss", missConectCount);
+  console.log(cf.bipartitesAll, cf.bipartitesForMissConnect);
 
   return {
     graph: structuredClone(graph),
@@ -90,7 +88,7 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
     midNodesCount,
     edgeWidths,
     midNodeWidths,
-    missingEdges,
+    missConectCount,
   };
 };
 

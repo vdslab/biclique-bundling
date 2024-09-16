@@ -5,6 +5,7 @@ class Confluent {
     this.bipartitesForColor = new Array();
     this.bipartitesAll = new Array();
     this.bipartitesForMiss = new Array();
+    this.bipartitesForMissConnect = new Array();
     this.getBicliqueCover = getBicliqueCover;
     this.param = param;
     this.maxDepth = maxDepth;
@@ -128,6 +129,12 @@ class Confluent {
     this.bipartitesAll.sort((a, b) => {
       return a.h - b.h;
     });
+
+    this.bipartitesForMissConnect = structuredClone(this.bipartitesAll)
+      .filter((item) => {
+        return Math.abs(item.depth) === +this.maxDepth;
+      })
+      .sort((a, b) => a.h - b.h);
   }
 
   #allIsIn(maximalBiclusterNodes, left, right) {
