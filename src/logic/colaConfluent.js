@@ -62,7 +62,7 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
   const totalEdgeCount = graph.edges.length;
 
   // 損失数
-  const missConectCount = getMissConnectionCount(
+  const { missConnectCount } = getMissConnectionCount(
     bipartite,
     cf.bipartitesForMissConnect
   );
@@ -77,7 +77,7 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
   // console.log("color", cf.bipartitesForColor);
   // console.log(edgePaths);
 
-  console.log("missssssssssssssssssssssssssss", missConectCount);
+  console.log("missssssssssssssssssssssssssss", missConnectCount);
   console.log(cf.bipartitesAll, cf.bipartitesForMissConnect);
 
   return {
@@ -88,7 +88,7 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
     midNodesCount,
     edgeWidths,
     midNodeWidths,
-    missConectCount,
+    missConnectCount,
   };
 };
 

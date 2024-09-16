@@ -139,6 +139,7 @@ const getMissingEdgeColors = (
 
 export const getMissConnectionCount = (bipartite, cbipartites) => {
   let missCount = 0;
+  let edgeCount = 0;
   for (let leftIdx = 0; leftIdx < bipartite.length; leftIdx++) {
     let srcNodes = [leftIdx];
     for (let cidx = 0; cidx < cbipartites.length; cidx++) {
@@ -165,9 +166,20 @@ export const getMissConnectionCount = (bipartite, cbipartites) => {
           bipartite[leftIdx].filter((item) => item === 1).length;
       }
     }
+
+    edgeCount += bipartite[leftIdx].filter((item) => item === 1).length;
   }
 
-  return missCount;
+  console.log(
+    "ratio",
+    missCount / (edgeCount + missCount),
+    missCount,
+    edgeCount
+  );
+  return {
+    missConnectCount: missCount,
+    missConnectRatio: missCount / (edgeCount + missCount),
+  };
 };
 
 export default getMissingEdgeColors;
