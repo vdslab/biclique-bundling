@@ -1,14 +1,24 @@
 import * as d3 from "d3";
 import getEdgeEndPos from "./getEdgeEndPos.js";
 
-export const getNodeLinkPath = (graph) => {
-  const linkGenerator = d3.linkVertical();
-  return graph.edges.map((d) => {
-    return linkGenerator({
-      source: [d.source.x, d.source.y],
-      target: [d.target.x, d.target.y],
+export const getNodeLinkPath = (graph, depth) => {
+  if (depth > 0) {
+    const linkGenerator = d3.linkVertical();
+    return graph.edges.map((d) => {
+      return linkGenerator({
+        source: [d.source.x, d.source.y],
+        target: [d.target.x, d.target.y],
+      });
     });
-  });
+  } else {
+    const lineGenerator = d3.line();
+    return graph.edges.map((edge) =>
+      lineGenerator([
+        [edge.source.x, edge.source.y],
+        [edge.target.x, edge.target.y],
+      ])
+    );
+  }
 };
 
 export const getEdgePaths = (graph, edgeWidths, midNodeWidths, maxDepth) => {

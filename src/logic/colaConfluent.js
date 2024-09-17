@@ -24,7 +24,7 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
   const width = 2650;
   const height = 2000;
   const d3cola = cola.d3adaptor(d3).linkDistance(300).size([width, height]);
-  const layerGap = 200;
+  const layerGap = maxDepth > 0 ? 250 : 500;
   const graph = makeGraphForCola(cf, layerGap);
 
   // 重み付きエッジ交差数
@@ -38,7 +38,8 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
     edgeWidths,
     lastLayer,
     isBaryWeighted,
-    d3cola
+    d3cola,
+    maxDepth
   );
 
   // stress最小化
@@ -49,7 +50,7 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
     .symmetricDiffLinkLengths(50)
     .start(30, 40, 50);
 
-  // console.error(graph);
+  // console.error("here", graph, edgeWidths);
   // console.error(edgeWidths)
 
   // エッジ交差数
@@ -62,7 +63,7 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
   const totalEdgeCount = graph.edges.length;
 
   // 損失数
-  const { missConnectCount } = getMissConnectionCount(
+  const { missConnectCount, missConnectRatio } = getMissConnectionCount(
     bipartite,
     cf.bipartitesForMissConnect
   );
@@ -77,8 +78,8 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
   // console.log("color", cf.bipartitesForColor);
   // console.log(edgePaths);
 
-  console.log("missssssssssssssssssssssssssss", missConnectCount);
-  console.log(cf.bipartitesAll, cf.bipartitesForMissConnect);
+  // console.log("missssssssssssssssssssssssssss", missConnectCount);
+  // console.log(cf.bipartitesAll, cf.bipartitesForMissConnect);
 
   return {
     graph: structuredClone(graph),
@@ -89,6 +90,7 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
     edgeWidths,
     midNodeWidths,
     missConnectCount,
+    missConnectRatio,
   };
 };
 

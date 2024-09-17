@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import colaConfluent from "../logic/colaConfluent";
 import { getBipartiteDensity } from "./../utils/getBipartiteDensity";
-import getEdgePaths from "./../utils/getEdgePaths.js";
+import { getEdgePaths, getNodeLinkPath } from "./../utils/getEdgePaths.js";
 /*
  confluent drawingに対しての準バイクリークが妥当がどうか
  depth = 1は普通の準バイクリークによるエッジバンドリングである。
@@ -20,19 +20,24 @@ const useColaConfluent = (param, url, maxDepth, fontSize) => {
       const res = await fetch(url);
       const bipartite = await res.json();
 
-      const parameter =
-        param < 0 || param > 1.0
-          ? (1.0 + getBipartiteDensity(bipartite)) / 2
-          : param;
+      const dense = getBipartiteDensity(bipartite);
+
+      const parameter = param < 0 || param > 1.0 ? (1.0 + dense) / 2 : param;
+
+      console.log(parameter, dense);
 
       const { cross, weightedCross, midNodeWidths, graph, edgeWidths } =
-        colaConfluent(bipartite, parameter, maxDepth, true);
-      const edgePaths = getEdgePaths(
-        graph,
-        edgeWidths,
-        midNodeWidths,
-        maxDepth
-      );
+        colaConfluent(bipartite, parameter, maxDepth, false);
+      // const edgePaths = getEdgePaths(
+      //   graph,
+      //   edgeWidths,
+      //   midNodeWidths,
+      //   maxDepth
+      // );
+
+      const edgePaths = getNodeLinkPath(graph, maxDepth);
+
+      console.log(edgePaths);
 
       weightedCrossCount.current = weightedCross;
       crossCount.current = cross;
