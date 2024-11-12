@@ -8,7 +8,7 @@ import { getEdgePaths, getNodeLinkPath } from "./../utils/getEdgePaths.js";
  depth = 1 と depth >= 2のdrawing結果で比較する→ depth > 2でdepth=1と上下ノードが同じようにリンクしているならばアルゴリズムは妥当
 
 */
-const useColaConfluent = (param, url, maxDepth, fontSize) => {
+const useColaConfluent = (param, url, maxDepth, fontSize, isFCLD) => {
   const [paths, setPaths] = useState([]);
   const [nodes, setNodes] = useState([]);
   const [nodeLabels, setNodeLabels] = useState([]);
@@ -27,15 +27,11 @@ const useColaConfluent = (param, url, maxDepth, fontSize) => {
       console.log(parameter, dense);
 
       const { cross, weightedCross, midNodeWidths, graph, edgeWidths } =
-        colaConfluent(bipartite, parameter, maxDepth, false);
-      // const edgePaths = getEdgePaths(
-      //   graph,
-      //   edgeWidths,
-      //   midNodeWidths,
-      //   maxDepth
-      // );
+        colaConfluent(bipartite, parameter, maxDepth, isFCLD);
 
-      const edgePaths = getNodeLinkPath(graph, maxDepth);
+      const edgePaths = isFCLD
+        ? getEdgePaths(graph, edgeWidths, midNodeWidths, maxDepth)
+        : getNodeLinkPath(graph, maxDepth);
 
       console.log(edgePaths);
 
@@ -102,7 +98,7 @@ const useColaConfluent = (param, url, maxDepth, fontSize) => {
         })
       );
     })();
-  }, [param, url, maxDepth, fontSize]);
+  }, [param, url, maxDepth, fontSize, isFCLD]);
 
   return {
     paths,

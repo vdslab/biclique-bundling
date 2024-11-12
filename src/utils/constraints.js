@@ -104,7 +104,9 @@ export const setCrossConstraint = (
     nodeOrders[node.layer].push(node.label);
   }
 
-  let count = getConfluentCrossCount(bipartites, nodeOrders);
+  let count = isBaryWeighted
+    ? getConfluentWeightedCrossCount(bipartites, nodeOrders, edgeWidths)
+    : getConfluentCrossCount(bipartites, nodeOrders);
   // console.error("cross count initial: ", count);
   // console.error(structuredClone(nodeOrders));
 
@@ -192,7 +194,10 @@ export const setCrossConstraint = (
     }
 
     fromLeft = !fromLeft;
-    const newCount = getConfluentCrossCount(bipartites, CopyNodeOrders);
+    const newCount = isBaryWeighted
+      ? getConfluentWeightedCrossCount(bipartites, CopyNodeOrders, edgeWidths)
+      : getConfluentCrossCount(bipartites, CopyNodeOrders);
+    console.error(newCount);
     //console.error("old cross count: ", count, nodeOrders, bipartites);
     // console.error("new cross count: ", newCount, CopyNodeOrders, bipartites);
     // console.error("----------------------------------------------");
@@ -210,9 +215,13 @@ export const setCrossConstraint = (
 
     //break;
   }
-  // console.error(nodeOrders)
+  console.error(
+    getConfluentWeightedCrossCount(bipartites, nodeOrders, edgeWidths),
+    getConfluentCrossCount(bipartites, nodeOrders)
+  );
 
   let Id = 0;
+  console.error("node", nodeOrders);
   nodeOrders.forEach((nodes, key) => {
     for (let i = 0; i < nodes.length - 1; i++) {
       // console.error(key, nodes[i]);
@@ -224,6 +233,7 @@ export const setCrossConstraint = (
       graph.constraints.push({
         left: nodes[i] + Id,
         right: nodes[i + 1] + Id,
+        type: "separation",
         gap,
         axis: "x",
       });

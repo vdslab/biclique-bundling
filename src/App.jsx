@@ -4,7 +4,7 @@ import { useState } from "react";
 import * as d3 from "d3";
 
 function App() {
-  const width = 3000;
+  const width = 4000;
   const height = 3000;
   const fontSize = 32;
 
@@ -12,12 +12,13 @@ function App() {
   const [rangeParam, setRangeParam] = useState(param);
   const [maxDepth, setMaxDepth] = useState(1);
   const [isMidShow, setIsMidShow] = useState(false);
+  const [isFCLD, setIsFCLD] = useState(true);
 
   const [url, setUrl] = useState("public/random/json/random_7_7_75_2.json");
   const [displayUrl, setDisplayUrl] = useState(url);
 
   const { paths, nodes, nodeLabels, crossCount, weightedCrossCount } =
-    useColaConfluent(param, url, maxDepth, fontSize);
+    useColaConfluent(param, url, maxDepth, fontSize, isFCLD);
 
   return (
     <>
@@ -73,18 +74,35 @@ function App() {
           />
           <label htmlFor="mid">中間ノードを表示</label>
         </div>
+
+        <div>
+          <input
+            type="checkbox"
+            id="fcld"
+            checked={isFCLD}
+            onChange={() => {
+              setIsFCLD(!isFCLD);
+            }}
+          />
+          <label htmlFor="fcld">FCLDを表示</label>
+        </div>
       </div>
 
       <svg width={width} height={height} style={{ border: "solid 1px" }}>
         <g>
           {paths?.map((path, key) => {
+            // 太さが0のエッジは描画しない
+            // if (path.width <= 0) {
+            //   return;
+            // }
+            console.log(path);
             return (
               <path
                 key={key}
-                d={path.path.d}
+                d={isFCLD ? path.path.d : path.path}
                 stroke={path.color || d3.schemeSet2[7]}
-                strokeWidth={Number(maxDepth) ? 0.2 : 1}
-                fill="silver"
+                strokeWidth={Number(maxDepth) && isFCLD ? 0.2 : 2}
+                fill={isFCLD ? "silver" : "transparent"}
                 opacity={0.75}
               />
             );

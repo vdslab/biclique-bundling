@@ -21,8 +21,8 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
   // .error(edgeWidths, midNodeWidths);
   // .error(cf);
 
-  const width = 2650;
-  const height = 2000;
+  const width = 4000;
+  const height = 2500;
   const d3cola = cola.d3adaptor(d3).linkDistance(300).size([width, height]);
   const layerGap = maxDepth > 0 ? 250 : 500;
   const graph = makeGraphForCola(cf, layerGap);
@@ -42,6 +42,7 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
     maxDepth
   );
 
+  console.error(edgeWidths);
   // stress最小化
   d3cola
     .nodes(graph.nodes)
