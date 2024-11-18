@@ -55,7 +55,6 @@ export const setCrossConstraint = (
   edgeWidths,
   lastLayer,
   isBaryWeighted,
-  d3cola,
   maxDepth
 ) => {
   const leftNodeNumber = bipartite.length;
@@ -67,14 +66,17 @@ export const setCrossConstraint = (
   const rightNodesOrder = new Array();
   const midNodesOrders = new Array(); // 中間ノードの層と同じサイズ
 
+  // [0, 1, 2, ...]
   for (let i = 0; i < leftNodeNumber; i++) {
     leftNodesOrder.push(i);
   }
 
+  // [0, 1, 2, ...]
   for (let i = 0; i < rightNodeNumber; i++) {
     rightNodesOrder.push(i);
   }
 
+  // [[0, 1, 2, ...],  [0, 1, 2, ...], ...]
   for (let i = 0; i < midLayerNumber; i++) {
     const midNodesOrder = new Array();
     for (let j = 0; j < layeredNodes[i].maximalNodes.length; j++) {
@@ -82,13 +84,6 @@ export const setCrossConstraint = (
     }
     midNodesOrders.push(midNodesOrder);
   }
-
-  // d3cola
-  //   .nodes(graph.nodes)
-  //   .links(graph.edges)
-  //   .constraints(graph.constraints)
-  //   .symmetricDiffLinkLengths(40) // ノードの数によって増やす
-  //   .start(30, 40, 50);
 
   // 制約の再追加
   const sortedNodes = structuredClone(graph.nodes).sort((a, b) => {
@@ -147,11 +142,9 @@ export const setCrossConstraint = (
             ouh += width * CopyNodeOrders[k].indexOf(u);
           }
 
-          // console.error(ouh, degree, 'ueeeeeeeeeeeee', v, ouh/degree, edge2Width)
           sum.push(ouh / degree);
         }
 
-        // console.error(sum, 'sum');
         CopyNodeOrders[k + 1].sort((a, b) => {
           if (sum[a] !== sum[b]) {
             return sum[a] - sum[b];
@@ -201,6 +194,7 @@ export const setCrossConstraint = (
     //console.error("old cross count: ", count, nodeOrders, bipartites);
     // console.error("new cross count: ", newCount, CopyNodeOrders, bipartites);
     // console.error("----------------------------------------------");
+
     if (count <= newCount) {
       // console.error(
       //   "result weight: ",
@@ -212,9 +206,8 @@ export const setCrossConstraint = (
 
     count = newCount;
     nodeOrders = CopyNodeOrders.slice();
-
-    //break;
   }
+
   console.error(
     getConfluentWeightedCrossCount(bipartites, nodeOrders, edgeWidths),
     getConfluentCrossCount(bipartites, nodeOrders)
@@ -224,12 +217,26 @@ export const setCrossConstraint = (
   console.error("node", nodeOrders);
   nodeOrders.forEach((nodes, key) => {
     for (let i = 0; i < nodes.length - 1; i++) {
-      // console.error(key, nodes[i]);
-      const gap = +maxDepth
+      let gap = +maxDepth
         ? (midNodeWidths[key][nodes[i]] + midNodeWidths[key][nodes[i + 1]]) /
             2 +
           30
-        : 60;
+        : 30;
+
+      if (key === 0 || key === lastLayer) {
+        const fontSize = 36;
+        const width1 =
+          String(nodes[i]).length * fontSize -
+          ((String(nodes[i]).length - 1) * fontSize) / 2.5;
+
+        const width2 =
+          String(nodes[i + 1]).length * fontSize -
+          ((String(nodes[i + 1]).length - 1) * fontSize) / 2.5;
+
+        const labelGap = (width1 + width2) / 2 + 10;
+        gap = Math.max(gap, labelGap);
+      }
+
       graph.constraints.push({
         left: nodes[i] + Id,
         right: nodes[i + 1] + Id,

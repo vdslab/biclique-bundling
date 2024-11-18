@@ -13,8 +13,10 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
   const cf = new Confluent(getQuasiBicliqueCover, param, maxDepth);
   cf.build(bipartite);
 
+  console.error(cf.bipartitesAll, cf.bipartitesInfo, cf.bipartites);
+
   const { edgeWidths, midNodeWidths } = getEdgeWidths(
-    cf.bipartitesForMiss,
+    cf.bipartitesInfo,
     cf.bipartitesAll
   );
 
@@ -32,13 +34,12 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
   const weightedCross = setCrossConstraint(
     bipartite,
     cf.bipartites,
-    cf.layeredNodes,
+    cf.bipartitesInfo,
     graph,
     midNodeWidths,
     edgeWidths,
     lastLayer,
     isBaryWeighted,
-    d3cola,
     maxDepth
   );
 
@@ -66,7 +67,7 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
   // 損失数
   const { missConnectCount, missConnectRatio } = getMissConnectionCount(
     bipartite,
-    cf.bipartitesForMissConnect
+    cf.bipartites
   );
 
   // パラメター、交差数、エッジ数、中間ノード数、誤差数のログ
@@ -80,7 +81,6 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
   // console.log(edgePaths);
 
   // console.log("missssssssssssssssssssssssssss", missConnectCount);
-  // console.log(cf.bipartitesAll, cf.bipartitesForMissConnect);
 
   return {
     graph: structuredClone(graph),

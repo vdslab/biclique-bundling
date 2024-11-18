@@ -24,7 +24,7 @@ const useColaConfluent = (param, url, maxDepth, fontSize, isFCLD) => {
 
       const parameter = param < 0 || param > 1.0 ? (1.0 + dense) / 2 : param;
 
-      console.log(parameter, dense);
+      console.log("densf",parameter, dense);
 
       const { cross, weightedCross, midNodeWidths, graph, edgeWidths } =
         colaConfluent(bipartite, parameter, maxDepth, isFCLD);

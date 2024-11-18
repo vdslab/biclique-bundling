@@ -6,7 +6,7 @@ import * as d3 from "d3";
 function App() {
   const width = 4000;
   const height = 3000;
-  const fontSize = 32;
+  const fontSize = 36;
 
   const [param, setParam] = useState(-1.0);
   const [rangeParam, setRangeParam] = useState(param);
@@ -89,38 +89,57 @@ function App() {
       </div>
 
       <svg width={width} height={height} style={{ border: "solid 1px" }}>
-        <g>
-          {paths?.map((path, key) => {
-            // 太さが0のエッジは描画しない
-            // if (path.width <= 0) {
-            //   return;
-            // }
-            console.log(path);
-            return (
-              <path
-                key={key}
-                d={isFCLD ? path.path.d : path.path}
-                stroke={path.color || d3.schemeSet2[7]}
-                strokeWidth={Number(maxDepth) && isFCLD ? 0.2 : 2}
-                fill={isFCLD ? "silver" : "transparent"}
-                opacity={0.75}
-              />
-            );
-          })}
+        {paths?.map((path, key) => {
+          console.log(path);
+          return (
+            <path
+              key={key}
+              d={isFCLD ? path.path.d : path.path}
+              stroke={path.color || d3.schemeSet2[7]}
+              strokeWidth={Number(maxDepth) && isFCLD ? 0.2 : 2}
+              fill={isFCLD ? "silver" : "transparent"}
+              opacity={0.75}
+            />
+          );
+        })}
 
+        <g>
           {nodes?.map((node, key) => {
             return (
-              <text
-                key={key}
-                x={node.x}
-                y={node.y}
-                fontSize={
-                  isMidShow ? fontSize : nodeLabels[key].isShow ? fontSize : 0
-                }
-                fill="black"
-              >
-                {nodeLabels[key]["label"]}
-              </text>
+              <>
+                <text
+                  key={key}
+                  style={{ border: "solid" }}
+                  x={node.x}
+                  y={node.y}
+                  fontSize={
+                    isMidShow ? fontSize : nodeLabels[key].isShow ? fontSize : 0
+                  }
+                  fontFamily={"monospace"}
+                  fontWeight={"bold"}
+                  fill="black"
+                >
+                  {nodeLabels[key]["label"]}
+                </text>
+
+                {nodeLabels[key].isShow && (
+                  <rect
+                    key={key}
+                    x={node.x - fontSize / 4.5}
+                    y={node.y - fontSize / 1.2}
+                    width={
+                      String(nodeLabels[key]["label"]).length * fontSize -
+                      ((String(nodeLabels[key]["label"]).length - 1) *
+                        fontSize) /
+                        2.5
+                    }
+                    height={fontSize}
+                    stroke="black"
+                    fill="transparent"
+                    strokeWidth="0.5"
+                  />
+                )}
+              </>
             );
           })}
         </g>

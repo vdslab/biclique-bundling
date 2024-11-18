@@ -4,13 +4,13 @@ import sys
 import random
 import os
 
-lefts = [15, 20, 25, 30]
-rights = [15, 20, 25, 30]
-probs = [70, 80, 90]
-instances = 30
+lefts = [10]
+rights = [10]
+probs = [70]
+instances = 10
 
 # 95
-random.seed(95)
+random.seed(15)
 
 for ins in range(instances):
     for left in lefts:
@@ -32,8 +32,8 @@ for ins in range(instances):
                             vec.append(0)
                     output.append(vec)
 
-                os.makedirs("public/random-exp/json/{}_{}/{}/".format(left, right, prob), exist_ok=True)
-                output_file = "public/random-exp/json/{}_{}/{}/random_{}.json".format(left, right, prob, str(ins + 1).zfill(2))
+                # os.makedirs("public/random/json/{}_{}/{}/".format(left, right, prob), exist_ok=True)
+                output_file = "public/random/json/random_{}_{}_{}_{}.json".format(left, right, prob, str(ins + 1).zfill(2))
 
                 with open(output_file, "w") as file:
                     sys.stdout = file  # 標準出力をファイルに変更します

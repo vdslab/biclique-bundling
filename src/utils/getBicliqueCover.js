@@ -445,251 +445,6 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
     const deletedNode = structuredClone(S);
     const bicliqueNodes = coloredEdge2biclique(S, edge2Node); // {left: [0, 1, 2, 3], right: [1, 4, 5]}
 
-    //usedLeftNodes,usedRightNodesの配列にpushする
-    for (const leftNode of bicliqueNodes["left"]) {
-      usedLeftNodes.push(leftNode);
-    }
-
-    for (const rightNode of bicliqueNodes["right"]) {
-      usedRightNodes.push(rightNode);
-    }
-
-    for (let i = 0; i < bipartiteNodes["left"].length; i++) {
-      if (bicliqueNodes["left"].includes(i)) continue;
-      if (usedLeftNodes.includes(i)) continue;
-
-      addedCandNodes.push({ side: "left", node: i });
-    }
-
-    for (let i = 0; i < bipartiteNodes["right"].length; i++) {
-      if (bicliqueNodes["right"].includes(i)) continue;
-      if (usedRightNodes.includes(i)) continue;
-      addedCandNodes.push({ side: "right", node: i });
-    }
-
-    // bicliqueNodesの密度が高くなるようなノードを選択する
-    // 貪欲的に密度が高くなるようなノードを選択しても、最終的な結果が最良であるか限らない
-    //console.log(bicliqueNodes, addedCandNodes);
-    const addedNodes = [];
-    const addedNodesNumber = [];
-    for (;;) {
-      let maxDensityNode;
-      let maxDesity = -1.0;
-      for (const addedNode of addedCandNodes) {
-        const bipartiteDensity = calcBipartiteDensity(
-          bicliqueNodes,
-          addedNode,
-          g
-        );
-
-        const nodeNumber =
-          addedNode["side"] === "left"
-            ? "l" + addedNode["node"]
-            : "r" + addedNode["node"];
-        if (
-          bipartiteDensity >= maxDesity &&
-          !addedNodesNumber.includes(nodeNumber)
-        ) {
-          maxDesity = bipartiteDensity;
-          maxDensityNode = addedNode;
-        }
-      }
-
-      if (maxDesity < param) {
-        break;
-      } else {
-        // console.error("density log", maxDesity, bicliqueNodes);
-      }
-
-      if (maxDensityNode) {
-        bicliqueNodes[maxDensityNode["side"]].push(maxDensityNode["node"]);
-        addedNodes.push(maxDensityNode);
-        //addedNodesNumber.push(maxDensityNode["node"]);
-
-        if (maxDensityNode["side"] === "left") {
-          usedLeftNodes.push(maxDensityNode["node"]);
-          addedNodesNumber.push("l" + maxDensityNode["node"]);
-        } else {
-          usedRightNodes.push(maxDensityNode["node"]);
-          addedNodesNumber.push("r" + maxDensityNode["node"]);
-        }
-      }
-    }
-
-    // 準バイクリークの密度がparam未満だったら例外を投げる
-    const bipartiteDensity = calcBipartiteDensity(bicliqueNodes, undefined, g);
-    //console.error("SSS", counter, bicliqueNodes, bipartiteDensity);
-    if (bipartiteDensity < param) {
-      throw new Error("code error");
-    }
-
-    // 追加ノードをG_Eから削除する
-    for (const addedNode of addedNodes) {
-      edge2Node.forEach((GeNode, GEdge) => {
-        const edge = GEdge.split(",");
-
-        if (addedNode["side"] === "left") {
-          if (
-            Number(edge[0]) === addedNode["node"] &&
-            bicliqueNodes["right"].includes(Number(edge[1]))
-          ) {
-            deletedNode.push(GeNode);
-          }
-        } else {
-          if (
-            Number(edge[1]) === addedNode["node"] &&
-            bicliqueNodes["left"].includes(Number(edge[0]))
-          ) {
-            deletedNode.push(GeNode);
-          }
-        }
-      });
-    }
-    //console.error(deletedNode);
-
-    // 準バイクリークカバーの配列
-    quasiBicliques.push(bicliqueNodes);
-
-    //Sはエッジの配列
-    //S.push(addedNode);
-    //console.log("deleted", deletedNode);
-    //console.error("added", addedNodes, param);
-    //console.log("node2", edge2Node);
-    //console.log(bicliqueNodes);
-
-    //グラフからSを取り除く
-    //グラフから頂点集合Sとそのエッジを取り除く
-    //グラフからどう準バイクリークを取り除くか
-    for (const sElement of deletedNode) {
-      delete G[sElement];
-      for (let [key, neighbors] of Object.entries(G)) {
-        neighbors = neighbors.filter((element) => element !== sElement);
-        G[key] = neighbors;
-      }
-    }
-
-    quasiRLF(G, param, counter + 1);
-  };
-
-  const quasiRLFv2 = (G, param, counter = 0) => {
-    // グラフGが空だったらreturn
-    if (!Object.entries(G).length) return;
-
-    const S = [];
-    //maxDegNodeは複数の候補がある
-    //vertex-disjointになるようなmaxDegNodeを選ぶ
-    let maxDegNode = -1;
-    let maxNum = -1;
-    for (const [key, neighbors] of Object.entries(G)) {
-      if (neighbors.length > maxNum) {
-        maxDegNode = Number(key);
-        maxNum = neighbors.length;
-      }
-    }
-
-    //console.log(maxDegNode);
-    const U1 = new Set();
-    const U2 = new Set();
-    S.push(maxDegNode);
-
-    for (let i = 0; i < S.length; i++) {
-      for (const u2 of G[S[i]]) {
-        U2.add(u2);
-      }
-    }
-
-    //console.log("U2", U2);
-    for (const [key] of Object.entries(G)) {
-      if (U2.has(Number(key)) || maxDegNode === Number(key)) continue;
-      U1.add(Number(key));
-    }
-
-    //console.log("U1", U1);
-    //U1から選ぶでSに入れる；
-    //U1からdisjointになるedgesを優先的に選ぶ
-
-    while (U1.size) {
-      // U2にmaxの接続で選ぶ
-      let maxCount = -1;
-      const candObj = [];
-      const cands = [];
-      for (const u1Element of U1) {
-        let count = 0;
-        for (const node of G[u1Element]) {
-          if (U2.has(node)) {
-            count++;
-          }
-        }
-
-        maxCount = Math.max(maxCount, count);
-        candObj.push({ u1: u1Element, count });
-      }
-
-      candObj.forEach((element) => {
-        if (element.count === maxCount) {
-          cands.push(element.u1);
-        }
-      });
-      //console.log("cands", cands, candObj);
-      //console.log("end");
-
-      //candからU1に最小に繋がっているやつを選ぶ。
-      let minU1deg = 1e12;
-      let disi;
-      for (const cElement of cands) {
-        let count = 0;
-        for (const n of G[cElement]) {
-          if (U1.has(n)) {
-            count++;
-          }
-        }
-
-        if (minU1deg > count) {
-          minU1deg = count;
-          disi = cElement;
-        }
-      }
-
-      let maxEdge;
-      for (const e of edge2Node) {
-        if (maxDegNode === e[1]) {
-          maxEdge = e[0];
-        }
-      }
-
-      //candsからvertex-disjointなedgeを優先的に選択
-      const mac = maxEdge.split(",");
-      for (const cElement of cands) {
-        for (const e of edge2Node) {
-          if (cElement === e[1]) {
-            const tar = e[0].split(",");
-            if (mac[0] !== tar[0] && mac[1] !== tar[1]) {
-              disi = cElement;
-            }
-          }
-        }
-      }
-
-      //console.log("disi", disi);
-      S.push(disi);
-      U1.delete(disi);
-
-      for (const n of G[disi]) {
-        U2.add(n);
-        U1.delete(n);
-      }
-
-      //console.log("S", S);
-      //console.log("U1", U1);
-    }
-
-    //console.log("S", S);
-
-    // bipartiteNodes
-    const addedCandNodes = []; // [{side: 'left', node:1},{side: 'right', node: 2} ]
-    const deletedNode = structuredClone(S);
-    const bicliqueNodes = coloredEdge2biclique(S, edge2Node); // {left: [0, 1, 2, 3], right: [1, 4, 5]}
-
     console.log(bicliqueNodes, bipartiteNodes);
     //usedLeftNodes,usedRightNodesの配列にpushする
     for (const leftNode of bicliqueNodes["left"]) {
@@ -705,12 +460,6 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
       if (bicliqueNodes["left"].includes(i)) continue;
       if (usedLeftNodes.includes(i)) continue;
 
-      // let isConnected = false;
-      // for(const right of bicliqueNodes["right"]) {
-      //   if(g[i][right]) isConnected = true;
-      // }
-
-      // if(!isConnected) continue;
       addedCandNodes.push({ side: "left", node: i });
     }
 
@@ -718,12 +467,6 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
       if (bicliqueNodes["right"].includes(i)) continue;
       if (usedRightNodes.includes(i)) continue;
 
-      // let isConnected = false;
-      // for(const left of bicliqueNodes["left"]) {
-      //   if(g[left][i]) isConnected = true;
-      // }
-
-      // if(!isConnected) continue;
       addedCandNodes.push({ side: "right", node: i });
     }
 
@@ -758,10 +501,13 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
         }
       }
 
+      // maxDesity = -1.0 -> ノードが追加されなかったとき
       if (maxDesity < param) {
         console.log(
-          "density",
-          calcBipartiteDensity(bicliqueNodes, undefined, g)
+          "densityr",
+          calcBipartiteDensity(bicliqueNodes, undefined, g),
+          maxDesity,
+          param
         );
         break;
       } else {
@@ -835,11 +581,11 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
       }
     }
 
-    quasiRLFv2(G, param, counter + 1);
+    quasiRLF(G, param, counter + 1);
   };
   //ここでRFLを実行する
   // console.error("Hasime");
-  quasiRLFv2(G, param);
+  quasiRLF(G, param);
   //console.error("owari");
   //coloredEdgesをconfluent drawing用にデータを変換してreturn
 
@@ -849,7 +595,7 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
     biclique.left.sort((a, b) => a - b);
     biclique.right.sort((a, b) => a - b);
   });
-  console.log(quasiBicliques, "quasib");
+
   return quasiBicliques;
 };
 
@@ -934,6 +680,7 @@ export const calcBipartiteDensity = (bicliqueNodes, addedNode, bipartite) => {
   return bipartiteDensity;
 };
 
+// 追加するノードがバイクリーク内のノードと隣接しているか？
 const isNeighbor = (bicliqueNodes, addedNode, g) => {
   if (addedNode.side === "right") {
     for (const left of bicliqueNodes["left"]) {
