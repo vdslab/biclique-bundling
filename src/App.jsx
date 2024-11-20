@@ -4,8 +4,8 @@ import { useState } from "react";
 import * as d3 from "d3";
 
 function App() {
-  const width = 4000;
-  const height = 3000;
+  const [width, setWidth] = useState(2400);
+  const height = 1200;
   const fontSize = 36;
 
   const [param, setParam] = useState(-1.0);
@@ -18,7 +18,50 @@ function App() {
   const [displayUrl, setDisplayUrl] = useState(url);
 
   const { paths, nodes, nodeLabels, crossCount, weightedCrossCount } =
-    useColaConfluent(param, url, maxDepth, fontSize, isFCLD);
+    useColaConfluent(param, url, maxDepth, fontSize, isFCLD, width, height);
+
+  function downloadSvgAsPng() {
+    // svg要素を取得
+    const svgNode = document.querySelector("svg");
+    const svgText = new XMLSerializer().serializeToString(svgNode);
+    console.log(svgText);
+    const svgBlob = new Blob([svgText], {
+      type: "image/svg+xml;charset=utf-8",
+    });
+    const svgUrl = URL.createObjectURL(svgBlob);
+
+    // Imageオブジェクトを生成
+    const im = new Image();
+
+    // Imageの作成に少し時間がかかるため、addEventListnerで行う
+    im.addEventListener("load", () => {
+      const width = svgNode.getAttribute("width");
+      const height = svgNode.getAttribute("height");
+
+      // canvasを作成
+      const cvs = document.createElement("canvas");
+      cvs.setAttribute("width", width);
+      cvs.setAttribute("height", height);
+      const ctx = cvs.getContext("2d");
+
+      // canvasに描画(背景は透過)
+      ctx.drawImage(im, 0, 0, width, height);
+      const imgUrl = cvs.toDataURL("image/png");
+
+      // a要素を作ってダウンロード
+      const a = document.createElement("a");
+      a.href = imgUrl;
+      a.download = `${url}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(svgUrl);
+      URL.revokeObjectURL(imgUrl);
+    });
+
+    // Imageオブジェクトを、svgデータから作成
+    im.src = svgUrl;
+  }
 
   return (
     <>
@@ -40,6 +83,14 @@ function App() {
           </button>
         </div>
         <br />
+        <span>width:</span>
+        <input
+          type="number"
+          value={width}
+          onChange={(e) => setWidth(e.target.value)}
+        />
+        <br />
+
         <span>depth:</span>
         <input
           type="number"
@@ -86,29 +137,41 @@ function App() {
           />
           <label htmlFor="fcld">FCLDを表示</label>
         </div>
+
+        <button
+          onClick={() => {
+            downloadSvgAsPng();
+          }}
+        >
+          PNGとしてダウンロード
+        </button>
       </div>
 
-      <svg width={width} height={height} style={{ border: "solid 1px" }}>
-        {paths?.map((path, key) => {
-          console.log(path);
-          return (
-            <path
-              key={key}
-              d={isFCLD ? path.path.d : path.path}
-              stroke={path.color || d3.schemeSet2[7]}
-              strokeWidth={Number(maxDepth) && isFCLD ? 0.2 : 2}
-              fill={isFCLD ? "silver" : "transparent"}
-              opacity={0.75}
-            />
-          );
-        })}
-
+      <svg
+        width={width}
+        height={height}
+        viewBox={`0, 0, ${width}, ${height}`}
+        style={{ border: "solid 1px" }}
+      >
         <g>
+          {paths?.map((path, key) => {
+            console.log(path);
+            return (
+              <path
+                key={key}
+                d={isFCLD ? path.path.d : path.path}
+                stroke={path.color || d3.schemeSet2[7]}
+                strokeWidth={Number(maxDepth) && isFCLD ? 0.2 : 2}
+                fill={isFCLD ? "silver" : "transparent"}
+                opacity={0.75}
+              />
+            );
+          })}
+
           {nodes?.map((node, key) => {
             return (
-              <>
+              <g key={key}>
                 <text
-                  key={key}
                   style={{ border: "solid" }}
                   x={node.x}
                   y={node.y}
@@ -124,9 +187,8 @@ function App() {
 
                 {nodeLabels[key].isShow && (
                   <rect
-                    key={key}
                     x={node.x - fontSize / 4.5}
-                    y={node.y - fontSize / 1.2}
+                    y={node.y - fontSize / 1.175}
                     width={
                       String(nodeLabels[key]["label"]).length * fontSize -
                       ((String(nodeLabels[key]["label"]).length - 1) *
@@ -139,7 +201,7 @@ function App() {
                     strokeWidth="0.5"
                   />
                 )}
-              </>
+              </g>
             );
           })}
         </g>

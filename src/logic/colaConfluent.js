@@ -8,7 +8,15 @@ import { getColaBipartiteCross } from "./../utils/getBipartiteCross.js";
 import { setCrossConstraint } from "./../utils/constraints.js";
 import { getMissConnectionCount } from "./../utils/getMissingEdgeColors.js";
 
-const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
+const colaConfluent = (
+  bipartite,
+  param,
+  maxDepth,
+  isBaryWeighted,
+  width,
+  height,
+  fontSize
+) => {
   const lastLayer = 2 ** maxDepth;
   const cf = new Confluent(getQuasiBicliqueCover, param, maxDepth);
   cf.build(bipartite);
@@ -23,8 +31,6 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
   // .error(edgeWidths, midNodeWidths);
   // .error(cf);
 
-  const width = 4000;
-  const height = 2500;
   const d3cola = cola.d3adaptor(d3).linkDistance(300).size([width, height]);
   const layerGap = maxDepth > 0 ? 250 : 500;
   const graph = makeGraphForCola(cf, layerGap);
@@ -40,7 +46,8 @@ const colaConfluent = (bipartite, param, maxDepth, isBaryWeighted) => {
     edgeWidths,
     lastLayer,
     isBaryWeighted,
-    maxDepth
+    maxDepth,
+    fontSize
   );
 
   console.error(edgeWidths);
