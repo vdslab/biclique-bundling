@@ -3,6 +3,7 @@
  出力:グラフG_Eの隣接リスト(Object)
 **/
 
+// convertG2Ge ok1
 export const convertG2Ge = (G) => {
   let nodeNumber = 0;
   const Ge = {};
@@ -19,8 +20,6 @@ export const convertG2Ge = (G) => {
     }
   }
 
-  // console.log(edge2Node);
-
   for (let i = 0; i < edges.length; i++) {
     const iG = edges[i]["row"];
     const jG = edges[i]["col"];
@@ -31,9 +30,10 @@ export const convertG2Ge = (G) => {
       //vertex-jointならpass;
       if (iG === iGe || jG === jGe) continue;
 
-      const rowDiff = iGe - iG;
-      const colDiff = jGe - jG;
-      if (G[iG + rowDiff][jG] && G[iG][jG + colDiff]) continue;
+      // indeced P_4 or C^c_4
+      // const rowDiff = iGe - iG;
+      // const colDiff = jGe - jG;
+      if (G[iGe][jG] && G[iG][jGe]) continue;
 
       //通過した(iG, jG)と(iGe, jGe)は結ぶ
       Ge[edge2Node.get(iG + "," + jG)].push(edge2Node.get(iGe + "," + jGe));
@@ -309,7 +309,6 @@ export const getBicliqueCover = (g) => {
 
 export const getQuasiBicliqueCover = (g, param = 1.0) => {
   const [G, edge2Node] = convertG2Ge(g);
-  // console.error("GG", G);
 
   const bipartiteNodes = { left: [], right: [] };
   for (let i = 0; i < g.length; i++) {
@@ -326,6 +325,8 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
   // 準バイクリークカバーの配列
   const quasiBicliques = [];
 
+  // RLF part ok1
+  // quasi part ok1
   const quasiRLF = (G, param, counter = 0) => {
     // グラフGが空だったらreturn
     if (!Object.entries(G).length) return;
@@ -362,7 +363,7 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
     //console.log("U1", U1);
     //U1から選ぶでSに入れる；
     //U1からdisjointになるedgesを優先的に選ぶ
-
+    console.error("FROU1", structuredClone(U1), counter);
     while (U1.size) {
       // U2にmaxの接続で選ぶ
       let maxCount = -1;
@@ -385,15 +386,19 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
           cands.push(element.u1);
         }
       });
-      //console.log("cands", cands, candObj);
+      console.log("cands", cands, candObj, counter);
       //console.log("end");
 
-      //candからU1に最小に繋がっているやつを選ぶ。
+      // U2への次数がmaxのノードが複数あった場合
+      // candからU1に最小に繋がっているやつを選ぶ
+      // この時点で候補ノードが一つでもaddNodeは必ず決定される
+      // find v min deg_U1(v)
+      let hack1, hack2;
       let minU1deg = 1e12;
-      let disi;
-      for (const cElement of cands) {
+      let addNode;
+      for (const candNode of cands) {
         let count = 0;
-        for (const n of G[cElement]) {
+        for (const n of G[candNode]) {
           if (U1.has(n)) {
             count++;
           }
@@ -401,51 +406,77 @@ export const getQuasiBicliqueCover = (g, param = 1.0) => {
 
         if (minU1deg > count) {
           minU1deg = count;
-          disi = cElement;
+          hack1 = candNode;
+          addNode = candNode;
         }
       }
+      console.error("hack1", addNode);
 
-      let maxEdge;
+      // U2への次数がmaxのノードが複数あった場合
+      // candsからSエッジからvertex-disjointなedgeを優先的に選択
+      // この条件の方が優先される
+      const Sedges = [];
       for (const e of edge2Node) {
-        if (maxDegNode === e[1]) {
-          maxEdge = e[0];
+        if (S.includes(e[1])) {
+          const f = e[0].split(",");
+          Sedges.push([+f[0], +f[1]]);
         }
       }
 
-      //candsからvertex-disjointなedgeを優先的に選択
-      const mac = maxEdge.split(",");
-      for (const cElement of cands) {
-        for (const e of edge2Node) {
-          if (cElement === e[1]) {
-            const tar = e[0].split(",");
-            if (mac[0] !== tar[0] && mac[1] !== tar[1]) {
-              disi = cElement;
+      console.error("Sedges", Sedges, counter);
+
+      // Sのバイクリークからvertex-disjointなエッジを選ぶ
+      if (Sedges.length > 0) {
+        for (const candNode of cands) {
+          for (const [edge, node] of edge2Node) {
+            if (candNode !== node) continue;
+            const candEdge = edge.split(",");
+
+            let isDisjoint = true;
+            for (const Sedge of Sedges) {
+              if (+Sedge[0] === +candEdge[0] || +Sedge[1] === +candEdge[1]) {
+                isDisjoint = false;
+              }
+            }
+
+            if (isDisjoint) {
+              addNode = candNode;
+              hack2 = candNode;
             }
           }
         }
       }
 
-      //console.log("disi", disi);
-      S.push(disi);
-      U1.delete(disi);
+      // console.error("hack2", addNode);
 
-      for (const n of G[disi]) {
+      // if(hack1 !== hack2 && hack2 !== undefined) {
+      //   console.error("diff", hack1, hack2)
+      // }
+      // console.error("===================================");
+
+      //console.log("disi", disi);
+      S.push(addNode);
+      U1.delete(addNode);
+
+      for (const n of G[addNode]) {
         U2.add(n);
         U1.delete(n);
       }
 
-      //console.log("S", S);
+      // console.error("Sdf", S, counter);
       //console.log("U1", U1);
     }
+
+    // console.error("compf", S, counter);
 
     //console.log("S", S);
 
     // bipartiteNodes
     const addedCandNodes = []; // [{side: 'left', node:1},{side: 'right', node: 2} ]
-    const deletedNode = structuredClone(S);
+    const deletedNode = structuredClone(S); // number[]
     const bicliqueNodes = coloredEdge2biclique(S, edge2Node); // {left: [0, 1, 2, 3], right: [1, 4, 5]}
 
-    console.log(bicliqueNodes, bipartiteNodes);
+    // console.log(bicliqueNodes, bipartiteNodes);
     //usedLeftNodes,usedRightNodesの配列にpushする
     for (const leftNode of bicliqueNodes["left"]) {
       usedLeftNodes.push(leftNode);
@@ -630,6 +661,7 @@ const coloredEdges2bicliques = (coloredEdges, edge2Node) => {
   return bicliques;
 };
 
+// ok1
 const coloredEdge2biclique = (coloredEdge, edge2Node) => {
   const bicliqueEdges = [];
   for (let i = 0; i < coloredEdge.length; i++) {
@@ -647,11 +679,16 @@ const coloredEdge2biclique = (coloredEdge, edge2Node) => {
   }
   //console.log(bicliqueObj);
   //bicliqueObjの重複削除とソート
-  bicliqueObj["left"] = Array.from(new Set(bicliqueObj["left"])).sort();
-  bicliqueObj["right"] = Array.from(new Set(bicliqueObj["right"])).sort();
+  bicliqueObj["left"] = Array.from(new Set(bicliqueObj["left"])).sort(
+    (a, b) => a - b
+  );
+  bicliqueObj["right"] = Array.from(new Set(bicliqueObj["right"])).sort(
+    (a, b) => a - b
+  );
   return bicliqueObj;
 };
 
+// ok1
 export const calcBipartiteDensity = (bicliqueNodes, addedNode, bipartite) => {
   let bipartiteEdgesCount = 0;
 
@@ -680,7 +717,7 @@ export const calcBipartiteDensity = (bicliqueNodes, addedNode, bipartite) => {
   return bipartiteDensity;
 };
 
-// 追加するノードがバイクリーク内のノードと隣接しているか？
+// 追加するノードがバイクリーク内のノードと隣接しているか？ ok1
 const isNeighbor = (bicliqueNodes, addedNode, g) => {
   if (addedNode.side === "right") {
     for (const left of bicliqueNodes["left"]) {
