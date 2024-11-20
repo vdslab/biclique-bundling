@@ -8,20 +8,16 @@ import { getEdgePaths, getNodeLinkPath } from "./../utils/getEdgePaths.js";
  depth = 1 と depth >= 2のdrawing結果で比較する→ depth > 2でdepth=1と上下ノードが同じようにリンクしているならばアルゴリズムは妥当
 
 */
-const useColaConfluent = (
-  param,
-  url,
-  maxDepth,
-  fontSize,
-  isFCLD,
-  width,
-  height
-) => {
+const useColaConfluent = (param, url, maxDepth, fontSize, isFCLD) => {
   const [paths, setPaths] = useState([]);
   const [nodes, setNodes] = useState([]);
   const [nodeLabels, setNodeLabels] = useState([]);
   const weightedCrossCount = useRef(0);
   const crossCount = useRef(0);
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
+  const [fromX, setFromX] = useState(0);
+  const [fromY, setFromY] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -44,6 +40,30 @@ const useColaConfluent = (
           height,
           fontSize
         );
+
+      const nodePoses = {
+        x: [],
+        y: [],
+      };
+
+      for (const node of graph.nodes) {
+        nodePoses.x.push(node.x);
+        nodePoses.y.push(node.y);
+      }
+
+      //console.error("err", graph.nodes , nodeXposes,Math.max(...nodeXposes) - Math.min(...nodeXposes));
+      const maxX = Math.max(...nodePoses.x);
+      const minX = Math.min(...nodePoses.x);
+      const maxY = Math.max(...nodePoses.y);
+      const minY = Math.min(...nodePoses.y);
+
+      setWidth(Math.round(maxX - minX) + 4 * fontSize);
+      setHeight(Math.round(maxY - minY) + 4 * fontSize);
+
+      console.log(minX, minY, "FFFFFFFFFFFFF", nodePoses);
+
+      setFromX(minX - 2 * fontSize);
+      setFromY(minY - 2 * fontSize);
 
       const edgePaths = isFCLD
         ? getEdgePaths(graph, edgeWidths, midNodeWidths, maxDepth)
@@ -114,7 +134,17 @@ const useColaConfluent = (
         })
       );
     })();
-  }, [param, url, maxDepth, fontSize, isFCLD, width, height]);
+  }, [
+    param,
+    url,
+    maxDepth,
+    fontSize,
+    isFCLD,
+    width,
+    setWidth,
+    setHeight,
+    height,
+  ]);
 
   return {
     paths,
@@ -122,6 +152,11 @@ const useColaConfluent = (
     nodeLabels,
     crossCount: crossCount.current,
     weightedCrossCount: weightedCrossCount.current,
+    width,
+    height,
+    setWidth,
+    fromX,
+    fromY,
   };
 };
 

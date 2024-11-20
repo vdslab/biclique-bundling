@@ -55,7 +55,8 @@ export const setCrossConstraint = (
   edgeWidths,
   lastLayer,
   isBaryWeighted,
-  maxDepth
+  maxDepth,
+  fontSize
 ) => {
   const leftNodeNumber = bipartite.length;
   const rightNodeNumber = bipartite[0].length;
@@ -224,7 +225,6 @@ export const setCrossConstraint = (
         : 30;
 
       if (key === 0 || key === lastLayer) {
-        const fontSize = 36;
         const width1 =
           String(nodes[i]).length * fontSize -
           ((String(nodes[i]).length - 1) * fontSize) / 2.5;

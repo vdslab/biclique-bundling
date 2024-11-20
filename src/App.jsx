@@ -4,8 +4,6 @@ import { useState } from "react";
 import * as d3 from "d3";
 
 function App() {
-  const [width, setWidth] = useState(2400);
-  const height = 1200;
   const fontSize = 36;
 
   const [param, setParam] = useState(-1.0);
@@ -17,14 +15,23 @@ function App() {
   const [url, setUrl] = useState("public/random/json/random_7_7_75_2.json");
   const [displayUrl, setDisplayUrl] = useState(url);
 
-  const { paths, nodes, nodeLabels, crossCount, weightedCrossCount } =
-    useColaConfluent(param, url, maxDepth, fontSize, isFCLD, width, height);
+  const {
+    paths,
+    nodes,
+    nodeLabels,
+    crossCount,
+    weightedCrossCount,
+    width,
+    height,
+    fromX,
+    fromY,
+  } = useColaConfluent(param, url, maxDepth, fontSize, isFCLD);
 
   function downloadSvgAsPng() {
     // svg要素を取得
     const svgNode = document.querySelector("svg");
     const svgText = new XMLSerializer().serializeToString(svgNode);
-    console.log(svgText);
+    // console.log(svgText);
     const svgBlob = new Blob([svgText], {
       type: "image/svg+xml;charset=utf-8",
     });
@@ -83,14 +90,10 @@ function App() {
           </button>
         </div>
         <br />
-        <span>width:</span>
-        <input
-          type="number"
-          value={width}
-          onChange={(e) => setWidth(e.target.value)}
-        />
+        <span>width:{width}</span>
         <br />
-
+        <span>height:{height}</span>
+        <br />
         <span>depth:</span>
         <input
           type="number"
@@ -150,12 +153,11 @@ function App() {
       <svg
         width={width}
         height={height}
-        viewBox={`0, 0, ${width}, ${height}`}
+        viewBox={`${fromX}, ${fromY}, ${width}, ${height}`}
         style={{ border: "solid 1px" }}
       >
         <g>
           {paths?.map((path, key) => {
-            console.log(path);
             return (
               <path
                 key={key}
